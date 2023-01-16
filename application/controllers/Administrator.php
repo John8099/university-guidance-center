@@ -676,9 +676,9 @@ class Administrator extends CI_Controller {
 
         $UserType = $this->db->escape_str($this->input->post('txtUserType'));
         $username = $this->db->escape_str($this->input->post('txtUsername'));
-        $password = md5($this->input->post("txtPassword"));
-        $Query=$this->db->query("SELECT * FROM tbluser WHERE SchoolID = '{$username}' AND HashedPassword = '{$password}'");
-
+        $password = hash("sha256", $this->db->escape_str($this->input->post('txtPassword')));
+        $Query=$this->db->query("SELECT * FROM tbluser WHERE SchoolID = '{$username}' AND HashedPassword = '{$password}' AND UserType = '{$UserType}';");
+        
         if($Query->num_rows()<>0){
             $rowdata = $Query->row();
             if($rowdata->Status == 'Inactive') {
