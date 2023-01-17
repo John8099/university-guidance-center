@@ -136,8 +136,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                   <div class="custom-select">
                     <select class="form-control form-control-line" name="txtUserType" required="required" id="txtUserType">
                       <option value="">Select User Type</option>
-                      <option value="Superadmin">College Guidance Facilitator</option>
-                      <option value="Administrator">University Guidance Counsellor</option>
+                      <option value="Superadmin">University Guidance Counsellor</option>
+                      <option value="Administrator" selected>College Guidance Facilitator</option>
                     </select>
                   </div>
                 </div>

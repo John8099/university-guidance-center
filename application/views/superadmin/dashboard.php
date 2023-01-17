@@ -86,9 +86,9 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
         </div>
         <!-- title -->
       </div>
-      <div class="table-responsive">
+      <div class="table-responsive" style="padding: 20px !important;">
 
-        <table id="datatable" class="table table-hover">
+        <table id="dashboardTable" class="table table-hover">
           <thead>
             <tr>
               <th scope="col">School ID</th>
