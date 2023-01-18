@@ -60,7 +60,7 @@
 
   <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.3.4/css/searchBuilder.dataTables.min.css">
   <link rel="stylesheet" href="<?= base_url() . 'media/' ?>datatables-datetime/css/dataTables.dateTime.min.css">
-  
+
   <script src="<?= base_url() . 'media/' ?>assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="<?= base_url() . 'media/' ?>sweetalert2/sweetalert2.all.min.js"></script>
   <style type="text/css">
@@ -228,7 +228,9 @@
             <li>
               <!-- User Profile-->
               <div class="user-profile dropdown m-t-20">
-                <div class="user-pic"><img src="<?= base_url('uploads/') . $this->session->userdata('ImageLoc'); ?>" alt="users" class="rounded-circle" width="200" /></div>
+                <div class="user-pic d-flex justify-content-center">
+                  <img src="<?= base_url('uploads/') . $this->session->userdata('ImageLoc'); ?>" alt="users" class="rounded-circle" width="100" />
+                </div>
                 <div class="user-content hide-menu m-l-10 text-center">
                   <a href="#" class="" id="Userdd" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <h6 class="m-b-0 m-t-20 user-name font-small">University Guidance Counsellor <i class="fa fa-angle-down"></i></h6>
