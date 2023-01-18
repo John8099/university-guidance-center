@@ -37,7 +37,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
           <tbody>
             <?php
-            $query = $this->db->query("SELECT tblappointment.AppointmentID, tblappointment.StudentName, tblcollege.College, tblappointment.YearSection, tblappointment.SelectedDate, tblappointment.PreferredTime, tblappointment.Platform, tblappointment.Status, tblappointment.Remarks FROM tblappointment INNER JOIN tblcollege ON tblcollege.CollegeID=tblappointment.CollegeID;");
+            $query = $this->db->query("SELECT ta.AppointmentID, ta.StudentName, tc.College, ta.YearSection, ta.SelectedDate, ta.PreferredTime, ta.Platform, ta.Status, ta.Remarks FROM tblappointment ta INNER JOIN tblcollege tc ON tc.CollegeID=ta.CollegeID WHERE ta.Status<>'Completed' ORDER BY FIELD(ta.Status, 'Pending') DESC;");
 
             foreach ($query->result() as $row) : ?>
               <tr>
@@ -49,9 +49,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <td><?= $row->Platform; ?></td>
                 <td><?= $row->Status; ?></td>
                 <td><a href="<?= site_url() . 'superadmin/view_appointment/' . $row->AppointmentID; ?>" class="btn btn-outline-info btn-sm" title="View Appointment">Change Status</a></td>
-                <td><?php if ($row->Status == 'Completed') : ?>
-                    <a href="<?= site_url() . 'superadmin/view_appointment/' . $row->AppointmentID; ?>" class="btn btn-outline-info btn-sm" title="View Appointment">Add Remarks</a>
-                    <?php endif; ?><?= ($row->Remarks != '') ? '<br></br>' . $row->Remarks : ''; ?>
+                <td><?php #if ($row->Status == 'Completed') : 
+                    ?>
+                  <!-- <a href="<?= site_url() . 'superadmin/view_appointment/' . $row->AppointmentID; ?>" class="btn btn-outline-info btn-sm" title="View Appointment">Add Remarks</a> -->
+                  <?php #endif; 
+                  ?>
+                  <?= $row->Remarks ? substr($row->Remarks, 0, 70) . "..." : "" ?>
                 </td>
               </tr>
             <?php endforeach; ?>

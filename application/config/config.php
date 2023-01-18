@@ -461,7 +461,7 @@ if (isset($_SERVER["REQUEST_URI"])) {
 		$config['csrf_protection'] = TRUE;
 	}
 }
-// $config['csrf_protection'] = TRUE;
+$config['csrf_protection'] = TRUE;
 $config['csrf_token_name'] = 'csrf_token_ess';
 $config['csrf_cookie_name'] = 'csrf_cookie_ess';
 $config['csrf_expire'] = 7200;

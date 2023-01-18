@@ -54,12 +54,15 @@
   <link href="<?= base_url() . 'media/' ?>assets/libs/chartist/dist/chartist.min.css" rel="stylesheet">
   <link href="<?= base_url() . 'media/' ?>dist/css/style.min.css" rel="stylesheet">
   <link href="<?= base_url() . 'media/' ?>global.css" rel="stylesheet">
-  <script src="<?= base_url() . 'media/' ?>assets/libs/sweetalert/sweetalert.min.js"></script>
+
   <link rel="stylesheet" href="<?= base_url() . 'media/' ?>datatables-responsive/css/responsive.bootstrap4.min.css">
   <link rel="stylesheet" href="<?= base_url() . 'media/' ?>datatables-buttons/css/buttons.bootstrap4.min.css">
 
   <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.3.4/css/searchBuilder.dataTables.min.css">
   <link rel="stylesheet" href="<?= base_url() . 'media/' ?>datatables-datetime/css/dataTables.dateTime.min.css">
+  
+  <script src="<?= base_url() . 'media/' ?>assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>sweetalert2/sweetalert2.all.min.js"></script>
   <style type="text/css">
     /*the container must be positioned relative:*/
     .custom-select {
@@ -758,6 +761,11 @@
             colors: ["#304758"]
           }
         },
+        tooltip: {
+          y: {
+            formatter: (val) => val
+          }
+        },
 
         xaxis: {
           categories: months,
@@ -783,6 +791,9 @@
 
         },
         yaxis: {
+          labels: {
+            formatter: (val) => val
+          },
           axisBorder: {
             show: false
           },
@@ -887,8 +898,18 @@
             opacity: 0.5
           },
         },
+        tooltip: {
+          y: {
+            formatter: (val) => val
+          }
+        },
         xaxis: {
           categories: lineCategory,
+        },
+        yaxis: {
+          labels: {
+            formatter: (val) => val
+          },
         }
       }
 
