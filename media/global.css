@@ -163,3 +163,7 @@ ul.notification {
   margin: 0;
   padding: 0;
 }
+
+.dtb-popover-close {
+  display: none !important;
+}

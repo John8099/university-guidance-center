@@ -264,7 +264,7 @@
             </li>
 
             <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'superadmin/wellness_checks'; ?>" aria-expanded="false"><i class="mdi mdi-emoticon"></i><span class="hide-menu">Wellness Check</span>
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'superadmin/wellness_checks'; ?>" aria-expanded="false"><i class="mdi mdi-clipboard-text"></i><span class="hide-menu">Assessment list</span>
               </a>
             </li>
 
@@ -477,7 +477,7 @@
           $(this).html($(this).text());
         });
 
-        var table = $("#dashboardTable").DataTable({
+        const tableConfig = {
           "paging": true,
           "lengthChange": false,
           "ordering": true,
@@ -493,9 +493,13 @@
               button: 'Advance search',
             }
           },
-        })
+        }
+
+        var table = $("#dashboardTable").DataTable(tableConfig)
+        var assessmentTable = $("#assessmentTable").DataTable(tableConfig)
 
         table.buttons().container().appendTo('#dashboardTable_wrapper .col-md-6:eq(0)');
+        assessmentTable.buttons().container().appendTo('#assessmentTable_wrapper .col-md-6:eq(0)');
       });
 
       $('#SelectCollegeAppointmentReports').change(function() {

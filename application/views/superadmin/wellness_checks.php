@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <!-- title -->
                 <div class="d-md-flex">
                     <div>
-                        <h4 class="card-title">Wellness Check List</h4>
+                        <h4 class="card-title">Wellness Check Assessment List</h4>
                     </div>
                     <div class="ms-auto">
                         <a href="<?=site_url().'superadmin/wellness_check';?>" type="button" class="btn btn-outline-success btn-sm" title="Create Wellness Check" style="width: 100px;">Create</a>
