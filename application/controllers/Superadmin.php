@@ -76,7 +76,7 @@ class Superadmin extends CI_Controller
   {
     $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'superadmin/login');
     $data['heading'] = 'Super Admin';
-    $data['sub_heading'] = 'Admin Details';
+    $data['sub_heading'] = 'Create Admin';
     $data['content'] = 'admin_list';
     $this->load->view('superadmin/superadmin_template', $data);
   }

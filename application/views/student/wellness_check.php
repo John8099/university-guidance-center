@@ -8,6 +8,7 @@ $NumberQuestion = '';
 $EndDate = '';
 $CreatedOn = '';
 $WellnessCheckID = $this->uri->segment(3);
+
 $result = $this->db->query("SELECT * FROM tblwellnesscheck WHERE WellnessCheckID = '" . $WellnessCheckID . "'");
 foreach ($result->result() as $row) {
   $Title = $row->Title;
@@ -16,12 +17,15 @@ foreach ($result->result() as $row) {
   $EndDate = $row->EndDate;
   $CreatedOn = date('Y-m-d', strtotime($row->CreatedOn));
 }
+
 $Remarks = '';
 $QScore = '';
 $SScore = '';
 $Results = '';
 $ResultID = $this->uri->segment(3);
+
 $tblresult = $this->db->query("SELECT * FROM tblresult WHERE WellnessCheckID = '" . $WellnessCheckID . "' AND CreatedBy='" . $this->session->userdata('StudentUserID') . "'");
+
 foreach ($tblresult->result() as $row) {
   $Remarks = $row->Remarks;
   $QScore = $row->QScore;
