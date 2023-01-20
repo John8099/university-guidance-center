@@ -89,12 +89,11 @@ class Superadmin extends CI_Controller
       redirect(site_url() . 'superadmin/admin_list');
     }
 
-    $ranpass = $this->routines->generateRandomString(8);
-    $hashPassword = hash("sha256", $ranpass);
     $email = $this->input->post('txtEmail');
+    $ranpass = $this->routines->generateRandomString(8);
+    $hashPassword = hash("sha256", $email);
 
     $data = array(
-      'HashedPassword' => $hashPassword,
       'Fullname' => $this->input->post('txtFullname'),
       'UserType' => 'Administrator',
       'Address' => '',
@@ -110,8 +109,16 @@ class Superadmin extends CI_Controller
       'Status' => 'Active',
     );
     if ($this->routines->validateEmail($email)) {
+
       if ($this->uri->segment(3) == '') {
+        $data['HashedPassword'] = $hashPassword;
+        $data["isNew"] = 1;
+
         $this->main_model->insert_entry('tbluser', $data);
+
+        // SEND EMAIL VERIFICATION
+        $msg = 'Your username: ' . $this->input->post('txtSchoolID') . ' password: ' . $ranpass . '';
+        $sendemail = $this->routines->sendEmail("Temporary Account", $msg, $email);
       } else {
         $this->main_model->update_entry('tbluser', $data, 'UserID', $this->uri->segment(3));
       }
@@ -122,11 +129,9 @@ class Superadmin extends CI_Controller
       $this->session->set_flashdata('CollegeID', $this->input->post('txtCollege'));
       $this->session->set_flashdata('SchoolID', $this->input->post('txtSchoolID'));
       $this->session->set_flashdata('Email', $email);
-      $this->session->set_flashdata('admin_list_save', 'The email was invalid only accepts wvsu.edu.ph email.');
+      $this->session->set_flashdata('invalid', 'The email was invalid only accepts wvsu.edu.ph email.');
     }
-    // SEND EMAIL VERIFICATION
-    $msg = 'Your username: ' . $this->input->post('txtSchoolID') . ' password: ' . $ranpass . '';
-    $sendemail = $this->routines->sendEmail("Temporary Account", $msg, $email);
+
     if ($this->input->post('txtRegisterType') == 'Superadmin') {
       redirect(site_url() . 'superadmin/admin_list/' . $this->uri->segment(3));
     } else {

@@ -23,9 +23,20 @@ foreach ($result->result() as $row) {
   <div class="col-lg-12 col-xlg-12 col-md-12">
     <div class="card">
       <div class="card-body">
-        <div class="d-md-flex">
-          <div class="ms-auto">
-            <a href="<?= site_url() . 'superadmin/schedule/' . $UserID; ?>" type="button" class="btn btn-outline-success btn-sm" title="Create Schedule">Create Admin</a>
+        <div class="alert alert-success d-flex align-items-center d-none" role="alert" id="alertsuccess">
+          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+            <use xlink:href="#check-circle-fill" />
+          </svg>
+          <div>
+            <?= $this->session->flashdata('admin_list_save'); ?>
+          </div>
+        </div>
+        <div class="alert alert-danger d-flex align-items-center d-none" role="alert" id="alertdanger">
+          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+            <use xlink:href="#exclamation-triangle-fill" />
+          </svg>
+          <div>
+            <?= $this->session->flashdata('invalid'); ?>
           </div>
         </div>
         <form method="post" action="<?= site_url() . 'superadmin/admin_list_save/' . $UserID ?>" class="form-horizontal form-material mx-2">
@@ -82,8 +93,38 @@ foreach ($result->result() as $row) {
     </div>
   </div>
 </div>
-<?php
-if ($this->session->flashdata('admin_list_save') != '') {
-  echo $this->routines->callSweetAlert($this->session->flashdata('admin_list_save'));
-}
-?>
+<script type="text/javascript">
+  function successful() {
+    // $('#alertsuccess').removeClass('d-none');
+    //  setTimeout(function(){
+    //     $('#alertsuccess').addClass('d-none');
+    //  }, 5000);
+    document.querySelector('#alertsuccess').classList.remove('d-none');
+    setTimeout(function() {
+      document.querySelector('#alertsuccess').classList.add('d-none');
+    }, 5000);
+  }
+
+  function failed() {
+    // $('#alertsuccess').removeClass('d-none');
+    //  setTimeout(function(){
+    //     $('#alertsuccess').addClass('d-none');
+    //  }, 5000);
+    document.querySelector('#alertdanger').classList.remove('d-none');
+    setTimeout(function() {
+      document.querySelector('#alertdanger').classList.add('d-none');
+    }, 5000);
+  }
+</script>
+
+<?php if ($this->session->flashdata('admin_list_save') != '') : ?>
+  <script>
+    successful();
+  </script>
+<?php endif; ?>
+
+<?php if ($this->session->flashdata('invalid') != '') : ?>
+  <script>
+    failed();
+  </script>
+<?php endif; ?>

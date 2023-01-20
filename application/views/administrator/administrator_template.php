@@ -213,15 +213,24 @@
             <!-- User Profile-->
             <li>
               <!-- User Profile-->
-              <div class="user-profile d-flex no-block dropdown m-t-20">
-                <div class="user-pic"><img src="<?= base_url() . 'media/' ?>assets/images/users/2.jpg" alt="users" class="rounded-circle" width="40" /></div>
-                <div class="user-content hide-menu m-l-10">
+              <div class="user-profile dropdown m-t-20">
+                <div class="user-pic d-flex justify-content-center">
+                  <img src="<?= base_url('uploads/') . $this->session->userdata('ImageLoc'); ?>" alt="users" class="rounded-circle" width="100" />
+                </div>
+                <div class="user-content hide-menu m-l-10 text-center">
                   <a href="#" class="" id="Userdd" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <h5 class="m-b-0 user-name font-medium">University Guidance Counsellor<i class="fa fa-angle-down"></i></h5>
-                    <span class="op-5 user-email">Administrator</span>
+                    <h6 class="m-b-0 m-t-20 user-name font-small">
+                      <?= $this->session->userdata("AdminFullname") ?>
+                      <i class="fa fa-angle-down"></i>
+                    </h6>
+                    <span class="op-5 user-email">
+                      <?= $this->session->userdata("AdminUserType") ?>
+                    </span>
                   </a>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="Userdd">
-                    <a class="dropdown-item" href="<?= site_url() . 'administrator/admin_lists'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Admin List</a>
+                    
+                    <a class="dropdown-item" href="<?= site_url() . 'administrator/change_password'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Change Password</a>
+                    <a class="dropdown-item" href="<?= site_url() . 'administrator/change_profile_picture'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Change Profile Picture</a>
                   </div>
                 </div>
               </div>
@@ -389,6 +398,12 @@
             <?php $this->load->view('administrator/' . $content); ?>
 
           <?php elseif ($content == 'schedule_appointment') : ?>
+            <?php $this->load->view('administrator/' . $content); ?>
+
+          <?php elseif ($content == 'change_password') : ?>
+            <?php $this->load->view('administrator/' . $content); ?>
+
+          <?php elseif ($content == 'change_profile_picture') : ?>
             <?php $this->load->view('administrator/' . $content); ?>
           <?php endif; ?>
         <?php endif; ?>

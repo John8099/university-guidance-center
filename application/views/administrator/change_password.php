@@ -102,12 +102,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
       <div class="col-lg-4 offset-lg-4">
         <center><img src="<?= base_url() . 'media/' ?>assets/images/logo.png" alt="users" width="200" class="d-none" /></center>
-        <div style="margin-top: 100px;"></div>
+        <div style="margin-top: 200px;"></div>
       </div>
       <!-- Column -->
-      <div class="col-lg-8 offset-lg-2">
+      <div class="col-lg-4 offset-lg-4">
         <div class="card" style="background: none; color: #fff;">
           <div class="card-body">
+
             <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
               <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
@@ -119,102 +120,45 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
               </symbol>
             </svg>
-
-
-            <div class="alert alert-success d-flex align-items-center d-none" role="alert" id="alertsuccess">
-              <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-                <use xlink:href="#check-circle-fill" />
-              </svg>
-              <div>
-                <?= $this->session->flashdata('RegisterSuccess'); ?>
-              </div>
-            </div>
             <div class="alert alert-danger d-flex align-items-center d-none" role="alert" id="alertdanger">
               <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
                 <use xlink:href="#exclamation-triangle-fill" />
               </svg>
               <div>
-                <?= $this->session->flashdata('RegisterFailed'); ?>
+                <?= $this->session->flashdata('pass_msg'); ?>
               </div>
             </div>
-            <h2 class="text-center" style="margin-bottom: 20px">Admin Register Here</h2>
-            <form class="form-horizontal form-material mx-2" action="<?= site_url() . 'superadmin/admin_save' ?>" id="frmRegister" method="post">
+            <form method="post" action="<?= site_url() . 'administrator/change_password_save' ?>" class="form-horizontal form-material mx-2">
               <?= $this->routines->InsertCSRF() ?>
-              <div class="row">
-                <div class="col-md-5">
-                  <div class="form-group">
-                    <label for="txtFullname" class="col-md-12">Full Name</label>
-                    <div class="col-md-12">
-                      <input type="text" placeholder="Full Name" class="form-control form-control-line" required="required" name="txtFullname" id="txtFullname" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="txtCollege" class="col-md-12">College</label>
-                    <div class="col-md-12">
-                      <div class="custom-select">
-                        <select class="form-control form-control-line" name="txtCollege" required="required" id="txtCollege">
-                          <option value="" selected hidden>Select College</option>
-                          <?php $query = $this->db->query("SELECT CollegeID, College FROM tblcollege;");
-                          foreach ($query->result() as $row) : ?>
-                            <option value="<?= $row->CollegeID; ?>"><?= $row->College; ?></option>
-                          <?php endforeach; ?>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="txtIdentifiedGender" class="col-md-12">Identified Gender</label>
-                    <div class="col-md-12">
-                      <div class="custom-select">
-                        <select class="form-control form-control-line" name="txtIdentifiedGender" required="required" id="txtIdentifiedGender">
-                          <option value="" selected hidden>Select Identified Gender</option>
-                          <option value="0">Female</option>
-                          <option value="1">Male</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-5 offset-lg-2">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="txtEmail" class="col-md-12">School Email</label>
-                        <div class="col-md-12">
-                          <input type="text" placeholder="Email" class="form-control form-control-line" required="required" name="txtEmail" id="txtEmail" />
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label for="txtSchoolID" class="col-md-12">Admin ID</label>
-                        <div class="col-md-12">
-                          <input type="text" placeholder="Admin ID" class="form-control form-control-line" required="required" name="txtSchoolID" id="txtSchoolID" value="<?= $this->routines->generateAdminID(); ?>" readonly />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="txtPassword" class="col-md-12">Password</label>
-                    <div class="col-md-12">
-                      <input type="password" placeholder="Password" value="" class="form-control form-control-line" required="required" name="txtPassword" id="txtPassword" />
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label for="txtConfirmPassword" class="col-md-12">Confirm Password</label>
-                    <div class="col-md-12">
-                      <input type="password" placeholder="Confirm Password" value="" class="form-control form-control-line" required="required" name="txtConfirmPassword" id="txtConfirmPassword" />
-                    </div>
-                  </div>
+              <div class="form-group">
+                <label for="txtOldPassword" class="col-md-12">Old Password</label>
+                <div class="col-md-12">
+                  <input type="password" placeholder="Enter you old password here" class="form-control form-control-line" required="required" name="txtOldPassword" id="txtOldPassword" value="" />
                 </div>
               </div>
               <div class="form-group">
-                <div class="col-sm-12 mt-4">
-                  <center><button class="btn btn-primary text-white" type="submit" style="width: 180px; background: #5271ff;">REGISTER</button><br></br>Already have an account? <a href="<?= site_url() . 'superadmin/login' ?>" class="text-white" style="width: 150px;">Sign In</a></center>
+                <label for="txtPassword" class="col-md-12">New Password</label>
+                <div class="col-md-12">
+                  <input type="password" placeholder="Enter you new password here" class="form-control form-control-line" required="required" name="txtPassword" id="txtPassword" value="" />
                 </div>
-                <div class="col-sm-12 mt-4">
-
+              </div>
+              <div class="form-group">
+                <label for="txtConfirmPassword" class="col-md-12">Confirm Password</label>
+                <div class="col-md-12">
+                  <input type="password" placeholder="Enter you confirm password here" class="form-control form-control-line" required="required" name="txtConfirmPassword" id="txtConfirmPassword" value="" />
                 </div>
+              </div>
+              <div class="col-sm-12 mt-4 text-center">
+                <button class="btn btn-success text-white" style="width: 100px; background: #5271ff;" type="submit">
+                  Save
+                </button>
+                <?php
+                if ($_SERVER["HTTP_REFERER"] !== (site_url() . "administrator/login")) :
+                ?>
+                  <button class="btn btn-success text-white" style="width: 100px; background: #dc3545;" type="button" onclick="return window.history.back()">
+                    Cancel
+                  </button>
+                <?php endif; ?>
               </div>
             </form>
           </div>
@@ -236,19 +180,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
   <script src="<?= base_url() . 'media/' ?>dist/js/sidebarmenu.js"></script>
   <!--Custom JavaScript -->
   <script src="<?= base_url() . 'media/' ?>dist/js/custom.js"></script>
-
   <script type="text/javascript">
-    function successful() {
-      // $('#alertsuccess').removeClass('d-none');
-      //  setTimeout(function(){
-      //     $('#alertsuccess').addClass('d-none');
-      //  }, 5000);
-      document.querySelector('#alertsuccess').classList.remove('d-none');
-      setTimeout(function() {
-        document.querySelector('#alertsuccess').classList.add('d-none');
-      }, 5000);
-    }
-
     function failed() {
       // $('#alertsuccess').removeClass('d-none');
       //  setTimeout(function(){
@@ -261,17 +193,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
     }
   </script>
 
-  <?php if ($this->session->flashdata('RegisterSuccess') != '') : ?>
-    <script>
-      successful();
-    </script>
-  <?php endif; ?>
-
-  <?php if ($this->session->flashdata('RegisterFailed') != '') : ?>
+  <?php if ($this->session->flashdata('pass_msg') != '') : ?>
     <script>
       failed();
     </script>
   <?php endif; ?>
+
   <script type="text/javascript">
     var x, i, j, l, ll, selElmnt, a, b, c;
     /* Look for any elements with the class "custom-select": */

@@ -233,8 +233,13 @@
                 </div>
                 <div class="user-content hide-menu m-l-10 text-center">
                   <a href="#" class="" id="Userdd" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <h6 class="m-b-0 m-t-20 user-name font-small">University Guidance Counsellor <i class="fa fa-angle-down"></i></h6>
-                    <span class="op-5 user-email">Superadmin</span>
+                    <h6 class="m-b-0 m-t-20 user-name font-small">
+                      <?= $this->session->userdata("Fullname") ?>
+                      <i class="fa fa-angle-down"></i>
+                    </h6>
+                    <span class="op-5 user-email">
+                      <?= $this->session->userdata("UserType") ?>
+                    </span>
                   </a>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="Userdd">
                     <a class="dropdown-item" href="<?= site_url() . 'superadmin/admin_lists'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Admin List</a>

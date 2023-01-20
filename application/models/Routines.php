@@ -143,14 +143,20 @@ class Routines extends CI_Model
   function generateAdminID($length = 1)
   {
     $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $charactersLength = strlen($characters);
+    // $charactersLength = strlen($characters);
     $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-      $randomString .= $characters[rand(0, $charactersLength - 1)];
-    }
+    // for ($i = 0; $i < $length; $i++) {
+    //   $randomString .= $characters[rand(0, $charactersLength - 1)];
+    // }
 
     $AUTO_INCREMENT = $this->db->query("SELECT AUTO_INCREMENT AS ID FROM information_schema.tables WHERE table_name = 'tbluser' and table_schema = '" . $this->db->database . "';")->row();
-    return date('Y') . $randomString . str_pad($AUTO_INCREMENT->ID, 5, '0', STR_PAD_LEFT);
+
+    $countAdmin = $this->db->query("SELECT COUNT(*) AS count FROM tbluser WHERE UserType='Superadmin' or UserType='Administrator'")->row();
+
+    $letterIndex = intval(intval($countAdmin->count) / 100);
+    $randomString = $characters[$letterIndex];
+
+    return date('Y') . $randomString . str_pad($AUTO_INCREMENT->ID, 4, '0', STR_PAD_LEFT);
   }
 
   function isAdminLogin()
