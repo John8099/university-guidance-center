@@ -5,6 +5,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $Title = '';
 $WellnessType = '';
 $NumberQuestion = '';
+$numberCategory = '';
 $EndDate = '';
 $CreatedOn = '';
 $WellnessCheckID = $this->uri->segment(3);
@@ -14,6 +15,7 @@ foreach ($result->result() as $row) {
   $WellnessType = $row->WellnessType;
   $NumberQuestion = $row->NumberQuestion;
   $EndDate = $row->EndDate;
+  $numberCategory = $row->numberOfCategory;
   $CreatedOn = date('Y-m-d', strtotime($row->CreatedOn));
 }
 ?>
@@ -60,7 +62,7 @@ foreach ($result->result() as $row) {
                 <div class="form-group">
                   <label class="col-md-12">Type</label>
                   <div class="col-md-12">
-                    <input name='txtType' type="text" class="form-control form-control-line" value="<?= $WellnessType; ?>" readonly />
+                    <input name='txtType' id="InputType" type="text" class="form-control form-control-line" value="<?= $WellnessType; ?>" readonly />
                   </div>
                 </div>
               <?php else : ?>
@@ -76,28 +78,73 @@ foreach ($result->result() as $row) {
                 </div>
               <?php endif; ?>
             </div>
+
+            <div class="col-lg-12 col-xlg-12 col-md-12" id="divCategory">
+              <div class="form-group">
+                <label class="col-md-12">Total Category</label>
+
+                <div class="col-md-12">
+                  <input name='textNumberCategory' min="1" type="number" placeholder="Enter total number of category here" class="form-control form-control-line" value="<?= $numberCategory; ?>" required />
+                </div>
+              </div>
+            </div>
+
             <div class="col-lg-12 col-xlg-12 col-md-12">
               <div class="form-group">
-                <label class="col-md-12">Total Questions</label>
+
+                <label class="col-md-12" style="display: none" id="labelQualitative">Number of Questions</label>
+                <label class="col-md-12" style="display: none" id="labelQuantitative">Number of Questions per Category</label>
+
                 <div class="col-md-12">
                   <input name='txtNumberQuestion' min="1" type="number" placeholder="Enter total number of questions here" class="form-control form-control-line" value="<?= $NumberQuestion; ?>" required />
                 </div>
               </div>
             </div>
-            <div class="col-lg-12 col-xlg-12 col-md-12">
-              <div class="form-group">
-                <label class="col-md-12">&nbsp;</label>
-                <div class="col-md-12">
-                  <button type="submit" class="btn btn-success w-100">Add Question</button>
+
+
+            <?php
+            if ($WellnessCheckID == 0) :
+            ?>
+              <div class="col-lg-12 col-xlg-12 col-md-12">
+                <div class="form-group">
+                  <label class="col-md-12">&nbsp;</label>
+                  <div class="col-md-12">
+                    <button type="submit" class="btn btn-success w-100">Add Question</button>
+                  </div>
                 </div>
               </div>
-            </div>
+            <?php
+            endif;
+            ?>
           </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+<script>
+  $("#InputType").ready(function() {
+    if ($("#InputType").val().toLowerCase() === "quantitative") {
+      $("#labelQuantitative").show();
+      $("#divCategory").show();
+    } else {
+      $("#labelQualitative").show();
+      $("#divCategory").hide();
+    }
+  })
+
+  $("#InputType").on("change", function(e) {
+    if (e.target.value.toLowerCase() === "quantitative") {
+      $("#labelQuantitative").show();
+      $("#labelQualitative").hide();
+      $("#divCategory").show();
+    } else {
+      $("#labelQualitative").show();
+      $("#labelQuantitative").hide();
+      $("#divCategory").hide();
+    }
+  })
+</script>
 <?php
 if ($WellnessCheckID != 0) {
   if ($WellnessType == 'Quantitative') {
@@ -106,7 +153,6 @@ if ($WellnessCheckID != 0) {
 
       foreach ($tblwellnessquestionCategory->result() as $CategoryRow) :
 ?>
-
         <div class="row">
           <!-- column -->
           <div class="col-12">

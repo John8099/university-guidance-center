@@ -63,6 +63,10 @@
 
   <script src="<?= base_url() . 'media/' ?>assets/libs/jquery/dist/jquery.min.js"></script>
   <script src="<?= base_url() . 'media/' ?>sweetalert2/sweetalert2.all.min.js"></script>
+
+  <link rel="stylesheet" href="<?= base_url() . 'media/' ?>jquery-editable-select/css/jquery-editable-select.css">
+  <script src="<?= base_url() . 'media/' ?>jquery-editable-select/js/jquery-editable-select.js"></script>
+
   <style type="text/css">
     /*the container must be positioned relative:*/
     .custom-select {
@@ -280,7 +284,7 @@
 
 
             <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'superadmin/appointments'; ?>" aria-expanded="false"><i class="mdi mdi-calendar-multiple-check"></i><span class="hide-menu">Appointment list</span>
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'superadmin/appointments'; ?>" aria-expanded="false"><i class="mdi mdi-calendar-multiple-check"></i><span class="hide-menu">Manage Appointment</span>
               </a>
             </li>
 

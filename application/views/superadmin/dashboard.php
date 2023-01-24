@@ -265,22 +265,51 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
                             <?php endforeach; ?>
                           </div>
                         </div>
-
                         <h3 style="text-align: right;">Score: <?= $row->QScore ?></h3>
+                        <p>
+                          <strong>Scores of 20-28:</strong>
+                          <br>
+                          Awesome! Your answers indicate that you're making
+                          positive steps in this dimension of wellness. Even though you achieved a high
+                          overall score for this dimension, you may want to check for low scores on
+                          individual items to see if there are more specific areas that you might want to
+                          address. Consider focusing on another area where your scores weren't so high.
+                          <br><br>
+                          <strong>Scores of 15-19:</strong>
+                          <br>
+                          Caution! Your behaviours in this area are good, but there is room
+                          for improvement. Take a look at the items on which you scored lower. What changes
+                          might you make it to improve your score?
+                          <br><br>
+                          <strong>Scores of 14 and below:</strong>
+                          <br>
+                          Danger! Your answers indicate some potential health and
+                          well-being risks. Review those areas where you scored lower.
+
+                        </p>
                       <?php else : ?>
                         <div class="row">
                           <div class="col-12">
                             <div class="text-center">
                               <h3 class="mb-3">Sentiment:</h3>
                               <?php if ($row->Results == 'Negative') : ?>
-                                <h4 style="text-transform: uppercase;"><?= $row->Results ?></h4>
+                                <!-- <h4 style="text-transform: uppercase;"><?= $row->Results ?></h4> -->
                                 <img src="<?= base_url() . 'media/emoj/' ?>Negative.png" alt="Negative" />
+                                <p>
+                                  We understand that you may be feeling overwhelmed, frustrated, or upset. We want to ensure that you are supported and have the resources to improve your wellbeing. Please let us know if there is anything we can do to help. You can schedule an appointment with us.
+                                </p>
                               <?php elseif ($row->Results == 'Neutral') : ?>
-                                <h4 style="text-transform: uppercase;"><?= $row->Results ?></h4>
+                                <!-- <h4 style="text-transform: uppercase;"><?= $row->Results ?></h4> -->
                                 <img src="<?= base_url() . 'media/emoj/' ?>Neutral.png" alt="Neutral" />
+                                <p>
+                                  We hope that you are doing well,we are always here if you want to schedule an appointment with us. Have a Good Day!
+                                </p>
                               <?php elseif ($row->Results == 'Positive') : ?>
-                                <h4 style="text-transform: uppercase;"><?= $row->Results ?></h4>
+                                <!-- <h4 style="text-transform: uppercase;"><?= $row->Results ?></h4> -->
                                 <img src="<?= base_url() . 'media/emoj/' ?>Positive.png" alt="Positive" />
+                                <p>
+                                  We are happy to know that you are doing well! We hope that you will be able to continue and improve your wellbeing. You are always welcome to schedule an appointment with us, even right now if you wish.
+                                </p>
                               <?php else : ?>
                                 <h4 style="text-transform: uppercase;">No Results</h4>
                               <?php endif; ?>

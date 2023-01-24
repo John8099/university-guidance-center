@@ -317,7 +317,7 @@ class Superadmin extends CI_Controller
       $secondSentence = array(
         "Facebook Messenger" => "Please ensure that the Facebook profile link in your student profile is yours, as we will be contacting you there. We look forward to hearing from you soon. Have a great day!",
         "Google Meet" => "Below you will find the link to the Google Meet. Please join the meeting as scheduled.\n\nThis is the link to the Google Meet: <a href='$googleLink'  target='_blank'>$googleLink</a>",
-        "Telecounseling" => "Please ensure that this is your phone number $phoneNumber . We look forward to hearing from you soon. Have a great day!.",
+        "Telecounseling" => "Please ensure that the phone number indicated in your student profile is yours, the number is $phoneNumber as we will contact you there. Have a great day!",
         "Face to Face" => "Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!"
       );
 
@@ -432,6 +432,7 @@ class Superadmin extends CI_Controller
         'Title' => $this->input->post('txtTitle'),
         'WellnessType' => $this->input->post('txtType'),
         'NumberQuestion' => $this->input->post('txtNumberQuestion'),
+        'numberOfCategory' => $this->input->post('textNumberCategory'),
         'CreatedOn' => $this->input->post('txtDate'),
         'EndDate' => $this->input->post('txtEndDate'),
         'CreatedBy' => $this->session->userdata('UserID'),
@@ -442,6 +443,7 @@ class Superadmin extends CI_Controller
         'Title' => $this->input->post('txtTitle'),
         'WellnessType' => $this->input->post('txtType'),
         'NumberQuestion' => $this->input->post('txtNumberQuestion'),
+        'numberOfCategory' => $this->input->post('textNumberCategory'),
         'CreatedOn' => $this->input->post('txtDate'),
         'EndDate' => $this->input->post('txtEndDate'),
         'CreatedBy' => $this->session->userdata('UserID'),
@@ -611,29 +613,80 @@ class Superadmin extends CI_Controller
     $Title = '';
     $WellnessType = '';
     $NumberQuestion = 0;
+    $numberOfCategory = 0;
+
+    $type = "";
+
     $result = $this->db->query("SELECT * FROM tblwellnesscheck WHERE WellnessCheckID = '" . $WellnessCheckID . "'");
     foreach ($result->result() as $row) {
       $Title = $row->Title;
       $WellnessType = $row->WellnessType;
       $NumberQuestion = $row->NumberQuestion;
+      $numberOfCategory = $row->numberOfCategory;
     }
+
     if ($WellnessType == 'Qualitative') {
       $this->session->set_flashdata('isPublish', 'true');
+      $type = "Sentiment Analysis Questions";
     } else {
       $this->session->set_flashdata('isPublish', 'false');
+      $type = "Quantitative Questions";
     }
-    for ($i = 1; $i <= $NumberQuestion; $i++) {
+
+    $questions = $this->input->post('txtQuestion');
+    $category = $this->input->post('txtCategory');
+
+    if (is_array($questions) && is_array($category)) {
+      for ($a = 0; $a < $numberOfCategory; $a++) {
+        $questionCount = 1;
+        foreach ($questions as $question) {
+          $data = array(
+            'QuestionNumber' => $questionCount,
+            'Question' => $question,
+            'Category' => $this->input->post('txtCategory')[$a],
+            'WellnessCheckID' => $WellnessCheckID,
+            'WellnessType' => $WellnessType,
+            'CreatedBy' => $this->session->userdata('UserID'),
+          );
+          $QuestionID = $this->main_model->insert_entry('tblwellnessquestion', $data);
+          if ($QuestionID) {
+            $this->checkAndInsertInQuestionBank($question, $type);
+            $questionCount++;
+          }
+        }
+      }
+    } else {
+      for ($i = 1; $i <= $NumberQuestion; $i++) {
+        $data = array(
+          'QuestionNumber' => $i,
+          'Question' => $this->input->post('txtQuestion' . $i),
+          'Category' => $this->input->post('txtCategory'),
+          'WellnessCheckID' => $WellnessCheckID,
+          'WellnessType' => $WellnessType,
+          'CreatedBy' => $this->session->userdata('UserID'),
+        );
+        $QuestionID = $this->main_model->insert_entry('tblwellnessquestion', $data);
+        if ($QuestionID) {
+          $this->checkAndInsertInQuestionBank($this->input->post('txtQuestion' . $i), $type);
+        }
+      }
+    }
+
+    redirect(site_url() . 'superadmin/wellness_check/' . $WellnessCheckID);
+  }
+
+  public function checkAndInsertInQuestionBank($question, $type)
+  {
+    $questionQ = $this->db->query("SELECT * FROM tblquestionbank WHERE LOWER(Question) LIKE LOWER('%$question%')");
+    $resQuestion = $questionQ->result();
+    if ($questionQ->num_rows() == 0) {
       $data = array(
-        'QuestionNumber' => $i,
-        'Question' => $this->input->post('txtQuestion' . $i),
-        'Category' => $this->input->post('txtCategory'),
-        'WellnessCheckID' => $WellnessCheckID,
-        'WellnessType' => $WellnessType,
+        'Question' => $question,
+        'Category' => $type,
         'CreatedBy' => $this->session->userdata('UserID'),
       );
-      $QuestionID = $this->main_model->insert_entry('tblwellnessquestion', $data);
+      $QuestionID = $this->main_model->insert_entry('tblquestionbank', $data);
     }
-    redirect(site_url() . 'superadmin/wellness_check/' . $WellnessCheckID);
   }
 
   public function question_bank()
