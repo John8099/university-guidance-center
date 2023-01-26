@@ -43,7 +43,10 @@
         },
         events: data,
         loading: function(bool) {
-          document.getElementById('loading').style.display = bool ? 'block' : 'none';
+          const loadingEl = document.getElementById('loading');
+          if (loadingEl) {
+            loadingEl.style.display = bool ? 'block' : 'none'
+          }
         }
       });
 
@@ -67,6 +70,35 @@
   <link rel="stylesheet" href="<?= base_url() . 'media/' ?>jquery-editable-select/css/jquery-editable-select.css">
   <script src="<?= base_url() . 'media/' ?>jquery-editable-select/js/jquery-editable-select.js"></script>
 
+  <!-- All Jquery -->
+  <!-- ============================================================== -->
+  <script src="<?= base_url() . 'media/' ?>assets/libs/jquery/dist/jquery.min.js"></script>
+  <!-- Bootstrap tether Core JavaScript -->
+  <script src="<?= base_url() . 'media/' ?>assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>dist/js/app-style-switcher.js"></script>
+  <!--Wave Effects -->
+  <script src="<?= base_url() . 'media/' ?>dist/js/waves.js"></script>
+  <!--Menu sidebar -->
+  <script src="<?= base_url() . 'media/' ?>dist/js/sidebarmenu.js"></script>
+  <!--Custom JavaScript -->
+  <script src="<?= base_url() . 'media/' ?>dist/js/custom.js"></script>
+  <!--This page JavaScript -->
+
+  <script src="<?= base_url() . 'media/' ?>datatables/jquery.dataTables.min.js"></script>
+
+  <script src="<?= base_url() . 'media/' ?>datatables/jquery.dataTables.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/dataTables.buttons.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>jszip/jszip.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.html5.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.print.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.colVis.min.js"></script>
+
+  <script src="<?= base_url() . 'media/' ?>datatables-searchbuilder/js/dataTables.searchBuilder.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-datetime/js/dataTables.dateTime.min.js"></script>
   <style type="text/css">
     /*the container must be positioned relative:*/
     .custom-select {
@@ -282,9 +314,13 @@
               </a>
             </li>
 
-
             <li class="sidebar-item">
               <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'superadmin/appointments'; ?>" aria-expanded="false"><i class="mdi mdi-calendar-multiple-check"></i><span class="hide-menu">Manage Appointment</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'superadmin/appointment_list'; ?>" aria-expanded="false"><i class="mdi mdi-calendar"></i><span class="hide-menu">Appointment List</span>
               </a>
             </li>
 
@@ -337,98 +373,103 @@
       <!-- ============================================================== -->
       <div class="container-fluid">
 
-        <?php if (isset($content)) : ?>
-          <?php if ($content == 'student_inventory') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+        <?php if (isset($content)) {
+          if ($content == 'student_inventory') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'dashboard') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'dashboard') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'wellness_question_list') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'wellness_question_list') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'colleges') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'colleges') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'appointments') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'appointments') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'college') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'college') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'appointment') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'appointment') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'view_appointment') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'view_appointment') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'appointment_reports') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'appointment_reports') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'assessments') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'assessments') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'assessment') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'assessment') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'question') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'question') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'schedule') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'schedule') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'students') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'students') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'completed_appointment') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'completed_appointment') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'admin_lists') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'admin_lists') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'admin_list') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'admin_list') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'pending_appointment') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'pending_appointment') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'assessment_reports') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'assessment_reports') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'question_banks') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'question_banks') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'question_bank') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'question_bank') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'student_view') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'student_view') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'wellness_checks') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'wellness_checks') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'wellness_check') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'wellness_check') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'wellness_question') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'wellness_question') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'set_schedule_appointment') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'set_schedule_appointment') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'schedule_appointment') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'schedule_appointment') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'wellness_question_update') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'wellness_question_update') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'change_password') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
+          elseif ($content == 'change_password') :
+            $this->load->view('superadmin/' . $content);
 
-          <?php elseif ($content == 'change_profile_picture') : ?>
-            <?php $this->load->view('superadmin/' . $content); ?>
-          <?php endif; ?>
-        <?php endif; ?>
+          elseif ($content == 'change_profile_picture') :
+            $this->load->view('superadmin/' . $content);
+
+          elseif ($content == 'appointment_list') :
+            $this->load->view('superadmin/' . $content);
+
+          endif;
+        }
+        ?>
 
       </div>
       <!-- ============================================================== -->
@@ -445,40 +486,7 @@
   <!-- ============================================================== -->
   <!-- ============================================================== -->
 
-  <!-- All Jquery -->
-  <!-- ============================================================== -->
-  <script src="<?= base_url() . 'media/' ?>assets/libs/jquery/dist/jquery.min.js"></script>
-  <!-- Bootstrap tether Core JavaScript -->
-  <script src="<?= base_url() . 'media/' ?>assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>dist/js/app-style-switcher.js"></script>
-  <!--Wave Effects -->
-  <script src="<?= base_url() . 'media/' ?>dist/js/waves.js"></script>
-  <!--Menu sidebar -->
-  <script src="<?= base_url() . 'media/' ?>dist/js/sidebarmenu.js"></script>
-  <!--Custom JavaScript -->
-  <script src="<?= base_url() . 'media/' ?>dist/js/custom.js"></script>
-  <!--This page JavaScript -->
-  <!--chartis chart-->
-  <script src="<?= base_url() . 'media/' ?>assets/libs/chartist/dist/chartist.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>dist/js/pages/dashboards/dashboard1.js"></script>
-  <script src="<?= base_url() . 'media/' ?>dist/js/chart.js"></script>
 
-  <script src="<?= base_url() . 'media/' ?>datatables/jquery.dataTables.min.js"></script>
-
-  <script src="<?= base_url() . 'media/' ?>datatables/jquery.dataTables.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables-responsive/js/dataTables.responsive.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/dataTables.buttons.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>jszip/jszip.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.html5.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.print.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.colVis.min.js"></script>
-
-  <script src="<?= base_url() . 'media/' ?>datatables-searchbuilder/js/dataTables.searchBuilder.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables-datetime/js/dataTables.dateTime.min.js"></script>
   <script type="text/javascript">
     try {
       $(document).ready(function() {
@@ -564,8 +572,6 @@
   ?>
   <script>
     try {
-
-
       var x, i, j, l, ll, selElmnt, a, b, c;
       /* Look for any elements with the class "custom-select": */
       x = document.getElementsByClassName("custom-select");
@@ -734,7 +740,7 @@
 
       const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
       const data = JSON.parse('<?= json_encode($barResult) ?>')
-      console.log(data.reverse())
+      // console.log(data.reverse())
 
       let barData = months.map((d) => {
         if (data.some((a) => a.SelectedDate === d)) {
@@ -860,10 +866,10 @@
         }
       })
 
-      console.log(lineData);
-      console.log(posCountData);
-      console.log(neutralCountData);
-      console.log(negCountData);
+      // console.log(lineData);
+      // console.log(posCountData);
+      // console.log(neutralCountData);
+      // console.log(negCountData);
 
       function getNumberWithOrdinal(n) {
         var s = ["th", "st", "nd", "rd"],
@@ -928,11 +934,13 @@
         }
       }
 
-      var barChart = new ApexCharts(document.querySelector("#barChart"), barChartOptions);
-      barChart.render();
+      if (document.querySelector("#barChart") && document.querySelector("#lineChart")) {
+        const barChart = new ApexCharts(document.querySelector("#barChart"), barChartOptions);
+        barChart.render();
 
-      var lineChart = new ApexCharts(document.querySelector("#lineChart"), lineChartOptions);
-      lineChart.render();
+        const lineChart = new ApexCharts(document.querySelector("#lineChart"), lineChartOptions);
+        lineChart.render();
+      }
 
     } catch (err) {}
   </script>

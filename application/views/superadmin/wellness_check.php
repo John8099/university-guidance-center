@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 <?php
 $Title = '';
 $WellnessType = '';
-$NumberQuestion = '';
+$NumberQuestion = '7';
 $numberCategory = '';
 $EndDate = '';
 $CreatedOn = '';
@@ -79,21 +79,19 @@ foreach ($result->result() as $row) {
               <?php endif; ?>
             </div>
 
-            <div class="col-lg-12 col-xlg-12 col-md-12" id="divCategory">
+            <div class="col-lg-12 col-xlg-12 col-md-12" style="display: none" id="divCategory">
               <div class="form-group">
-                <label class="col-md-12">Total Category</label>
+                <label class="col-md-12">Number of Category</label>
 
                 <div class="col-md-12">
-                  <input name='textNumberCategory' min="1" type="number" placeholder="Enter total number of category here" class="form-control form-control-line" value="<?= $numberCategory; ?>" required />
+                  <input name='textNumberCategory' min="1" max="7" type="number" placeholder="Enter total number of category here" class="form-control form-control-line" value="<?= $numberCategory; ?>" required />
                 </div>
               </div>
             </div>
 
-            <div class="col-lg-12 col-xlg-12 col-md-12">
+            <div class="col-lg-12 col-xlg-12 col-md-12" style="display: none" id="divNumQuestions">
               <div class="form-group">
-
-                <label class="col-md-12" style="display: none" id="labelQualitative">Number of Questions</label>
-                <label class="col-md-12" style="display: none" id="labelQuantitative">Number of Questions per Category</label>
+                <label class="col-md-12">Number of Questions</label>
 
                 <div class="col-md-12">
                   <input name='txtNumberQuestion' min="1" type="number" placeholder="Enter total number of questions here" class="form-control form-control-line" value="<?= $NumberQuestion; ?>" required />
@@ -103,7 +101,8 @@ foreach ($result->result() as $row) {
 
 
             <?php
-            if ($WellnessCheckID == 0) :
+            $count = $this->db->query("SELECT * FROM tblwellnessquestion WHERE WellnessCheckID='$WellnessCheckID'")->num_rows();
+            if ($count == 0) :
             ?>
               <div class="col-lg-12 col-xlg-12 col-md-12">
                 <div class="form-group">
@@ -125,23 +124,53 @@ foreach ($result->result() as $row) {
 <script>
   $("#InputType").ready(function() {
     if ($("#InputType").val().toLowerCase() === "quantitative") {
-      $("#labelQuantitative").show();
+      $("input[name='txtNumberQuestion']").prop("required", false)
+      $("input[name='txtNumberQuestion']").val("7")
+
+      $("input[name='textNumberCategory']").prop("required", true)
+
       $("#divCategory").show();
-    } else {
-      $("#labelQualitative").show();
+      $("#divNumQuestions").hide();
+
+    } else if ($("#InputType").val().toLowerCase() === "qualitative") {
+      $("input[name='textNumberCategory']").prop("required", false)
+      $("input[name='textNumberCategory']").val("")
+
+      $("input[name='txtNumberQuestion']").prop("required", true)
+
       $("#divCategory").hide();
+      $("#divNumQuestions").show();
+
+
+    } else {
+      $("#divCategory").hide();
+      $("#divNumQuestions").hide();
+
+      $("input[name='textNumberCategory']").prop("required", false)
+      $("input[name='txtNumberQuestion']").prop("required", false)
+
     }
   })
 
   $("#InputType").on("change", function(e) {
     if (e.target.value.toLowerCase() === "quantitative") {
-      $("#labelQuantitative").show();
-      $("#labelQualitative").hide();
+      $("input[name='txtNumberQuestion']").prop("required", false)
+      $("input[name='txtNumberQuestion']").val("7")
+
+      $("input[name='textNumberCategory']").prop("required", true)
+
       $("#divCategory").show();
+      $("#divNumQuestions").hide();
+
     } else {
-      $("#labelQualitative").show();
-      $("#labelQuantitative").hide();
+      $("input[name='txtNumberQuestion']").prop("required", true)
+      $("input[name='txtNumberQuestion']").val("")
+
+      $("input[name='textNumberCategory']").prop("required", false)
+
       $("#divCategory").hide();
+      $("#divNumQuestions").show();
+
     }
   })
 </script>
@@ -193,55 +222,55 @@ if ($WellnessCheckID != 0) {
             </div>
           </div>
         </div>
-    <?php
+      <?php
       endforeach;
     }
   } else {
     $tblwellnessquestion = $this->db->query("SELECT * FROM tblwellnessquestion WHERE WellnessCheckID='" . $WellnessCheckID . "' AND Category='NONE';");
 
     if ($tblwellnessquestion->num_rows() <> 0) {
-    }
-    ?>
-    <div class="row">
-      <!-- column -->
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body">
-            <!-- title -->
-            <div class="d-md-flex">
-              <div>
-                <h4 class="card-title">Qualitative Questions</h4>
+      ?>
+      <div class="row">
+        <!-- column -->
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <!-- title -->
+              <div class="d-md-flex">
+                <div>
+                  <h4 class="card-title">Qualitative Questions</h4>
+                </div>
               </div>
+              <!-- title -->
             </div>
-            <!-- title -->
-          </div>
-          <div class="table-responsive">
+            <div class="table-responsive">
 
-            <table id="" class="table table-hover">
-              <thead>
-                <tr>
-                  <th scope="col">Question</th>
-                  <th scope="col">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php
-                foreach ($tblwellnessquestion->result() as $row) : ?>
+              <table id="" class="table table-hover">
+                <thead>
                   <tr>
-                    <td><?= $row->Question; ?></td>
-                    <td>
-                      <a href="<?= site_url() . 'superadmin/wellness_question_update/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-primary btn-sm" title="Edit" style="width: 100px;">Edit</a>
-                      <a href="<?= site_url() . 'superadmin/wellness_question_delete/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-danger btn-sm" title="Delete" style="width: 100px;">Delete</a>
-                    </td>
+                    <th scope="col">Question</th>
+                    <th scope="col">Action</th>
                   </tr>
-                <?php endforeach; ?>
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  <?php
+                  foreach ($tblwellnessquestion->result() as $row) : ?>
+                    <tr>
+                      <td><?= $row->Question; ?></td>
+                      <td>
+                        <a href="<?= site_url() . 'superadmin/wellness_question_update/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-primary btn-sm" title="Edit" style="width: 100px;">Edit</a>
+                        <a href="<?= site_url() . 'superadmin/wellness_question_delete/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-danger btn-sm" title="Delete" style="width: 100px;">Delete</a>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 <?php
+    }
   }
 }
 ?>

@@ -236,6 +236,15 @@ class Superadmin extends CI_Controller
     $this->load->view('superadmin/superadmin_template', $data);
   }
 
+  public function appointment_list()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'superadmin/login');
+    $data['heading'] = 'Super Admin';
+    $data['sub_heading'] = 'List of All Appointments';
+    $data['content'] = 'appointment_list';
+    $this->load->view('superadmin/superadmin_template', $data);
+  }
+
   public function change_profile_picture_save()
   {
     $result = $this->routines->Upload('/uploads', 30, 'pdf|jpg|png');
@@ -256,16 +265,29 @@ class Superadmin extends CI_Controller
     if ($this->uri->segment(3) != '') {
       $CreatedBy = $this->uri->segment(3);
     }
-    $data = array(
-      'AppointmentDate' => $this->input->post('txtAppointmentDate'),
-      'AppointmentTime' => $this->input->post('txtAppointmentTime'),
-      'Status' => 'Active',
-      'CreatedOn' => $this->routines->getCurrentDateTime(),
-      'CreatedBy' => $CreatedBy,
-    );
-    $this->main_model->insert_entry('tblappointmentsched', $data);
-    $this->session->set_flashdata('Success', 'Appointment schedule data was successfully saved.');
+    if ($this->isDuplicateAppointment($this->input->post('txtAppointmentDate'), $this->input->post('txtAppointmentTime'))) {
+      $this->session->set_flashdata('Error', 'Appointment schedule conflicts with other schedule.');
+    } else {
+      $data = array(
+        'AppointmentDate' => $this->input->post('txtAppointmentDate'),
+        'AppointmentTime' => $this->input->post('txtAppointmentTime'),
+        'Status' => 'Active',
+        'CreatedOn' => $this->routines->getCurrentDateTime(),
+        'CreatedBy' => $CreatedBy,
+      );
+      $this->main_model->insert_entry('tblappointmentsched', $data);
+      $this->session->set_flashdata('Success', 'Appointment schedule data was successfully saved.');
+    }
     redirect(site_url() . 'superadmin/schedule/' . $this->uri->segment(3));
+  }
+  public function isDuplicateAppointment($date, $time)
+  {
+    $query = $this->db->query("SELECT * FROM tblappointmentsched WHERE AppointmentDate='$date' and AppointmentTime='$time'");
+
+    if ($query->num_rows() > 0) {
+      return true;
+    }
+    return false;
   }
 
   public function update_status()
@@ -432,7 +454,7 @@ class Superadmin extends CI_Controller
         'Title' => $this->input->post('txtTitle'),
         'WellnessType' => $this->input->post('txtType'),
         'NumberQuestion' => $this->input->post('txtNumberQuestion'),
-        'numberOfCategory' => $this->input->post('textNumberCategory'),
+        'numberOfCategory' => $this->input->post('textNumberCategory') == null ? NULL : $this->input->post('textNumberCategory'),
         'CreatedOn' => $this->input->post('txtDate'),
         'EndDate' => $this->input->post('txtEndDate'),
         'CreatedBy' => $this->session->userdata('UserID'),
@@ -443,7 +465,7 @@ class Superadmin extends CI_Controller
         'Title' => $this->input->post('txtTitle'),
         'WellnessType' => $this->input->post('txtType'),
         'NumberQuestion' => $this->input->post('txtNumberQuestion'),
-        'numberOfCategory' => $this->input->post('textNumberCategory'),
+        'numberOfCategory' => $this->input->post('textNumberCategory') == null ? NULL : $this->input->post('textNumberCategory'),
         'CreatedOn' => $this->input->post('txtDate'),
         'EndDate' => $this->input->post('txtEndDate'),
         'CreatedBy' => $this->session->userdata('UserID'),

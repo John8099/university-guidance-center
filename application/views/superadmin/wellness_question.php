@@ -22,12 +22,13 @@ foreach ($result->result() as $row) {
     <div class="card">
       <div class="card-body">
         <form method="post" action="<?= site_url() . 'superadmin/wellness_question_save/' . $WellnessCheckID ?>" class="form-horizontal form-material mx-2">
-          <h2>Quantitative Questions</h2>
-          <hr>
           <?= $this->routines->InsertCSRF() ?>
-          <?php if ($WellnessType == 'Quantitative') :
+          <?php if ($WellnessType == 'Quantitative') : ?>
+            <h2>Quantitative Questions</h2>
+            <hr>
+            <?php
             for ($a = 1; $a <= $numberOfCategory; $a++) :
-          ?>
+            ?>
               <div class="form-group">
                 <label class="col-md-12"><strong>Category <?= $a ?></strong></label>
                 <div class="col-md-12">

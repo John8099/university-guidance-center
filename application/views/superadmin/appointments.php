@@ -9,7 +9,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <!-- title -->
         <div class="d-md-flex">
           <div>
-            <h4 class="card-title">Appointment List</h4>
+            <h4 class="card-title">Manage Appointments</h4>
           </div>
           <div class="ms-auto">
             <a href="<?= site_url() . 'superadmin/set_schedule_appointment'; ?>" type="button" class="d-none btn btn-outline-success btn-sm" title="Create Appointment">Create Appointment</a>

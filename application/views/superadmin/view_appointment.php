@@ -42,7 +42,20 @@ $College = $this->db->query("SELECT * FROM tblcollege WHERE CollegeID = '{$Colle
   <div class="col-12">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Appointment Details</h4>
+        <div class="d-md-flex">
+          <div>
+            <h4 class="card-title">
+              Appointment Details
+
+            </h4>
+          </div>
+          <div class="ms-auto">
+            <button type="button" class="btn btn-default btn-sm" onclick="return window.history.back()">
+              Go back
+            </button>
+          </div>
+        </div>
+       
         <hr>
         <ul class="list-group">
           <?php if ($Referrer != '') : ?>
@@ -101,7 +114,7 @@ $College = $this->db->query("SELECT * FROM tblcollege WHERE CollegeID = '{$Colle
                     const redirect = '<?= site_url() . "superadmin/view_appointment/" . $this->uri->segment(3) ?>'
                     window.location.href = redirect
                   }
-                 
+
                 }).fail(function(e) {
                 swal.fire({
                   title: 'Error!',
@@ -127,7 +140,7 @@ $College = $this->db->query("SELECT * FROM tblcollege WHERE CollegeID = '{$Colle
           <a style="width: 170px;" href="<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Rescheduled'; ?>" class="btn btn-orange btn-sm text-white" title="Rescheduled Appointment">Rescheduled</a>
         <?php endif; ?>
         <?php if ($Status == 'Completed') : ?>
-          <br></br>
+          <br>
           <form method="post" action="<?= site_url() . 'superadmin/appointment_remarks_save/' . $AppointmentID ?>" class="form-horizontal form-material mx-2">
             <?= $this->routines->InsertCSRF() ?>
             <div class="form-group">
