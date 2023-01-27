@@ -9,8 +9,15 @@ $IdentifiedGender = $this->session->flashdata('IdentifiedGender');
 $SchoolID = $this->routines->generateAdminID();
 $UserID = $this->uri->segment(3);
 $result = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $UserID . "'");
+
+$fname = "";
+$mname = "";
+$lname = "";
+
 foreach ($result->result() as $row) {
-  $Fullname = $row->Fullname;
+  $fname = $row->first_name;
+  $mname = $row->middle_name;
+  $lname = $row->last_name;
   $CollegeID = $row->CollegeID;
   $Email = $row->Email;
   $IdentifiedGender = $row->IdentifiedGender;
@@ -49,9 +56,21 @@ foreach ($result->result() as $row) {
             </div>
           </div>
           <div class="form-group">
-            <label for="txtFullname" class="col-md-12">Full Name</label>
+            <label for="txtFullname" class="col-md-12">First Name</label>
             <div class="col-md-12">
-              <input type="text" placeholder="Full Name" class="form-control form-control-line" required="required" name="txtFullname" id="txtFullname" value="<?= $Fullname; ?>" />
+              <input type="text" placeholder="First Name" class="form-control form-control-line" required="required" name="txtFname" id="txtFullname" value="<?= $fname; ?>" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="txtFullname" class="col-md-12">Middle Name</label>
+            <div class="col-md-12">
+              <input type="text" placeholder="Middle Name" class="form-control form-control-line" required="required" name="txtMname" id="txtFullname" value="<?= $mname; ?>" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="txtFullname" class="col-md-12">Last Name</label>
+            <div class="col-md-12">
+              <input type="text" placeholder="Last Name" class="form-control form-control-line" required="required" name="txtLname" id="txtFullname" value="<?= $lname; ?>" />
             </div>
           </div>
           <div class="form-group">

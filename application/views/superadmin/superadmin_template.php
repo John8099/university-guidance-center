@@ -24,7 +24,7 @@
         $Fullname = '';
         $User = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $row->CreatedBy . "';")->row();
         if (isset($User->UserID)) {
-          $Fullname = $User->Fullname;
+          $Fullname = $this->routines->getUserFullName($User->UserID);
         }
         $Appointment = $row->AppointmentTime . '<br>' . $Fullname;
       ?>
@@ -70,11 +70,9 @@
   <link rel="stylesheet" href="<?= base_url() . 'media/' ?>jquery-editable-select/css/jquery-editable-select.css">
   <script src="<?= base_url() . 'media/' ?>jquery-editable-select/js/jquery-editable-select.js"></script>
 
-  <!-- All Jquery -->
-  <!-- ============================================================== -->
-  <script src="<?= base_url() . 'media/' ?>assets/libs/jquery/dist/jquery.min.js"></script>
   <!-- Bootstrap tether Core JavaScript -->
   <script src="<?= base_url() . 'media/' ?>assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
   <script src="<?= base_url() . 'media/' ?>dist/js/app-style-switcher.js"></script>
   <!--Wave Effects -->
   <script src="<?= base_url() . 'media/' ?>dist/js/waves.js"></script>
@@ -100,6 +98,10 @@
   <script src="<?= base_url() . 'media/' ?>datatables-searchbuilder/js/dataTables.searchBuilder.js"></script>
   <script src="<?= base_url() . 'media/' ?>datatables-datetime/js/dataTables.dateTime.min.js"></script>
   <style type="text/css">
+    .fc-day-today {
+      background: #d1e0ef !important;
+    }
+
     /*the container must be positioned relative:*/
     .custom-select {
       position: relative;
@@ -315,6 +317,11 @@
             </li>
 
             <li class="sidebar-item">
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'superadmin/question_banks'; ?>" aria-expanded="false"><i class="mdi mdi-bank"></i><span class="hide-menu">Question bank</span>
+              </a>
+            </li>
+
+            <li class="sidebar-item">
               <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'superadmin/appointments'; ?>" aria-expanded="false"><i class="mdi mdi-calendar-multiple-check"></i><span class="hide-menu">Manage Appointment</span>
               </a>
             </li>
@@ -465,6 +472,9 @@
             $this->load->view('superadmin/' . $content);
 
           elseif ($content == 'appointment_list') :
+            $this->load->view('superadmin/' . $content);
+
+          elseif ($content == 'question_banks') :
             $this->load->view('superadmin/' . $content);
 
           endif;

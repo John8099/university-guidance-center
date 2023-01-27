@@ -40,7 +40,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <td><?= $row->WellnessType; ?></td>
                 <td><?= date('Y-m-d', strtotime($row->CreatedOn)); ?></td>
                 <td><?= $row->EndDate; ?></td>
-                <td><?= $this->routines->getUserFullname($row->CreatedBy); ?></td>
+                <td><?= $this->routines->getUserFullName($row->CreatedBy); ?></td>
               </tr>
             <?php
               $IsWellnessTaken = false;

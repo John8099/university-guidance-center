@@ -41,7 +41,7 @@ foreach ($query->result() as $row) : ?>
         <td><?=$row->WellnessType;?></td>
         <td><?=date('Y-m-d', strtotime($row->CreatedOn));?></td>
         <td><?=$row->EndDate;?></td>
-        <td><?=$this->routines->getUserFullname($row->CreatedBy);?></td>
+        <td><?=$this->routines->getUserFullName($row->CreatedBy);?></td>
         <td><?=$row->Status;?></td>
         <td>
             <?php if($row->Status=='Disable') : ?>

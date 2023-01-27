@@ -54,7 +54,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <td><?=$row->Category;?></td>
                     <td><?=date('Y-m-d', strtotime($row->CreatedOn));?></td>
                     <td><?=($row->Status==0 ? 'Disable' : 'Enable');?></td>
-                    <td><?=$this->routines->getUserFullname($row->CreatedBy);?></td>
+                    <td><?=$this->routines->getUserFullName($row->CreatedBy);?></td>
                     <td>
                     <?php if($row->Status==0) : ?>
                         <a href="<?=site_url().'administrator/question_bank_update_status/'.$row->QuestionID.'/1';?>" class="btn btn-outline-warning btn-sm" title="Enable" style="width: 100px;">Enable</a>

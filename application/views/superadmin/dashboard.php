@@ -159,11 +159,10 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
           <tbody>
             <?php
             $assessmentQ = $this->db->query("SELECT 
-                                        u.Fullname AS CreatedBy,
+                                        u.UserID AS CreatedBy,
                                         wc.Title AS assessmentTitle,
                                         wc.WellnessType AS wellnessType,
                                         r.CreatedOn AS dateTaken,
-                                        (SELECT Fullname FROM tbluser WHERE UserID = r.CreatedBy) AS studentFullName,
                                         r.CreatedBy AS studentId,
                                         wc.CreatedBy AS CreatedById,
                                         r.Remarks as remarks,
@@ -186,20 +185,19 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
 
             foreach ($assessmentQ->result() as $row) : ?>
               <tr data-bs-toggle="modal" data-bs-target="#historyModal<?= $row->resultId ?>">
-                <td><?= $row->studentFullName; ?></td>
+                <td><?= $this->routines->getUserFullName($row->studentId); ?></td>
                 <td><?= $row->assessmentTitle; ?></td>
                 <td><?= $row->wellnessType; ?></td>
                 <td><?= date("M d, Y h:i:s A", strtotime($row->dateTaken)) ?></td>
-                <td><?= $row->CreatedBy; ?></td>
+                <td><?= $this->routines->getUserFullName($row->CreatedBy); ?></td>
                 <td><?= $row->remarks ? substr($row->remarks, 0, 70) . "..." : "" ?></td>
               </tr>
-
 
               <div class="modal fade" id="historyModal<?= $row->resultId ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog  modal-lg modal-dialog-centered modal-dialog-scrollable">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="exampleModalLabel"><?= $row->studentFullName ?> Results</h5>
+                      <h5 class="modal-title" id="exampleModalLabel"><?= $this->routines->getUserFullName($row->studentId) ?> Results</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">

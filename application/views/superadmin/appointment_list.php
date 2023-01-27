@@ -43,7 +43,7 @@ $query = $this->db->query("SELECT
 // $result = $query->num_rows() == 0 ? null : json_encode($query->result_object());
 $data = [];
 foreach ($query->result() as $res) {
-  $adminFullName = $this->routines->getUserFullname($res->adminID);
+  $adminFullName = $this->routines->getUserFullName($res->adminID);
   $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
   array_push(
     $data,

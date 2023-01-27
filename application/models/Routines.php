@@ -130,14 +130,16 @@ class Routines extends CI_Model
     return $College;
   }
 
-  function getUserFullname($user_id)
+  function getUserFullName($user_id)
   {
-    $UserFullname = '';
-    $tbluser = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $user_id . "';")->row();
-    if (isset($tbluser->Fullname)) {
-      $UserFullname = $tbluser->Fullname;
+    $UserFullName = '';
+    $tblUser = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $user_id . "';");
+    if ($tblUser->num_rows() > 0) {
+      $user = $tblUser->row();
+      $middleName = $user->middle_name != null ? $user->middle_name[0] : "";
+      $UserFullName = ucwords("$user->last_name, $user->first_name $middleName");
     }
-    return $UserFullname;
+    return $UserFullName;
   }
 
   function generateAdminID($length = 1)

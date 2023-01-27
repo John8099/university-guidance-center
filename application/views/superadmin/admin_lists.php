@@ -31,12 +31,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
           </thead>
           <tbody>
             <?php
-            $query = $this->db->query("SELECT UserID,Fullname,College,Email,IdentifiedGender,SchoolID FROM tbluser INNER JOIN tblcollege ON tblcollege.CollegeID=tbluser.CollegeID WHERE tbluser.UserType = 'Administrator';");
+            $query = $this->db->query("SELECT UserID,College,Email,IdentifiedGender,SchoolID FROM tbluser INNER JOIN tblcollege ON tblcollege.CollegeID=tbluser.CollegeID WHERE tbluser.UserType = 'Administrator';");
 
             foreach ($query->result() as $row) : ?>
               <tr>
                 <td><?= $row->SchoolID; ?></td>
-                <td><?= $row->Fullname; ?></td>
+                <td><?= $this->routines->getUserFullName($row->UserID); ?></td>
                 <td><?= $row->College; ?></td>
                 <td><?= $row->Email; ?></td>
                 <td><?= ($row->IdentifiedGender == 1) ? 'Male' : 'Female'; ?></td>

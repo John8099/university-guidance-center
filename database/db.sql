@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 24, 2023 at 03:20 PM
+-- Generation Time: Jan 27, 2023 at 03:21 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 7.4.27
 
@@ -100,7 +100,7 @@ CREATE TABLE `tblappointment` (
 INSERT INTO `tblappointment` (`AppointmentID`, `Referrer`, `StudentName`, `YearSection`, `Address`, `PhoneNumber`, `OtherContact`, `Platform`, `PreferredTime`, `SelectedDate`, `Category`, `Email`, `Status`, `CreatedOn`, `CreatedBy`, `CollegeID`, `AppointmentSchedID`, `Remarks`) VALUES
 (2, '', 'Horry Potter', '3E', 'Manila', '09713765121', '4123', 'Face to Face', '9:00 AM - 10:00 AM', '2023-01-11', 'Personal', 'horrypotter@wvsu.edu.ph', 'Completed', '2023-01-09 19:10:05', 10, 1, 10, 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor '),
 (3, '', 'Horry Potter', '3E', 'Manila', '09713765121', '09713765121', 'Face to Face', '8:00 AM - 9:00 AM', '2023-03-07', 'Academic', 'horrypotter@wvsu.edu.ph', 'Completed', '2023-01-09 19:20:28', 10, 1, 8, ''),
-(4, '', 'Horry Potter', '3E', 'Manila', '09713765121', '09713765121', 'Face to Face', '10:00 AM - 11:00 AM', '2023-01-12', 'Social', 'horrypotter@wvsu.edu.ph', 'Rescheduled', '2023-01-09 20:41:02', 10, 1, 9, '');
+(4, '', 'Horry Potter', '3E', 'Manila', '09713765121', '09713765121', 'Face to Face', '8:00 AM - 9:00 AM', '2023-01-28', 'Social', 'horrypotter@wvsu.edu.ph', 'Follow Up', '2023-01-09 20:41:02', 10, 1, 9, '');
 
 -- --------------------------------------------------------
 
@@ -122,18 +122,13 @@ CREATE TABLE `tblappointmentsched` (
 --
 
 INSERT INTO `tblappointmentsched` (`AppointmentSchedID`, `AppointmentDate`, `AppointmentTime`, `Status`, `CreatedOn`, `CreatedBy`) VALUES
-(1, '2023-01-04', '8:00 AM - 9:00 AM', 'Occupied', '2023-01-03 14:03:42', 1),
-(3, '2023-01-11', '8:00 AM - 9:00 AM', 'Occupied', '2023-01-08 20:45:13', 1),
-(4, '2023-01-11', '9:00 AM - 10:00 AM', 'Occupied', '2023-01-08 22:18:47', 1),
-(5, '2023-01-17', '10:00 AM - 11:00 AM', 'Occupied', '2023-01-08 22:39:28', 1),
-(6, '2023-01-13', '8:00 AM - 9:00 AM', 'Occupied', '2023-01-08 23:30:06', 1),
-(7, '2023-01-10', '10:00 AM - 11:00 AM', 'Occupied', '2023-01-09 13:46:47', 1),
 (8, '2023-01-11', '8:00 AM - 9:00 AM', 'Occupied', '2023-01-09 17:40:26', 1),
-(9, '2023-01-12', '10:00 AM - 11:00 AM', 'Occupied', '2023-01-09 17:40:57', 1),
+(9, '2023-01-28', '8:00 AM - 9:00 AM', 'Occupied', '2023-01-09 17:40:57', 1),
 (10, '2023-01-11', '9:00 AM - 10:00 AM', 'Occupied', '2023-01-09 17:58:16', 2),
 (11, '2023-01-11', '8:00 AM - 9:00 AM', 'Active', '2023-01-09 21:54:53', 1),
 (12, '2023-01-17', '10:00 AM - 11:00 AM', 'Active', '2023-01-16 13:26:15', 2),
-(13, '2023-01-18', '9:00 AM - 10:00 AM', 'Active', '2023-01-17 21:28:27', 1);
+(13, '2023-01-18', '9:00 AM - 10:00 AM', 'Active', '2023-01-17 21:28:27', 1),
+(14, '2023-01-25', '8:00 AM - 9:00 AM', 'Active', '2023-01-25 12:23:44', 1);
 
 -- --------------------------------------------------------
 
@@ -223,7 +218,22 @@ INSERT INTO `tblnotification` (`NotificationID`, `Notification`, `NotificationTo
 (30, 'Hello Horry Potter, Your appointment for (January 12, 2023 at 10:00 AM - 11:00 AM) has been approved. Please ensure that this is your phone number 09713765121 . We look forward to hearing from you soon. Have a great day!.', 10, 'Unread', '2023-01-18 12:39:53', 1),
 (31, 'Hello Horry Potter, Your appointment for (January 12, 2023 at 10:00 AM - 11:00 AM) has been approved. Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!', 10, 'Unread', '2023-01-18 12:40:42', 1),
 (32, 'Hello Horry Potter, Your appointment for (January 12, 2023 at 10:00 AM - 11:00 AM) has been approved. Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!', 10, 'Unread', '2023-01-20 15:41:32', 1),
-(33, 'Hello Horry Potter! Your scheduled appointment on 2023-01-12 10:00 AM - 11:00 AM with Superadmin is rescheduled.', 10, 'Unread', '2023-01-20 15:43:51', 1);
+(33, 'Hello Horry Potter! Your scheduled appointment on 2023-01-12 10:00 AM - 11:00 AM with Superadmin is rescheduled.', 10, 'Unread', '2023-01-20 15:43:51', 1),
+(34, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-12 10:00 AM - 11:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:13:43', 1),
+(35, 'Hello Potter, Horry ! Your scheduled appointment on  8:00 AM - 9:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:15:09', 1),
+(36, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-27 9:00 AM - 10:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:17:03', 1),
+(37, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-26 8:00 AM - 9:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:20:40', 1),
+(38, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-27 8:00 AM - 9:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:25:00', 1),
+(39, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-26 8:00 AM - 9:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:26:06', 1),
+(40, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-27 8:00 AM - 9:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:27:03', 1),
+(41, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-26 8:00 AM - 9:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:30:33', 1),
+(42, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-27 8:00 AM - 9:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:36:54', 1),
+(43, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-26 8:00 AM - 9:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:37:28', 1),
+(44, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-27 8:00 AM - 9:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:38:06', 1),
+(45, 'Hello Potter, Horry ! Your scheduled appointment on 2023-01-26 8:00 AM - 9:00 AM with Admin, Super  is rescheduled.', 10, 'Unread', '2023-01-27 14:39:01', 1),
+(46, 'Hello Potter, Horry , Your appointment for (January 27, 2023 at 9:00 AM - 10:00 AM) has been approved. Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!', 10, 'Unread', '2023-01-27 20:42:52', 1),
+(47, 'Hello Potter, Horry , Your appointment for (January 27, 2023 at 9:00 AM - 10:00 AM) has been approved. Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!', 10, 'Unread', '2023-01-27 20:44:09', 1),
+(48, 'Hello Potter, Horry , Your appointment for (January 27, 2023 at 9:00 AM - 10:00 AM) has been approved. Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!', 10, 'Unread', '2023-01-27 20:56:34', 1);
 
 -- --------------------------------------------------------
 
@@ -364,7 +374,9 @@ INSERT INTO `tblresultquan` (`ResultQuanID`, `WellnessCheckID`, `ResultID`, `Cat
 CREATE TABLE `tbluser` (
   `UserID` int(11) UNSIGNED NOT NULL,
   `HashedPassword` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `Fullname` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `first_name` text COLLATE utf8_unicode_ci NOT NULL,
+  `middle_name` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `last_name` text COLLATE utf8_unicode_ci NOT NULL,
   `UserType` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Administrator',
   `Address` text COLLATE utf8_unicode_ci NOT NULL,
   `IdentifiedGender` int(11) NOT NULL DEFAULT 0 COMMENT '0 = Female, 1 = Male',
@@ -410,18 +422,18 @@ CREATE TABLE `tbluser` (
 -- Dumping data for table `tbluser`
 --
 
-INSERT INTO `tbluser` (`UserID`, `HashedPassword`, `Fullname`, `UserType`, `Address`, `IdentifiedGender`, `BiologicalSex`, `Course`, `YearSec`, `Email`, `SchoolID`, `Status`, `CreatedOn`, `CreatedBy`, `CollegeID`, `DateBirth`, `PlaceBirth`, `SexualOrientation`, `SexBirth`, `Nationality`, `Religion`, `CivilStatus`, `MobileNo`, `TelephoneNo`, `DSWDHouseholdNo`, `Disability`, `Region`, `Province`, `MunicipalityCity`, `Barangay`, `ZipCode`, `ACRNo`, `PlacedIssued`, `DateIssued`, `AuthorizedStay`, `PassportNo`, `PassportExpixy`, `DateArrival`, `VisaType`, `VisaStatus`, `ImageLoc`, `isNew`) VALUES
-(1, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Superadmin', 'Superadmin', '', 1, '', '', '', 'superadmin@wvsu.edu.ph', 'superadmin', 'Active', '2023-01-09 00:54:10', 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'bb166a9efc46efed2a6bf974e60eb92f.jpg', NULL),
-(2, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin CAS', 'Administrator', '', 0, '', '', '', 'admincas@wvsu.edu.ph', '2023L00002', 'Active', '2023-01-09 01:26:21', 0, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
-(3, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin CICT', 'Administrator', '', 1, '', '', '', 'admincict@wvsu.edu.ph', '2023W00003', 'Active', '2023-01-09 01:28:27', 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
-(4, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin CBM', 'Administrator', '', 0, '', '', '', 'admincbm@wvsu.edu.ph', '2023V00004', 'Active', '2023-01-09 01:28:00', 0, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
-(5, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin COC', 'Administrator', '', 1, '', '', '', 'admincoc@wvsu.edu.ph', '2023Q00005', 'Active', '2023-01-09 01:29:34', 0, 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
-(6, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin CON', 'Administrator', '', 0, '', '', '', 'admincom@wvsu.edu.ph', '2023J00006', 'Active', '2023-01-09 01:30:27', 0, 5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
-(7, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin COM', 'Administrator', '', 0, '', '', '', 'admincom@wvsu.edu.ph', '2023U00007', 'Active', '2023-01-09 01:30:50', 0, 6, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
-(8, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin COE', 'Administrator', '', 1, '', '', '', 'admincoe@wvsu.edu.ph', '2023N00008', 'Active', '2023-01-09 01:31:15', 0, 8, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
-(9, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin CICT', 'Administrator', '', 0, '', '', '', 'admincict@wvsu.edu.ph', '2023A00009', 'Inactive', '2023-01-09 01:36:59', 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
-(10, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Horry Potter', 'Student', 'Manila', 0, 'Male', 'BSIT', '3E', 'student@wvsu.edu.ph', '04-1314-01944', 'Active', '2023-01-09 12:56:16', 0, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '8654961a64c7443db12710f5d1ebc756.png', NULL),
-(11, '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 'test', 'Administrator', '', 0, '', '', '', 'mail@wvsu.edu.ph', '2023A0011', 'Active', '2023-01-20 13:47:12', 0, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'b0e47a53b79a39a76e1df8c1e514f7d3.jpg', 0);
+INSERT INTO `tbluser` (`UserID`, `HashedPassword`, `first_name`, `middle_name`, `last_name`, `UserType`, `Address`, `IdentifiedGender`, `BiologicalSex`, `Course`, `YearSec`, `Email`, `SchoolID`, `Status`, `CreatedOn`, `CreatedBy`, `CollegeID`, `DateBirth`, `PlaceBirth`, `SexualOrientation`, `SexBirth`, `Nationality`, `Religion`, `CivilStatus`, `MobileNo`, `TelephoneNo`, `DSWDHouseholdNo`, `Disability`, `Region`, `Province`, `MunicipalityCity`, `Barangay`, `ZipCode`, `ACRNo`, `PlacedIssued`, `DateIssued`, `AuthorizedStay`, `PassportNo`, `PassportExpixy`, `DateArrival`, `VisaType`, `VisaStatus`, `ImageLoc`, `isNew`) VALUES
+(1, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Super', NULL, 'Admin', 'Superadmin', '', 1, '', '', '', 'superadmin@wvsu.edu.ph', 'superadmin', 'Active', '2023-01-09 00:54:10', 0, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'bb166a9efc46efed2a6bf974e60eb92f.jpg', NULL),
+(2, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin ', NULL, 'CAS', 'Administrator', '', 0, '', '', '', 'admincas@wvsu.edu.ph', '2023L00002', 'Active', '2023-01-09 01:26:21', 0, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
+(3, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin ', NULL, 'CICT', 'Administrator', '', 1, '', '', '', 'admincict@wvsu.edu.ph', '2023W00003', 'Active', '2023-01-09 01:28:27', 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
+(4, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin', NULL, 'CBM', 'Administrator', '', 0, '', '', '', 'admincbm@wvsu.edu.ph', '2023V00004', 'Active', '2023-01-09 01:28:00', 0, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
+(5, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin', NULL, 'COC', 'Administrator', '', 1, '', '', '', 'admincoc@wvsu.edu.ph', '2023Q00005', 'Active', '2023-01-09 01:29:34', 0, 4, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
+(6, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin', NULL, 'CON', 'Administrator', '', 0, '', '', '', 'admincom@wvsu.edu.ph', '2023J00006', 'Active', '2023-01-09 01:30:27', 0, 5, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
+(7, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin', NULL, 'COM', 'Administrator', '', 0, '', '', '', 'admincom@wvsu.edu.ph', '2023U00007', 'Active', '2023-01-09 01:30:50', 0, 6, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
+(8, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin', NULL, 'COE', 'Administrator', '', 1, '', '', '', 'admincoe@wvsu.edu.ph', '2023N00008', 'Active', '2023-01-09 01:31:15', 0, 8, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
+(9, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Admin', NULL, 'CICT', 'Administrator', '', 0, '', '', '', 'admincict@wvsu.edu.ph', '2023A00009', 'Inactive', '2023-01-09 01:36:59', 0, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL),
+(10, '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 'Horry', NULL, 'Potter', 'Student', 'Manila', 0, 'Male', 'BSIT', '3E', 'student@wvsu.edu.ph', '04-1314-01944', 'Active', '2023-01-09 12:56:16', 0, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '8654961a64c7443db12710f5d1ebc756.png', NULL),
+(11, '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', 'te', NULL, 'st', 'Administrator', '', 0, '', '', '', 'mail@wvsu.edu.ph', '2023A0011', 'Active', '2023-01-20 13:47:12', 0, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'b0e47a53b79a39a76e1df8c1e514f7d3.jpg', 0);
 
 -- --------------------------------------------------------
 
@@ -469,7 +481,9 @@ INSERT INTO `tblwellnesscheck` (`WellnessCheckID`, `Title`, `WellnessType`, `Num
 (3, 'sadasd', 'Quantitative', 3, 2, 'Disable', '30', '2023-01-10 00:00:00', 1),
 (4, 'hjgjk', 'Qualitative', 5, NULL, 'Enable', '15', '2023-01-10 00:00:00', 1),
 (5, 'dsasa', 'Qualitative', 12, NULL, 'Disable', '15', '2023-01-11 00:00:00', 1),
-(10, 'Sample', 'Quantitative', 4, 1, 'Disable', '7', '2023-01-25 00:00:00', 1);
+(10, 'Sample', 'Quantitative', 4, 1, 'Disable', '7', '2023-01-25 00:00:00', 1),
+(11, 'test', 'Quantitative', 7, 2, 'Disable', '7', '2023-01-26 00:00:00', 1),
+(12, 'Sample2', 'Qualitative', 6, NULL, 'Disable', '15', '2023-01-26 00:00:00', 1);
 
 -- --------------------------------------------------------
 
@@ -691,7 +705,7 @@ ALTER TABLE `tblappointment`
 -- AUTO_INCREMENT for table `tblappointmentsched`
 --
 ALTER TABLE `tblappointmentsched`
-  MODIFY `AppointmentSchedID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `AppointmentSchedID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `tblassessment`
@@ -709,7 +723,7 @@ ALTER TABLE `tblcollege`
 -- AUTO_INCREMENT for table `tblnotification`
 --
 ALTER TABLE `tblnotification`
-  MODIFY `NotificationID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `NotificationID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `tblquestion`
@@ -751,7 +765,7 @@ ALTER TABLE `tblwellnessanswer`
 -- AUTO_INCREMENT for table `tblwellnesscheck`
 --
 ALTER TABLE `tblwellnesscheck`
-  MODIFY `WellnessCheckID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `WellnessCheckID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `tblwellnessquestion`

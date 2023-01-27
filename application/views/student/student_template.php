@@ -24,7 +24,7 @@
         $Fullname = '';
         $User = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $row->CreatedBy . "';")->row();
         if (isset($User->UserID)) {
-          $Fullname = $User->Fullname;
+          $Fullname = $this->routines->getUserFullName($User->UserID);;
         }
         $Appointment = $row->AppointmentTime . '<br>' . $Fullname;
       ?>

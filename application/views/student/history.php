@@ -63,7 +63,7 @@ foreach ($query->result() as $row) {
               ?>
                 <tr>
                   <td><?= $row->SelectedDate . ' - ' . $row->PreferredTime; ?></td>
-                  <td><?= $this->routines->getUserFullname($tblappointmentsched->row()->CreatedBy); ?></td>
+                  <td><?= $this->routines->getUserFullName($tblappointmentsched->row()->CreatedBy); ?></td>
                   <td><?= $row->Status; ?></td>
                   <td><?= $row->Platform; ?></td>
                   <td><?= $row->Remarks; ?></td>
@@ -106,7 +106,7 @@ foreach ($query->result() as $row) {
                     <?php else : ?>
                     <?php endif; ?>
                   </td>
-                  <td><?= $this->routines->getUserFullname($row->CreatedBy); ?></td>
+                  <td><?= $this->routines->getUserFullName($row->CreatedBy); ?></td>
                   <td><?= $row->Remarks; ?></td>
 
                 </tr>

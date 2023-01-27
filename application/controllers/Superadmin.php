@@ -39,7 +39,7 @@ class Superadmin extends CI_Controller
       if ($rowdata->UserType == 'Administrator') {
         $this->session->set_userdata('AdminUserID', $rowdata->UserID);
         $this->session->set_userdata('AdminUserType', $rowdata->UserType);
-        $this->session->set_userdata('AdminFullname', $rowdata->Fullname);
+        $this->session->set_userdata('AdminFullname', $this->routines->getUserFullName($rowdata->UserID));
         $this->session->set_userdata('AdminEmail', $rowdata->Email);
         $this->session->set_userdata('AdminCollegeID', $rowdata->CollegeID);
         $this->session->set_userdata('AdminSchoolID', $rowdata->SchoolID);
@@ -49,7 +49,7 @@ class Superadmin extends CI_Controller
       } else {
         $this->session->set_userdata('UserID', $rowdata->UserID);
         $this->session->set_userdata('UserType', $rowdata->UserType);
-        $this->session->set_userdata('Fullname', $rowdata->Fullname);
+        $this->session->set_userdata('Fullname', $this->routines->getUserFullName($rowdata->UserID));
         $this->session->set_userdata('Email', $rowdata->Email);
         $this->session->set_userdata('CollegeID', $rowdata->CollegeID);
         $this->session->set_userdata('SchoolID', $rowdata->SchoolID);
@@ -306,7 +306,7 @@ class Superadmin extends CI_Controller
     $AppointmentID = $this->uri->segment(3);
     $query = $this->db->query("SELECT * FROM tblappointment WHERE AppointmentID = '" . $AppointmentID . "'");
     foreach ($query->result() as $row) {
-      $StudentName = $row->StudentName;
+      $StudentName = $this->routines->getUserFullName($row->CreatedBy);
       $Remarks = $row->Remarks;
       $PreferredTime = $row->PreferredTime;
       $SelectedDate = $row->SelectedDate;
@@ -321,16 +321,64 @@ class Superadmin extends CI_Controller
     foreach ($query->result() as $row) {
       $CreatedBySchedule = $row->CreatedBy;
     }
+
+    $dateSched = $this->input->post('dateSched');
+    $timeSched = $this->input->post('timeSched');
+
+    if ($dateSched != "" && $timeSched != "") {
+      if ($this->isDuplicateAppointment($dateSched, $timeSched)) {
+        $this->session->set_flashdata('Failed', 'Appointment schedule conflicts with other schedule.');
+        redirect(site_url() . 'superadmin/view_appointment/' . $this->uri->segment(3));
+        exit();
+      }
+    }
+
     if ($this->uri->segment(3) == '') {
     } else {
-      $data = array(
-        'Status' => urldecode($this->uri->segment(4))
-      );
-      $this->main_model->update_entry('tblappointment', $data, 'AppointmentID', $this->uri->segment(3));
+
+      if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
+
+        $dataAppoint = array(
+          "PreferredTime" => "$timeSched",
+          "SelectedDate" => "$dateSched"
+        );
+
+        $dataAppointSchedule = array(
+          "AppointmentDate" => "$dateSched",
+          "AppointmentTime" => "$timeSched"
+        );
+
+        $this->main_model->update_entry('tblappointment', $dataAppoint, 'AppointmentID', $this->uri->segment(3));
+        $this->main_model->update_entry('tblappointmentsched', $dataAppointSchedule, 'AppointmentSchedID', $AppointmentSchedID);
+      } else if (urldecode($this->uri->segment(4)) == 'Follow Up') {
+
+        $dataAppoint = array(
+          "PreferredTime" => "$timeSched",
+          "SelectedDate" => "$dateSched",
+          "Status" => "Follow Up"
+        );
+
+        $dataAppointSchedule = array(
+          "AppointmentDate" => "$dateSched",
+          "AppointmentTime" => "$timeSched"
+        );
+
+        $this->main_model->update_entry('tblappointment', $dataAppoint, 'AppointmentID', $this->uri->segment(3));
+        $this->main_model->update_entry('tblappointmentsched', $dataAppointSchedule, 'AppointmentSchedID', $AppointmentSchedID);
+      } else {
+
+        $data = array(
+          'Status' => urldecode($this->uri->segment(4))
+        );
+        $this->main_model->update_entry('tblappointment', $data, 'AppointmentID', $this->uri->segment(3));
+      }
+
       //send email
       $sendemail = $this->routines->sendEmail("Appointment Status", "Your appointment was " . urldecode($this->uri->segment(4)), $this->session->userdata('AppointmentEmail'));
     }
+
     $this->session->set_flashdata('Success', 'Appointment data was successfully saved.');
+
     $Notification = '';
     if (urldecode($this->uri->segment(4)) == 'Approved') {
 
@@ -345,11 +393,11 @@ class Superadmin extends CI_Controller
 
       $Notification = $firstSentence . " " . nl2br($secondSentence[$platform]);
 
-      // $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullname($CreatedBySchedule) . ' is approved. See you there!';
+      // $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullName($CreatedBySchedule) . ' is approved. See you there!';
       $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
     }
     if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
-      $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullname($CreatedBySchedule) . ' is rescheduled.';
+      $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullName($CreatedBySchedule) . ' is rescheduled.';
       $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
     }
     redirect(site_url() . 'superadmin/view_appointment/' . $this->uri->segment(3));
