@@ -9,7 +9,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <!-- title -->
                 <div class="d-md-flex">
                     <div>
-                        <h4 class="card-title">Wellness Check Assessment List</h4>
+                        <h4 class="card-title">Wellness Check List</h4>
                     </div>
                     <div class="ms-auto">
                         <a href="<?=site_url().'administrator/wellness_check';?>" type="button" class="btn btn-outline-success btn-sm" title="Create Wellness Check" style="width: 100px;">Create</a>
@@ -19,14 +19,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
             <div class="table-responsive">
                 
-            <table id="datatable" class="table table-hover">
+            <table id="example" class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col">Title</th>
                             <th scope="col">Type</th>
                             <th scope="col">Date</th>
-                            <th scope="col">End Date</th>
-                            <th scope="col">Created</th>
                             <th scope="col">Status</th>
                             <th scope="col">Action</th>
                         </tr>
@@ -40,8 +38,6 @@ foreach ($query->result() as $row) : ?>
         <td><?=$row->Title;?></td>
         <td><?=$row->WellnessType;?></td>
         <td><?=date('Y-m-d', strtotime($row->CreatedOn));?></td>
-        <td><?=$row->EndDate;?></td>
-        <td><?=$this->routines->getUserFullName($row->CreatedBy);?></td>
         <td><?=$row->Status;?></td>
         <td>
             <?php if($row->Status=='Disable') : ?>
@@ -51,7 +47,7 @@ foreach ($query->result() as $row) : ?>
             <?php endif; ?>
             <?php if ($row->Status=='Disable'): ?>
             <a href="<?=site_url().'administrator/wellness_check/'.$row->WellnessCheckID;?>" class="btn btn-outline-primary btn-sm" title="Edit" style="width: 100px;">Edit</a>
-            <a href="<?=site_url().'administrator/wellness_checks_delete/'.$row->WellnessCheckID;?>" class="btn btn-outline-danger btn-sm" title="Delete" style="width: 100px;">Delete</a>
+            <a href="<?=site_url().'administrator/wellness_check/'.$row->WellnessCheckID;?>" class="btn btn-outline-danger btn-sm" title="Delete" style="width: 100px;">Delete</a>
             <?php else: ?>
             <button class="btn btn-outline-primary btn-sm" style="width: 100px;" disabled>Edit</button>
             <button class="btn btn-outline-danger btn-sm" style="width: 100px;" disabled>Delete</button>

@@ -13,94 +13,195 @@ class Administrator extends CI_Controller
     $this->load->model('analyzer_model');
   }
 
-  public function index()
+  public function login()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), $this->session->userdata('Location'), false);
+    $data['heading'] = 'Administrator Login';
+    $this->load->view('administrator/login', $data);
+  }
+
+  public function administrator_login()
+  {
+    if (!$this->input->post('txtUsername')) {
+      redirect(site_url() . 'administrator/login');
+    }
+
+    $UserType = $this->db->escape_str($this->input->post('txtUserType'));
+    $username = $this->db->escape_str($this->input->post('txtUsername'));
+    $password = hash("sha256", $this->db->escape_str($this->input->post('txtPassword')));
+    $Query = $this->db->query("SELECT * FROM tbluser WHERE SchoolID = '{$username}' AND HashedPassword = '{$password}' AND UserType = '{$UserType}';");
+    if ($Query->num_rows() <> 0) {
+      $rowdata = $Query->row();
+      if ($rowdata->Status == 'Inactive') {
+        $this->session->set_flashdata('Failed', 'Login authentication failed, please verify your email.');
+        redirect(site_url() . 'administrator/login');
+      }
+      if ($rowdata->UserType == 'Administrator') {
+        $this->session->set_userdata('UserID', $rowdata->UserID);
+        $this->session->set_userdata('UserType', $rowdata->UserType);
+        $this->session->set_userdata('Fullname', $this->routines->getUserFullName($rowdata->UserID));
+        $this->session->set_userdata('Email', $rowdata->Email);
+        $this->session->set_userdata('CollegeID', $rowdata->CollegeID);
+        $this->session->set_userdata('SchoolID', $rowdata->SchoolID);
+        $this->session->set_userdata('ImageLoc', $rowdata->ImageLoc);
+        $this->session->set_userdata('Location', site_url() . 'administrator');
+        redirect(site_url() . 'administrator');
+      } else {
+        $this->session->set_userdata('UserID', $rowdata->UserID);
+        $this->session->set_userdata('UserType', $rowdata->UserType);
+        $this->session->set_userdata('Fullname', $this->routines->getUserFullName($rowdata->UserID));
+        $this->session->set_userdata('Email', $rowdata->Email);
+        $this->session->set_userdata('CollegeID', $rowdata->CollegeID);
+        $this->session->set_userdata('SchoolID', $rowdata->SchoolID);
+        $this->session->set_userdata('ImageLoc', $rowdata->ImageLoc);
+        $this->session->set_userdata('Location', site_url() . 'administrator');
+        redirect(site_url() . 'administrator');
+      }
+    } else {
+      $this->session->set_flashdata('Failed', 'Login Authentication Failed.');
+      redirect(site_url() . 'administrator/login');
+    }
+  }
+
+  public function admin_lists()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Student Inventory';
-    $data['content'] = 'student_inventory';
+    $data['sub_heading'] = 'Admin List';
+    $data['content'] = 'admin_lists';
     $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function admin_list()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Create Admin';
+    $data['content'] = 'admin_list';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function admin_list_save()
+  {
+    // wvsu.edu.ph
+    if ($this->input->post('txtPassword') <> $this->input->post('txtConfirmPassword')) {
+      $this->session->set_flashdata('admin_list_save', 'Password not match.');
+      redirect(site_url() . 'administrator/admin_list');
+    }
+
+    $email = $this->input->post('txtEmail');
+    $ranpass = $this->routines->generateRandomString(8);
+    $hashPassword = hash("sha256", $email);
+
+    $data = array(
+      'Fullname' => $this->input->post('txtFullname'),
+      'UserType' => 'Administrator',
+      'Address' => '',
+      'IdentifiedGender' => $this->input->post('txtIdentifiedGender'),
+      'BiologicalSex' => '',
+      'Course' => '',
+      'YearSec' => '',
+      'Email' => $email,
+      'SchoolID ' => $this->input->post('txtSchoolID'),
+      'CollegeID ' => $this->input->post('txtCollege'),
+      'CreatedOn' => $this->routines->getCurrentDateTime(),
+      'CreatedBy' => 0,
+      'Status' => 'Active',
+    );
+    if ($this->routines->validateEmail($email)) {
+
+      if ($this->uri->segment(3) == '') {
+        $data['HashedPassword'] = $hashPassword;
+        $data["isNew"] = 1;
+
+        $this->main_model->insert_entry('tbluser', $data);
+
+        // SEND EMAIL VERIFICATION
+        $msg = 'Your username: ' . $this->input->post('txtSchoolID') . ' password: ' . $ranpass . '';
+        $sendemail = $this->routines->sendEmail("Temporary Account", $msg, $email);
+      } else {
+        $this->main_model->update_entry('tbluser', $data, 'UserID', $this->uri->segment(3));
+      }
+      $this->session->set_flashdata('admin_list_save', 'Registration was successfully saved.');
+    } else {
+      $this->session->set_flashdata('Fullname', $this->input->post('txtFullname'));
+      $this->session->set_flashdata('IdentifiedGender', $this->input->post('txtIdentifiedGender'));
+      $this->session->set_flashdata('CollegeID', $this->input->post('txtCollege'));
+      $this->session->set_flashdata('SchoolID', $this->input->post('txtSchoolID'));
+      $this->session->set_flashdata('Email', $email);
+      $this->session->set_flashdata('invalid', 'The email was invalid only accepts wvsu.edu.ph email.');
+    }
+
+    if ($this->input->post('txtRegisterType') == 'Superadmin') {
+      redirect(site_url() . 'administrator/admin_list/' . $this->uri->segment(3));
+    } else {
+      redirect(site_url() . 'administrator/admin_portal/' . $this->uri->segment(3));
+    }
+  }
+
+  public function admin_register()
+  {
+    $data['heading'] = 'Admin Register';
+    $data['sub_heading'] = 'Admin Register';
+    $data['content'] = 'admin_register';
+    $this->load->view('administrator/admin_register', $data);
+  }
+
+  public function admin_save()
+  {
+    // wvsu.edu.ph
+    if ($this->input->post('txtPassword') <> $this->input->post('txtConfirmPassword')) {
+      $this->session->set_flashdata('RegisterFailed', 'Password not match.');
+      redirect(site_url() . 'administrator/admin_register');
+    }
+
+    $SchoolID = $this->db->query("SELECT * FROM tbluser WHERE SchoolID = '" . $this->input->post('txtSchoolID') . "';")->row()->SchoolID;
+
+
+    if ($SchoolID != '') {
+      $this->session->set_flashdata('RegisterFailed', 'Admin ID is already exist.');
+      redirect(site_url() . 'administrator/admin_register');
+    }
+
+    $hashPassword = hash("sha256", $this->input->post('txtPassword'));
+    $email = $this->input->post('txtEmail');
+
+    $data = array(
+      'HashedPassword' => $hashPassword,
+      'Fullname' => $this->input->post('txtFullname'),
+      'UserType' => 'Administrator',
+      'Address' => '',
+      'IdentifiedGender' => $this->input->post('txtIdentifiedGender'),
+      'BiologicalSex' => '',
+      'Course' => '',
+      'YearSec' => '',
+      'Email' => $email,
+      'SchoolID' => $this->input->post('txtSchoolID'),
+      'CollegeID ' => $this->input->post('txtCollege'),
+      'CreatedOn' => $this->routines->getCurrentDateTime(),
+      'CreatedBy' => 0,
+      'Status' => 'Inactive',
+    );
+    if ($this->routines->validateEmail($email)) {
+      if ($this->uri->segment(3) == '') {
+        $this->main_model->insert_entry('tbluser', $data);
+      } else {
+        $this->main_model->update_entry('tbluser', $data, 'UserID', $this->uri->segment(3));
+      }
+      $this->session->set_flashdata('RegisterSuccess', 'Registration was successfully saved.');
+    } else {
+      $this->session->set_flashdata('RegisterFailed', 'The email was invalid only accepts wvsu.edu.ph email.');
+    }
+    redirect(site_url() . 'administrator/admin_register');
   }
 
   public function change_password()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Change Password';
     $data['content'] = 'change_password';
     $this->load->view('administrator/change_password');
-  }
-
-  public function student_view()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Student View';
-    $data['content'] = 'student_view';
-    $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function dashboard()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Dashboard';
-    $data['content'] = 'dashboard';
-    $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function completed_appointment()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Completed Appointment List';
-    $data['content'] = 'completed_appointment';
-    $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function pending_appointment()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Appointment List';
-    $data['content'] = 'pending_appointment';
-    $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function students()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Student List';
-    $data['content'] = 'students';
-    $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function wellness_question_list()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Wellness Check Question List';
-    $data['content'] = 'wellness_question_list';
-    $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function wellness_checks()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Wellness Check';
-    $data['content'] = 'wellness_checks';
-    $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function wellness_check()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Wellness Check';
-    $data['content'] = 'wellness_check';
-    $this->load->view('administrator/administrator_template', $data);
   }
 
   public function change_password_save()
@@ -110,34 +211,311 @@ class Administrator extends CI_Controller
       redirect(site_url() . 'administrator/change_password');
     }
 
-    $OldPassword = hash("sha256", $this->input->post('txtOldPassword'));
+    $OldPassword = hash("sha256", $this->db->escape_str($this->input->post('txtOldPassword')));
     $hashPassword = hash("sha256", $this->input->post('txtPassword'));
-    $Query = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $this->session->userdata('AdminUserID') . "' AND HashedPassword = '$OldPassword';");
+    $Query = $this->db->query("SELECT * FROM tbluser WHERE UserID = '{$this->session->userdata('UserID')}' AND HashedPassword = '{$OldPassword}';");
     if ($Query->num_rows() <> 0) {
       $data = array(
         'HashedPassword' => $hashPassword,
-        'isNew' => 0
       );
-      $this->main_model->update_entry('tbluser', $data, 'UserID', $this->session->userdata('AdminUserID'));
+      $this->main_model->update_entry('tbluser', $data, 'UserID', $this->session->userdata('UserID'));
       $this->session->set_flashdata('pass_msg', 'Password was successfully changed.');
-      redirect(site_url() . 'administrator');
+      redirect(site_url() . 'administrator/change_password');
     } else {
       $this->session->set_flashdata('pass_msg', 'Old password was incorrect.');
       redirect(site_url() . 'administrator/change_password');
     }
   }
 
+  public function change_profile_picture()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Change Profile Picture';
+    $data['content'] = 'change_profile_picture';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function appointment_list()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'List of All Appointments';
+    $data['content'] = 'appointment_list';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function change_profile_picture_save()
+  {
+    $result = $this->routines->Upload('/uploads', 30, 'pdf|jpg|png');
+    echo $result['file_name'];
+    $ImageLoc = $result['file_name'];
+    $data = array(
+      'ImageLoc' => $ImageLoc
+    );
+    $this->main_model->update_entry('tbluser', $data, 'UserID', $this->session->userdata('UserID'));
+    $this->routines->del_image($this->session->userdata('ImageLoc'));
+    $this->session->set_userdata('ImageLoc', $ImageLoc);
+    redirect(site_url() . 'administrator/change_profile_picture');
+  }
+
+  public function schedule_save()
+  {
+    $CreatedBy = $this->session->userdata('UserID');
+    if ($this->uri->segment(3) != '') {
+      $CreatedBy = $this->uri->segment(3);
+    }
+    if ($this->isDuplicateAppointment($this->input->post('txtAppointmentDate'), $this->input->post('txtAppointmentTime'))) {
+      $this->session->set_flashdata('Error', 'Appointment schedule conflicts with other schedule.');
+    } else {
+      $data = array(
+        'AppointmentDate' => $this->input->post('txtAppointmentDate'),
+        'AppointmentTime' => $this->input->post('txtAppointmentTime'),
+        'Status' => 'Active',
+        'CreatedOn' => $this->routines->getCurrentDateTime(),
+        'CreatedBy' => $CreatedBy,
+      );
+      $this->main_model->insert_entry('tblappointmentsched', $data);
+      $this->session->set_flashdata('Success', 'Appointment schedule data was successfully saved.');
+    }
+    redirect(site_url() . 'administrator/schedule/' . $this->uri->segment(3));
+  }
+  public function isDuplicateAppointment($date, $time)
+  {
+    $query = $this->db->query("SELECT * FROM tblappointmentsched WHERE AppointmentDate='$date' and AppointmentTime='$time'");
+
+    if ($query->num_rows() > 0) {
+      return true;
+    }
+    return false;
+  }
+
+  public function update_status()
+  {
+    $StudentName = '';
+    $Remarks = '';
+    $PreferredTime = '';
+    $SelectedDate = '';
+    $AppointmentSchedID = '';
+    $CreatedBy = '';
+
+    $googleLink = $this->input->post('google_link');
+    $phoneNumber = "";
+    $platform = "";
+
+    $AppointmentID = $this->uri->segment(3);
+    $query = $this->db->query("SELECT * FROM tblappointment WHERE AppointmentID = '" . $AppointmentID . "'");
+    foreach ($query->result() as $row) {
+      $StudentName = $this->routines->getUserFullName($row->CreatedBy);
+      $Remarks = $row->Remarks;
+      $PreferredTime = $row->PreferredTime;
+      $SelectedDate = $row->SelectedDate;
+      $AppointmentSchedID = $row->AppointmentSchedID;
+      $CreatedBy = $row->CreatedBy;
+      $phoneNumber = $row->PhoneNumber;
+      $platform = $row->Platform;
+    }
+
+    $CreatedBySchedule = '';
+    $query = $this->db->query("SELECT * FROM tblappointmentsched WHERE AppointmentSchedID = '" . $AppointmentSchedID . "'");
+    foreach ($query->result() as $row) {
+      $CreatedBySchedule = $row->CreatedBy;
+    }
+
+    $dateSched = $this->input->post('dateSched');
+    $timeSched = $this->input->post('timeSched');
+
+    if ($dateSched != "" && $timeSched != "") {
+      if ($this->isDuplicateAppointment($dateSched, $timeSched)) {
+        $this->session->set_flashdata('Failed', 'Appointment schedule conflicts with other schedule.');
+        redirect(site_url() . 'administrator/view_appointment/' . $this->uri->segment(3));
+        exit();
+      }
+    }
+
+    if ($this->uri->segment(3) == '') {
+    } else {
+
+      if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
+
+        $dataAppoint = array(
+          "PreferredTime" => "$timeSched",
+          "SelectedDate" => "$dateSched"
+        );
+
+        $dataAppointSchedule = array(
+          "AppointmentDate" => "$dateSched",
+          "AppointmentTime" => "$timeSched"
+        );
+
+        $this->main_model->update_entry('tblappointment', $dataAppoint, 'AppointmentID', $this->uri->segment(3));
+        $this->main_model->update_entry('tblappointmentsched', $dataAppointSchedule, 'AppointmentSchedID', $AppointmentSchedID);
+      } else if (urldecode($this->uri->segment(4)) == 'Follow Up') {
+
+        $dataAppoint = array(
+          "PreferredTime" => "$timeSched",
+          "SelectedDate" => "$dateSched",
+          "Status" => "Follow Up"
+        );
+
+        $dataAppointSchedule = array(
+          "AppointmentDate" => "$dateSched",
+          "AppointmentTime" => "$timeSched"
+        );
+
+        $this->main_model->update_entry('tblappointment', $dataAppoint, 'AppointmentID', $this->uri->segment(3));
+        $this->main_model->update_entry('tblappointmentsched', $dataAppointSchedule, 'AppointmentSchedID', $AppointmentSchedID);
+      } else if (urldecode($this->uri->segment(4)) == 'Endorsed') {
+
+        $referrer = $this->session->userdata("Fullname") . " (" . $this->routines->getCollege($this->session->userdata("CollegeID")) . " " . $this->session->userdata("UserType") . ")";
+
+        $dataEndorsed = array(
+          "Referrer" => $referrer,
+          'Status' => urldecode($this->uri->segment(4))
+        );
+
+        $this->main_model->update_entry('tblappointment', $dataEndorsed, 'AppointmentID', $this->uri->segment(3));
+      } else {
+
+        $data = array(
+          'Status' => urldecode($this->uri->segment(4))
+        );
+        $this->main_model->update_entry('tblappointment', $data, 'AppointmentID', $this->uri->segment(3));
+      }
+
+      //send email
+      $sendemail = $this->routines->sendEmail("Appointment Status", "Your appointment was " . urldecode($this->uri->segment(4)), $this->session->userdata('AppointmentEmail'));
+    }
+
+    $this->session->set_flashdata('Success', 'Appointment data was successfully saved.');
+
+    $Notification = '';
+    if (urldecode($this->uri->segment(4)) == 'Approved') {
+
+      $firstSentence = "Hello $StudentName, Your appointment for (" . date("F d, Y", strtotime($SelectedDate)) . " at $PreferredTime) has been approved.";
+
+      $secondSentence = array(
+        "Facebook Messenger" => "Please ensure that the Facebook profile link in your student profile is yours, as we will be contacting you there. We look forward to hearing from you soon. Have a great day!",
+        "Google Meet" => "Below you will find the link to the Google Meet. Please join the meeting as scheduled.\n\nThis is the link to the Google Meet: <a href='$googleLink'  target='_blank'>$googleLink</a>",
+        "Telecounseling" => "Please ensure that the phone number indicated in your student profile is yours, the number is $phoneNumber as we will contact you there. Have a great day!",
+        "Face to Face" => "Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!"
+      );
+
+      $Notification = $firstSentence . " " . nl2br($secondSentence[$platform]);
+
+      // $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullName($CreatedBySchedule) . ' is approved. See you there!';
+      $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
+    }
+    if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
+      $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullName($CreatedBySchedule) . ' is rescheduled.';
+      $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
+    }
+    redirect(site_url() . 'administrator/view_appointment/' . $this->uri->segment(3));
+  }
+
+  // UPPER PART IS DONE ===================================================================================
+  public function index()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Student Inventory';
+    $data['content'] = 'student_inventory';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function student_view()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Student View';
+    $data['content'] = 'student_view';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function dashboard()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Dashboard';
+    $data['content'] = 'dashboard';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function completed_appointment()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Completed Appointment List';
+    $data['content'] = 'completed_appointment';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function pending_appointment()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Appointment List';
+    $data['content'] = 'pending_appointment';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function students()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Student List';
+    $data['content'] = 'students';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function wellness_question_list()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Wellness Check Question List';
+    $data['content'] = 'wellness_question_list';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function wellness_checks()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Wellness Check';
+    $data['content'] = 'wellness_checks';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function wellness_checks_delete()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $this->main_model->delete_entry('tblwellnesscheck', 'WellnessCheckID', $this->uri->segment(3));
+    $this->main_model->delete_entry('tblwellnessquestion', 'WellnessCheckID', $this->uri->segment(3));
+    redirect(site_url() . 'administrator/wellness_checks');
+  }
+
+  public function wellness_check()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Wellness Check';
+    $data['content'] = 'wellness_check';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
   public function wellness_check_save()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $WellnessCheckID = 0;
     if ($this->uri->segment(3) == '') {
       $data = array(
         'Title' => $this->input->post('txtTitle'),
         'WellnessType' => $this->input->post('txtType'),
         'NumberQuestion' => $this->input->post('txtNumberQuestion'),
+        'numberOfCategory' => $this->input->post('textNumberCategory') == null ? NULL : $this->input->post('textNumberCategory'),
         'CreatedOn' => $this->input->post('txtDate'),
-        'CreatedBy' => $this->session->userdata('AdminUserID'),
+        'EndDate' => $this->input->post('txtEndDate'),
+        'CreatedBy' => $this->session->userdata('UserID'),
       );
       $WellnessCheckID = $this->main_model->insert_entry('tblwellnesscheck', $data);
     } else {
@@ -145,8 +523,10 @@ class Administrator extends CI_Controller
         'Title' => $this->input->post('txtTitle'),
         'WellnessType' => $this->input->post('txtType'),
         'NumberQuestion' => $this->input->post('txtNumberQuestion'),
+        'numberOfCategory' => $this->input->post('textNumberCategory') == null ? NULL : $this->input->post('textNumberCategory'),
         'CreatedOn' => $this->input->post('txtDate'),
-        'CreatedBy' => $this->session->userdata('AdminUserID'),
+        'EndDate' => $this->input->post('txtEndDate'),
+        'CreatedBy' => $this->session->userdata('UserID'),
       );
       $this->main_model->update_entry('tblwellnesscheck', $data, 'WellnessCheckID', $this->uri->segment(3));
       $WellnessCheckID = $this->uri->segment(3);
@@ -154,9 +534,22 @@ class Administrator extends CI_Controller
     redirect(site_url() . 'administrator/wellness_question/' . $WellnessCheckID);
   }
 
+  public function wellness_question_no()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    if ($this->uri->segment(3) == '' && $this->uri->segment(4) == '') {
+    } else {
+      $data = array(
+        'NumberQuestion' => $this->uri->segment(4) + 1,
+      );
+      $this->main_model->update_entry('tblwellnesscheck', $data, 'WellnessCheckID', $this->uri->segment(3));
+    }
+    redirect(site_url() . 'administrator/wellness_check/' . $this->uri->segment(3));
+  }
+
   public function wellness_check_status()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     if ($this->uri->segment(3) == '' && $this->uri->segment(4) == '') {
     } else {
       $data = array(
@@ -170,7 +563,7 @@ class Administrator extends CI_Controller
 
   public function wellness_check_question_status()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     if ($this->uri->segment(3) == '' && $this->uri->segment(4) == '') {
     } else {
       $data = array(
@@ -184,14 +577,14 @@ class Administrator extends CI_Controller
 
   public function wellness_check_question_confirm()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $this->session->set_flashdata('isQuestionDelete', 'true');
     redirect(site_url() . 'administrator/wellness_question_list/' . $this->uri->segment(3) . '/' . $this->uri->segment(4));
   }
 
   public function wellness_check_question_delete()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     if ($this->uri->segment(3) == '' && $this->uri->segment(4) == '') {
       $this->session->set_flashdata('QuestionDeleted', 'false');
     } else {
@@ -220,7 +613,7 @@ class Administrator extends CI_Controller
 
   public function wellness_question_publish()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $WeekP = $this->db->query("SELECT IFNULL(MAX(WeekPublish), 0) AS 'WeekP' FROM tblwellnessquestionpublish;")->row()->WeekP;
     $tblwellnessquestion = $this->db->query("SELECT * FROM tblwellnessquestion WHERE IsPublish = '0';");
     foreach ($tblwellnessquestion->result() as $row) {
@@ -231,30 +624,48 @@ class Administrator extends CI_Controller
       $data = array(
         'QuestionID' => $row->QuestionID,
         'WeekPublish' => $WeekP + 1,
-        'CreatedBy' => $this->session->userdata('AdminUserID'),
+        'CreatedBy' => $this->session->userdata('UserID'),
       );
       $QuestionID = $this->main_model->insert_entry('tblwellnessquestionpublish', $data);
     }
     $this->session->set_flashdata('QuestionIsPublish', 'true');
-    redirect(site_url() . 'administrator/wellness_question_list');
+    redirect(site_url() . 'administrator/wellness_check/' . $this->uri->segment(3));
   }
 
   public function wellness_question()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Wellness Check Questions';
     $data['content'] = 'wellness_question';
     $this->load->view('administrator/administrator_template', $data);
   }
 
-  public function wellness_question_save()
+  public function wellness_question_update()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data['heading'] = 'Administrator';
+    $data['sub_heading'] = 'Wellness Check Questions';
+    $data['content'] = 'wellness_question_update';
+    $this->load->view('administrator/administrator_template', $data);
+  }
+
+  public function wellness_question_delete()
+  {
     $WellnessCheckID = $this->uri->segment(3);
+    $QuestionID = $this->uri->segment(4);
+    $this->main_model->delete_entry('tblwellnessquestion', 'QuestionID', $QuestionID);
+    redirect(site_url() . 'administrator/wellness_check/' . $WellnessCheckID);
+  }
+
+  public function wellness_question_update_save()
+  {
+    $QuestionID = $this->uri->segment(4);
+
     $Title = '';
     $WellnessType = '';
     $NumberQuestion = 0;
+    $WellnessCheckID = $this->uri->segment(3);
     $result = $this->db->query("SELECT * FROM tblwellnesscheck WHERE WellnessCheckID = '" . $WellnessCheckID . "'");
     foreach ($result->result() as $row) {
       $Title = $row->Title;
@@ -266,36 +677,101 @@ class Administrator extends CI_Controller
     } else {
       $this->session->set_flashdata('isPublish', 'false');
     }
-    for ($i = 1; $i <= $NumberQuestion; $i++) {
-      $QuestionID = $this->db->query("SELECT * FROM tblwellnessquestion WHERE WellnessCheckID = '" . $WellnessCheckID . "' AND QuestionNumber = '" . $i . "' AND WellnessType = '" . $WellnessType . "';")->row();
-      if (isset($QuestionID->QuestionID)) {
+    $QuestionID = $this->uri->segment(4);
+    $data = array(
+      'Question' => $this->input->post('txtQuestion'),
+      'Category' => $this->input->post('txtCategory'),
+    );
+    $this->main_model->update_entry('tblwellnessquestion', $data, 'QuestionID', $QuestionID);
+    redirect(site_url() . 'administrator/wellness_check/' . $WellnessCheckID);
+  }
+
+  public function wellness_question_save()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $WellnessCheckID = $this->uri->segment(3);
+    $Title = '';
+    $WellnessType = '';
+    $NumberQuestion = 0;
+    $numberOfCategory = 0;
+
+    $type = "";
+
+    $result = $this->db->query("SELECT * FROM tblwellnesscheck WHERE WellnessCheckID = '" . $WellnessCheckID . "'");
+    foreach ($result->result() as $row) {
+      $Title = $row->Title;
+      $WellnessType = $row->WellnessType;
+      $NumberQuestion = $row->NumberQuestion;
+      $numberOfCategory = $row->numberOfCategory;
+    }
+
+    if ($WellnessType == 'Qualitative') {
+      $this->session->set_flashdata('isPublish', 'true');
+      $type = "Sentiment Analysis Questions";
+    } else {
+      $this->session->set_flashdata('isPublish', 'false');
+      $type = "Quantitative Questions";
+    }
+
+    $questions = $this->input->post('txtQuestion');
+    $category = $this->input->post('txtCategory');
+
+    if (is_array($questions) && is_array($category)) {
+      for ($a = 0; $a < $numberOfCategory; $a++) {
+        $questionCount = 1;
+        foreach ($questions as $question) {
+          $data = array(
+            'QuestionNumber' => $questionCount,
+            'Question' => $question,
+            'Category' => $this->input->post('txtCategory')[$a],
+            'WellnessCheckID' => $WellnessCheckID,
+            'WellnessType' => $WellnessType,
+            'CreatedBy' => $this->session->userdata('UserID'),
+          );
+          $QuestionID = $this->main_model->insert_entry('tblwellnessquestion', $data);
+          if ($QuestionID) {
+            $this->checkAndInsertInQuestionBank($question, $type);
+            $questionCount++;
+          }
+        }
+      }
+    } else {
+      for ($i = 1; $i <= $NumberQuestion; $i++) {
         $data = array(
           'QuestionNumber' => $i,
           'Question' => $this->input->post('txtQuestion' . $i),
-          'Category' => $this->input->post('txtCategory' . $i),
+          'Category' => $this->input->post('txtCategory'),
           'WellnessCheckID' => $WellnessCheckID,
           'WellnessType' => $WellnessType,
-          'CreatedBy' => $this->session->userdata('AdminUserID'),
-        );
-        $this->main_model->update_entry('tblwellnessquestion', $data, 'QuestionID', $QuestionID->QuestionID);
-      } else {
-        $data = array(
-          'QuestionNumber' => $i,
-          'Question' => $this->input->post('txtQuestion' . $i),
-          'Category' => $this->input->post('txtCategory' . $i),
-          'WellnessCheckID' => $WellnessCheckID,
-          'WellnessType' => $WellnessType,
-          'CreatedBy' => $this->session->userdata('AdminUserID'),
+          'CreatedBy' => $this->session->userdata('UserID'),
         );
         $QuestionID = $this->main_model->insert_entry('tblwellnessquestion', $data);
+        if ($QuestionID) {
+          $this->checkAndInsertInQuestionBank($this->input->post('txtQuestion' . $i), $type);
+        }
       }
     }
-    redirect(site_url() . 'administrator/wellness_question_list');
+
+    redirect(site_url() . 'administrator/wellness_check/' . $WellnessCheckID);
+  }
+
+  public function checkAndInsertInQuestionBank($question, $type)
+  {
+    $questionQ = $this->db->query("SELECT * FROM tblquestionbank WHERE LOWER(Question) LIKE LOWER('%$question%')");
+    $resQuestion = $questionQ->result();
+    if ($questionQ->num_rows() == 0) {
+      $data = array(
+        'Question' => $question,
+        'Category' => $type,
+        'CreatedBy' => $this->session->userdata('UserID'),
+      );
+      $QuestionID = $this->main_model->insert_entry('tblquestionbank', $data);
+    }
   }
 
   public function question_bank()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Question Bank';
     $data['content'] = 'question_bank';
@@ -310,7 +786,7 @@ class Administrator extends CI_Controller
         'Question' => $this->input->post('txtQuestion'),
         'Category' => $this->input->post('txtType'),
         'CreatedOn' => $this->input->post('txtDate'),
-        'CreatedBy' => $this->session->userdata('AdminUserID'),
+        'CreatedBy' => $this->session->userdata('UserID'),
       );
       $QuestionID = $this->main_model->insert_entry('tblquestionbank', $data);
     } else {
@@ -320,7 +796,7 @@ class Administrator extends CI_Controller
           'Question' => $this->input->post('txtQuestion'),
           'Category' => $this->input->post('txtType'),
           'CreatedOn' => $this->input->post('txtDate'),
-          'CreatedBy' => $this->session->userdata('AdminUserID'),
+          'CreatedBy' => $this->session->userdata('UserID'),
         );
         $this->main_model->update_entry('tblquestionbank', $data, 'QuestionID', $this->uri->segment(3));
       } else {
@@ -332,7 +808,7 @@ class Administrator extends CI_Controller
 
   public function question_banks()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Question Bank';
     $data['content'] = 'question_banks';
@@ -358,7 +834,7 @@ class Administrator extends CI_Controller
 
   public function assessments()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Wellness Check';
     $data['content'] = 'assessments';
@@ -367,7 +843,7 @@ class Administrator extends CI_Controller
 
   public function assessment()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Assessment';
     $data['content'] = 'assessment';
@@ -383,7 +859,7 @@ class Administrator extends CI_Controller
         'Semester' => $this->input->post('txtSemester'),
         'NumberQuestion' => $this->input->post('txtNumberQuestion'),
         'NumberQuestionSent' => $this->input->post('txtNumberQuestionSent'),
-        'CreatedBy' => $this->session->userdata('AdminUserID'),
+        'CreatedBy' => $this->session->userdata('UserID'),
       );
       $AssessmentID = $this->main_model->insert_entry('tblassessment', $data);
     } else {
@@ -403,7 +879,7 @@ class Administrator extends CI_Controller
 
   public function question()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Question';
     $data['content'] = 'question';
@@ -432,7 +908,7 @@ class Administrator extends CI_Controller
           'Question' => $this->input->post('txtQuestion' . $i),
           'Category' => $this->input->post('txtCategory' . $i),
           'AssessmentID' => $AssessmentID,
-          'CreatedBy' => $this->session->userdata('AdminUserID'),
+          'CreatedBy' => $this->session->userdata('UserID'),
         );
         $this->main_model->update_entry('tblquestion', $data, 'QuestionID', $QuestionID->QuestionID);
       } else {
@@ -441,7 +917,7 @@ class Administrator extends CI_Controller
           'Question' => $this->input->post('txtQuestion' . $i),
           'Category' => $this->input->post('txtCategory' . $i),
           'AssessmentID' => $AssessmentID,
-          'CreatedBy' => $this->session->userdata('AdminUserID'),
+          'CreatedBy' => $this->session->userdata('UserID'),
         );
         $QuestionID = $this->main_model->insert_entry('tblquestion', $data);
       }
@@ -454,7 +930,7 @@ class Administrator extends CI_Controller
           'Question' => $this->input->post('txtQuestionMul' . $i),
           'Category' => $this->input->post('txtCategoryMul' . $i),
           'AssessmentID' => $AssessmentID,
-          'CreatedBy' => $this->session->userdata('AdminUserID'),
+          'CreatedBy' => $this->session->userdata('UserID'),
         );
         $this->main_model->update_entry('tblquestion', $data, 'QuestionID', $QuestionID->QuestionID);
       } else {
@@ -463,7 +939,7 @@ class Administrator extends CI_Controller
           'Question' => $this->input->post('txtQuestionMul' . $i),
           'Category' => $this->input->post('txtCategoryMul' . $i),
           'AssessmentID' => $AssessmentID,
-          'CreatedBy' => $this->session->userdata('AdminUserID'),
+          'CreatedBy' => $this->session->userdata('UserID'),
         );
         $QuestionID = $this->main_model->insert_entry('tblquestion', $data);
       }
@@ -488,7 +964,7 @@ class Administrator extends CI_Controller
 
   public function colleges()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Colleges';
     $data['content'] = 'colleges';
@@ -497,7 +973,7 @@ class Administrator extends CI_Controller
 
   public function college()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'College';
     $data['content'] = 'college';
@@ -533,7 +1009,7 @@ class Administrator extends CI_Controller
 
   public function appointments()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Appointments';
     $data['content'] = 'appointments';
@@ -542,7 +1018,7 @@ class Administrator extends CI_Controller
 
   public function view_appointment()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'View Appointment';
     $data['content'] = 'view_appointment';
@@ -551,7 +1027,7 @@ class Administrator extends CI_Controller
 
   public function appointment()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Appointment';
     $data['content'] = 'appointment';
@@ -560,7 +1036,7 @@ class Administrator extends CI_Controller
 
   public function appointment_save()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $email = $this->input->post('txtEmail');
 
     if ($this->routines->validateEmail($email)) {
@@ -577,7 +1053,8 @@ class Administrator extends CI_Controller
         'Platform' => $this->input->post('txtPlatform'),
         'PreferredTime' => $this->input->post('txtPreferredTime'),
         'SelectedDate' => $this->input->post('txtSelectedDate'),
-        'CreatedBy' => $this->session->userdata('AdminUserID'),
+        'CreatedBy' => $this->session->userdata('UserID'),
+        'AppointmentSchedID' => $this->session->userdata('AppointmentSchedID'),
       );
       if ($this->uri->segment(3) == '') {
         $this->main_model->insert_entry('tblappointment', $data);
@@ -595,9 +1072,19 @@ class Administrator extends CI_Controller
     redirect(site_url() . 'administrator/appointments');
   }
 
+  public function appointment_remarks_save()
+  {
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
+    $data = array(
+      'Remarks' => $this->input->post('txtRemarks'),
+    );
+    $this->main_model->update_entry('tblappointment', $data, 'AppointmentID', $this->uri->segment(3));
+    redirect(site_url() . 'administrator/view_appointment/' . $this->uri->segment(3));
+  }
+
   public function set_schedule_date()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
 
     if ($this->uri->segment(3) == '') {
       redirect(site_url() . 'administrator/set_schedule_date');
@@ -614,7 +1101,7 @@ class Administrator extends CI_Controller
 
   public function schedule_appointment()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Schedule Appointment';
     $data['sub_heading'] = 'Schedule Appointment';
     $data['content'] = 'schedule_appointment';
@@ -623,7 +1110,7 @@ class Administrator extends CI_Controller
 
   public function set_schedule_appointment()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'New Schedule Appointment';
     $data['sub_heading'] = 'New Schedule Appointment';
     $data['content'] = 'set_schedule_appointment';
@@ -632,34 +1119,16 @@ class Administrator extends CI_Controller
 
   public function schedule()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Create Schedule';
     $data['content'] = 'schedule';
     $this->load->view('administrator/administrator_template', $data);
   }
 
-  public function schedule_save()
-  {
-    $data = array(
-      'AppointmentDate' => $this->input->post('txtAppointmentDate'),
-      'AppointmentTime' => $this->input->post('txtAppointmentTime'),
-      'Status' => 'Active',
-      'CreatedOn' => $this->routines->getCurrentDateTime(),
-      'CreatedBy' => $this->session->userdata('AdminUserID'),
-    );
-    if ($this->uri->segment(3) == '') {
-      $this->main_model->insert_entry('tblappointmentsched', $data);
-    } else {
-      $this->main_model->update_entry('tblappointmentsched', $data, 'AppointmentSchedID', $this->uri->segment(3));
-    }
-    $this->session->set_flashdata('Success', 'Appointment schedule data was successfully saved.');
-    redirect(site_url() . 'administrator/schedule/' . $this->uri->segment(3));
-  }
-
   public function appointment_reports()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Appointment Reports';
     $data['content'] = 'appointment_reports';
@@ -668,153 +1137,11 @@ class Administrator extends CI_Controller
 
   public function assessment_reports()
   {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
+    $this->routines->ifLogin($this->session->userdata('UserID'), site_url() . 'administrator/login');
     $data['heading'] = 'Administrator';
     $data['sub_heading'] = 'Assessment Reports';
     $data['content'] = 'assessment_reports';
     $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function admin_lists()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Admin List';
-    $data['content'] = 'admin_lists';
-    $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function change_profile_picture()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Change Profile Picture';
-    $data['content'] = 'change_profile_picture';
-    $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function change_profile_picture_save()
-  {
-    $result = $this->routines->Upload('/uploads', 30, 'pdf|jpg|png');
-    echo $result['file_name'];
-    $ImageLoc = $result['file_name'];
-    $data = array(
-      'ImageLoc' => $ImageLoc
-    );
-    $this->main_model->update_entry('tbluser', $data, 'UserID', $this->session->userdata('AdminUserID'));
-    $this->routines->del_image($this->session->userdata('ImageLoc'));
-    $this->session->set_userdata('ImageLoc', $ImageLoc);
-    redirect(site_url() . 'administrator/change_profile_picture');
-  }
-
-  public function admin_list()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), site_url() . 'administrator/login');
-    $data['heading'] = 'Administrator';
-    $data['sub_heading'] = 'Admin Details';
-    $data['content'] = 'admin_list';
-    $this->load->view('administrator/administrator_template', $data);
-  }
-
-  public function admin_list_save()
-  {
-    // wvsu.edu.ph
-    if ($this->input->post('txtPassword') <> $this->input->post('txtConfirmPassword')) {
-      $this->session->set_flashdata('admin_list_save', 'Password not match.');
-      redirect(site_url() . 'administrator/admin_list');
-    }
-
-    $hashPassword = hash("sha256", $this->input->post('txtPassword'));
-    $email = $this->input->post('txtEmail');
-
-    $data = array(
-      'HashedPassword' => $hashPassword,
-      'Fullname' => $this->input->post('txtFullname'),
-      'UserType' => 'Administrator',
-      'Address' => '',
-      'IdentifiedGender' => $this->input->post('txtIdentifiedGender'),
-      'BiologicalSex' => '',
-      'Course' => '',
-      'YearSec' => '',
-      'Email' => $email,
-      'SchoolID ' => $this->input->post('txtSchoolID'),
-      'CollegeID ' => $this->input->post('txtCollege'),
-      'CreatedOn' => $this->routines->getCurrentDateTime(),
-      'CreatedBy' => 0,
-      'Status' => 'Active',
-    );
-    if ($this->routines->validateEmail($email)) {
-      if ($this->uri->segment(3) == '') {
-        $this->main_model->insert_entry('tbluser', $data);
-      } else {
-        $this->main_model->update_entry('tbluser', $data, 'UserID', $this->uri->segment(3));
-      }
-      $this->session->set_flashdata('admin_list_save', 'Registration was successfully saved.');
-    } else {
-      $this->session->set_flashdata('Fullname', $this->input->post('txtFullname'));
-      $this->session->set_flashdata('IdentifiedGender', $this->input->post('txtIdentifiedGender'));
-      $this->session->set_flashdata('CollegeID', $this->input->post('txtCollege'));
-      $this->session->set_flashdata('SchoolID', $this->input->post('txtSchoolID'));
-      $this->session->set_flashdata('Email', $email);
-      $this->session->set_flashdata('admin_list_save', 'The email was invalid only accepts wvsu.edu.ph email.');
-    }
-    // SEND EMAIL VERIFICATION
-    if ($this->input->post('txtRegisterType') == 'Superadmin') {
-      redirect(site_url() . 'administrator/admin_list/' . $this->uri->segment(3));
-    } else {
-      redirect(site_url() . 'administrator/admin_portal/' . $this->uri->segment(3));
-    }
-  }
-
-  public function login()
-  {
-    $this->routines->ifLogin($this->session->userdata('AdminUserID'), $this->session->userdata('Location'), false);
-    $data['heading'] = 'Superadmin Login';
-    $this->load->view('administrator/login', $data);
-  }
-
-  public function administrator_login()
-  {
-    if (!$this->input->post('txtUsername')) {
-      redirect(site_url() . 'administrator/login');
-    }
-
-    $UserType = $this->db->escape_str($this->input->post('txtUserType'));
-    $username = $this->db->escape_str($this->input->post('txtUsername'));
-    $password = hash("sha256", $this->db->escape_str($this->input->post('txtPassword')));
-    $Query = $this->db->query("SELECT * FROM tbluser WHERE SchoolID = '{$username}' AND HashedPassword = '{$password}' AND UserType = '{$UserType}';");
-
-    if ($Query->num_rows() <> 0) {
-      $rowdata = $Query->row();
-      if ($rowdata->Status == 'Inactive') {
-        $this->session->set_flashdata('Failed', 'Login authentication failed, please verify your email.');
-        redirect(site_url() . 'administrator/login');
-      }
-      if ($rowdata->UserType == 'Administrator') {
-        $this->session->set_userdata('AdminUserID', $rowdata->UserID);
-        $this->session->set_userdata('AdminUserType', $rowdata->UserType);
-        $this->session->set_userdata('AdminFullname', $rowdata->Fullname);
-        $this->session->set_userdata('AdminEmail', $rowdata->Email);
-        $this->session->set_userdata('AdminCollegeID', $rowdata->CollegeID);
-        $this->session->set_userdata('AdminSchoolID', $rowdata->SchoolID);
-        $this->session->set_userdata('ImageLoc', $rowdata->ImageLoc);
-        $this->session->set_userdata('AdminLocation', site_url() . 'administrator' . ($rowdata->isNew == "1" ? "/change_password" : ""));
-        redirect(site_url() . 'administrator' . ($rowdata->isNew == "1" ? "/change_password" : ""));
-      } else {
-        $this->session->set_userdata('UserID', $rowdata->UserID);
-        $this->session->set_userdata('UserType', $rowdata->UserType);
-        $this->session->set_userdata('Fullname', $rowdata->Fullname);
-        $this->session->set_userdata('Email', $rowdata->Email);
-        $this->session->set_userdata('CollegeID', $rowdata->CollegeID);
-        $this->session->set_userdata('SchoolID', $rowdata->SchoolID);
-        $this->session->set_userdata('ImageLoc', $rowdata->ImageLoc);
-        $this->session->set_userdata('Location', site_url() . 'superadmin');
-        redirect(site_url() . 'superadmin');
-      }
-    } else {
-      $this->session->set_flashdata('Failed', 'Login Authentication Failed.');
-      redirect(site_url() . 'administrator/login');
-    }
   }
 
   public function logout()
@@ -915,7 +1242,7 @@ class Administrator extends CI_Controller
         'SelectedDate' => $this->input->post('txtSelectedDate'),
         'Reason' => $this->input->post('txtReason'),
         'Email' => $this->input->post('txtEmail'),
-        'CreatedBy' => $this->session->userdata('AdminUserID'),
+        'CreatedBy' => $this->session->userdata('UserID'),
       );
       if ($this->uri->segment(3) == '') {
         $this->main_model->insert_entry('tblappointment', $data);
@@ -937,24 +1264,6 @@ class Administrator extends CI_Controller
     }
     $this->session->set_flashdata('Success', 'Appointment data was successfully deleted.');
     redirect(site_url() . 'administrator/appointments');
-  }
-
-  public function update_status()
-  {
-    $data = array(
-      'Status' => ''
-    );
-    if ($this->uri->segment(3) == '') {
-    } else {
-      $data = array(
-        'Status' => urldecode($this->uri->segment(4))
-      );
-      $this->main_model->update_entry('tblappointment', $data, 'AppointmentID', $this->uri->segment(3));
-      //send email
-      $sendemail = $this->routines->sendEmail("Appointment Status", "Your appointment was " . urldecode($this->uri->segment(4)), $this->session->userdata('AppointmentEmail'));
-    }
-    $this->session->set_flashdata('Success', 'Appointment data was successfully saved.');
-    redirect(site_url() . 'administrator/view_appointment/' . $this->uri->segment(3));
   }
 
   public function sendemail()

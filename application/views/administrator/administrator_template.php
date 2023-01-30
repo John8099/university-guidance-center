@@ -11,7 +11,7 @@
   <link href="<?= base_url() . 'media/' ?>fullcalendar/lib/main.css" rel="stylesheet">
   <script src='https://github.com/mozilla-comm/ical.js/releases/download/v1.4.0/ical.js'></script>
   <script src='<?= base_url() . 'media/' ?>fullcalendar/lib/main.js'></script>
-  <script src='<?= base_url() . 'media/' ?>fullcalendar/packages/icalendar/main.global.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var calendarEl = document.getElementById('calendar');
@@ -19,16 +19,18 @@
       var data = [];
       <?php
       $query = $this->db->query("SELECT * FROM tblappointmentsched WHERE Status='Active';");
-
+      $Appointment = '';
       foreach ($query->result() as $row) :
         $Fullname = '';
         $User = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $row->CreatedBy . "';")->row();
         if (isset($User->UserID)) {
-          $Fullname = $User->Fullname;
+          $Fullname = $this->routines->getUserFullName($User->UserID);
         }
+        $Appointment = $row->AppointmentTime . '<br>' . $Fullname;
       ?>
+        appointment = '<?= $Appointment; ?>';
         data.push({
-          title: '<?= $row->AppointmentTime . " - " . $Fullname; ?>',
+          title: appointment,
           url: '<?= site_url() . 'administrator/set_schedule_date/' . $row->AppointmentSchedID; ?>',
           start: '<?= $row->AppointmentDate; ?>'
         });
@@ -41,8 +43,10 @@
         },
         events: data,
         loading: function(bool) {
-          document.getElementById('loading').style.display =
-            bool ? 'block' : 'none';
+          const loadingEl = document.getElementById('loading');
+          if (loadingEl) {
+            loadingEl.style.display = bool ? 'block' : 'none'
+          }
         }
       });
 
@@ -53,8 +57,51 @@
   <link href="<?= base_url() . 'media/' ?>assets/libs/chartist/dist/chartist.min.css" rel="stylesheet">
   <link href="<?= base_url() . 'media/' ?>dist/css/style.min.css" rel="stylesheet">
   <link href="<?= base_url() . 'media/' ?>global.css" rel="stylesheet">
-  <script src="<?= base_url() . 'media/' ?>assets/libs/sweetalert/sweetalert.min.js"></script>
+
+  <link rel="stylesheet" href="<?= base_url() . 'media/' ?>datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="<?= base_url() . 'media/' ?>datatables-buttons/css/buttons.bootstrap4.min.css">
+
+  <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.3.4/css/searchBuilder.dataTables.min.css">
+  <link rel="stylesheet" href="<?= base_url() . 'media/' ?>datatables-datetime/css/dataTables.dateTime.min.css">
+
+  <script src="<?= base_url() . 'media/' ?>assets/libs/jquery/dist/jquery.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>sweetalert2/sweetalert2.all.min.js"></script>
+
+  <link rel="stylesheet" href="<?= base_url() . 'media/' ?>jquery-editable-select/css/jquery-editable-select.css">
+  <script src="<?= base_url() . 'media/' ?>jquery-editable-select/js/jquery-editable-select.js"></script>
+
+  <!-- Bootstrap tether Core JavaScript -->
+  <script src="<?= base_url() . 'media/' ?>assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- <script src="<?= base_url() . 'media/' ?>assets/libs/bootstrap/dist/js/bootstrap.min.js"></script> -->
+  <script src="<?= base_url() . 'media/' ?>dist/js/app-style-switcher.js"></script>
+  <!--Wave Effects -->
+  <script src="<?= base_url() . 'media/' ?>dist/js/waves.js"></script>
+  <!--Menu sidebar -->
+  <script src="<?= base_url() . 'media/' ?>dist/js/sidebarmenu.js"></script>
+  <!--Custom JavaScript -->
+  <script src="<?= base_url() . 'media/' ?>dist/js/custom.js"></script>
+  <!--This page JavaScript -->
+
+  <script src="<?= base_url() . 'media/' ?>datatables/jquery.dataTables.min.js"></script>
+
+  <script src="<?= base_url() . 'media/' ?>datatables/jquery.dataTables.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-responsive/js/dataTables.responsive.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/dataTables.buttons.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>jszip/jszip.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.html5.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.print.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-buttons/js/buttons.colVis.min.js"></script>
+
+  <script src="<?= base_url() . 'media/' ?>datatables-searchbuilder/js/dataTables.searchBuilder.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables-datetime/js/dataTables.dateTime.min.js"></script>
   <style type="text/css">
+    .fc-day-today {
+      background: #d1e0ef !important;
+    }
+
     /*the container must be positioned relative:*/
     .custom-select {
       position: relative;
@@ -121,6 +168,11 @@
     .select-items div:hover,
     .same-as-selected {
       background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .dataTables_filter {
+      display: flex;
+      justify-content: flex-end !important;
     }
   </style>
 </head>
@@ -220,15 +272,16 @@
                 <div class="user-content hide-menu m-l-10 text-center">
                   <a href="#" class="" id="Userdd" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <h6 class="m-b-0 m-t-20 user-name font-small">
-                      <?= $this->session->userdata("AdminFullname") ?>
+                      <?= $this->session->userdata("Fullname") ?>
                       <i class="fa fa-angle-down"></i>
                     </h6>
                     <span class="op-5 user-email">
-                      <?= $this->session->userdata("AdminUserType") ?>
+                      <?= $this->session->userdata("UserType") ?>
+                      <?= $this->routines->getCollege($this->session->userdata("CollegeID")) ?>
                     </span>
                   </a>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="Userdd">
-                    
+                    <a class="dropdown-item" href="<?= site_url() . 'administrator/admin_lists'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Admin List</a>
                     <a class="dropdown-item" href="<?= site_url() . 'administrator/change_password'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Change Password</a>
                     <a class="dropdown-item" href="<?= site_url() . 'administrator/change_profile_picture'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Change Profile Picture</a>
                   </div>
@@ -255,18 +308,22 @@
             </li>
 
             <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'administrator/wellness_question_list'; ?>" aria-expanded="false"><i class="mdi mdi-emoticon"></i><span class="hide-menu">Wellness Check</span>
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'administrator/wellness_checks'; ?>" aria-expanded="false"><i class="mdi mdi-clipboard-text"></i><span class="hide-menu">Assessment list</span>
               </a>
             </li>
 
             <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'administrator/colleges'; ?>" aria-expanded="false"><i class="mdi mdi-book-open-page-variant"></i><span class="hide-menu">College</span>
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'administrator/question_banks'; ?>" aria-expanded="false"><i class="mdi mdi-bank"></i><span class="hide-menu">Question bank</span>
               </a>
             </li>
 
+            <li class="sidebar-item">
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'administrator/appointments'; ?>" aria-expanded="false"><i class="mdi mdi-calendar-multiple-check"></i><span class="hide-menu">Manage Appointment</span>
+              </a>
+            </li>
 
             <li class="sidebar-item">
-              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'administrator/appointments'; ?>" aria-expanded="false"><i class="mdi mdi-calendar-multiple-check"></i><span class="hide-menu">Appointment list</span>
+              <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'administrator/appointment_list'; ?>" aria-expanded="false"><i class="mdi mdi-calendar"></i><span class="hide-menu">Appointment List</span>
               </a>
             </li>
 
@@ -318,95 +375,105 @@
       <!-- Container fluid  -->
       <!-- ============================================================== -->
       <div class="container-fluid">
-        <?php if (isset($content)) : ?>
-          <?php if ($content == 'student_inventory') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
 
-          <?php elseif ($content == 'dashboard') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+        <?php if (isset($content)) {
+          if ($content == 'student_inventory') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'wellness_question_list') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'dashboard') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'colleges') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'wellness_question_list') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'appointments') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'appointments') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'college') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'college') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'appointment') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'appointment') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'view_appointment') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'view_appointment') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'appointment_reports') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'appointment_reports') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'assessments') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'assessments') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'assessment') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'assessment') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'question') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'question') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'schedule') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'schedule') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'students') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'students') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'completed_appointment') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'completed_appointment') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'admin_lists') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'admin_lists') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'admin_list') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'admin_list') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'pending_appointment') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'pending_appointment') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'assessment_reports') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'assessment_reports') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'question_banks') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'question_banks') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'question_bank') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'question_bank') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'student_view') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'student_view') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'wellness_checks') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'wellness_checks') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'wellness_check') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'wellness_check') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'wellness_question') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'wellness_question') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'set_schedule_appointment') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'set_schedule_appointment') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'schedule_appointment') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'schedule_appointment') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'change_password') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
+          elseif ($content == 'wellness_question_update') :
+            $this->load->view('administrator/' . $content);
 
-          <?php elseif ($content == 'change_profile_picture') : ?>
-            <?php $this->load->view('administrator/' . $content); ?>
-          <?php endif; ?>
-        <?php endif; ?>
+          elseif ($content == 'change_password') :
+            $this->load->view('administrator/' . $content);
+
+          elseif ($content == 'change_profile_picture') :
+            $this->load->view('administrator/' . $content);
+
+          elseif ($content == 'appointment_list') :
+            $this->load->view('administrator/' . $content);
+
+          elseif ($content == 'question_banks') :
+            $this->load->view('administrator/' . $content);
+
+          endif;
+        }
+        ?>
+
       </div>
       <!-- ============================================================== -->
       <!-- End Container fluid  -->
@@ -422,50 +489,46 @@
   <!-- ============================================================== -->
   <!-- ============================================================== -->
 
-  <!-- All Jquery -->
-  <!-- ============================================================== -->
-  <script src="<?= base_url() . 'media/' ?>assets/libs/jquery/dist/jquery.min.js"></script>
-  <!-- Bootstrap tether Core JavaScript -->
-  <script src="<?= base_url() . 'media/' ?>assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>dist/js/app-style-switcher.js"></script>
-  <!--Wave Effects -->
-  <script src="<?= base_url() . 'media/' ?>dist/js/waves.js"></script>
-  <!--Menu sidebar -->
-  <script src="<?= base_url() . 'media/' ?>dist/js/sidebarmenu.js"></script>
-  <!--Custom JavaScript -->
-  <script src="<?= base_url() . 'media/' ?>dist/js/custom.js"></script>
-  <!--This page JavaScript -->
-  <!--chartis chart-->
-  <script src="<?= base_url() . 'media/' ?>assets/libs/chartist/dist/chartist.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>dist/js/pages/dashboards/dashboard1.js"></script>
-  <script src="<?= base_url() . 'media/' ?>dist/js/chart.js"></script>
 
-  <script src="<?= base_url() . 'media/' ?>datatables/jquery.dataTables.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables/dataTables.buttons.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables/buttons.print.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables/dataTables.bootstrap4.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables/dataTables.responsive.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables/responsive.bootstrap4.min.js"></script>
   <script type="text/javascript">
-    $(document).ready(function() {
-      $('#datatable').DataTable({
-        ordering: false,
-        dom: 'Bfrtip',
-        buttons: [{
-          customize: function(win) {
-            $(win.document.body).find('h1').css('font-size', '12pt');
-          }
-        }],
-        "paging": false,
+    try {
+      $(document).ready(function() {
+        $('.fc-event-title.fc-sticky').each(function(data) {
+          $(this).html($(this).text());
+        });
+
+        const tableConfig = {
+          "paging": true,
+          "lengthChange": false,
+          "ordering": true,
+          "info": true,
+          "autoWidth": false,
+          "responsive": true,
+
+          "buttons": [
+            "searchBuilder",
+          ],
+          language: {
+            searchBuilder: {
+              button: 'Advance search',
+            }
+          },
+        }
+
+        var table = $("#dashboardTable").DataTable(tableConfig)
+        var assessmentTable = $("#assessmentTable").DataTable(tableConfig)
+
+        table.buttons().container().appendTo('#dashboardTable_wrapper .col-md-6:eq(0)');
+        assessmentTable.buttons().container().appendTo('#assessmentTable_wrapper .col-md-6:eq(0)');
       });
-    });
-    $('#SelectCollegeAppointmentReports').change(function() {
-      window.location = '<?= site_url() . 'administrator/appointment_reports/'; ?>' + $('#SelectCollegeAppointmentReports').val();
-    });
-  </script>
 
-  <script type="text/javascript">
+      $('#SelectCollegeAppointmentReports').change(function() {
+        window.location = '<?= site_url() . 'administrator/appointment_reports/'; ?>' + $('#SelectCollegeAppointmentReports').val();
+      });
+    } catch (err) {
+      console.error(err)
+    }
+
     function successful() {
       // $('#alertsuccess').removeClass('d-none');
       //  setTimeout(function(){
@@ -500,87 +563,406 @@
       failed();
     </script>
   <?php endif; ?>
+  <?php
+  $barChartQ = $this->db->query("SELECT MAX(MONTHNAME(tbl_A.SelectedDate)) AS SelectedDate, COUNT(1) AS CountPerMonth
+        FROM tblappointment tbl_A WHERE tbl_A.status='Completed' and tbl_A.CollegeID='" . $this->session->userdata('CollegeID') . "' GROUP BY MONTHNAME(tbl_A.SelectedDate);");
+
+  $barResult = $barChartQ->result();
+
+  $lineChartQ = $this->db->query("SELECT 
+                                  CAST(REPLACE(YEARWEEK(r.CreatedOn), year(curdate()), '') AS INT)  AS YearWeek, 
+                                  Results,
+                                  wc.WellnessCheckID,
+                                  wc.CreatedBy
+                                  FROM tblresult r
+                                  LEFT JOIN tblwellnesscheck wc
+                                  ON
+                                  r.WellnessCheckID = wc.WellnessCheckID
+                                  LEFT JOIN tbluser u
+                                  ON
+                                  wc.CreatedBy = u.UserID
+                                  WHERE 
+                                  year(r.CreatedOn) = year(curdate()) and 
+                                  Results<>'' and
+                                  u.CollegeID = '" . $this->session->userdata('CollegeID') . "'
+                                  
+                                  ");
+
+  $lineResults = $lineChartQ->result();
+  ?>
   <script>
-    var x, i, j, l, ll, selElmnt, a, b, c;
-    /* Look for any elements with the class "custom-select": */
-    x = document.getElementsByClassName("custom-select");
-    l = x.length;
-    for (i = 0; i < l; i++) {
-      selElmnt = x[i].getElementsByTagName("select")[0];
-      ll = selElmnt.length;
-      /* For each element, create a new DIV that will act as the selected item: */
-      a = document.createElement("DIV");
-      a.setAttribute("class", "select-selected");
-      a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
-      x[i].appendChild(a);
-      /* For each element, create a new DIV that will contain the option list: */
-      b = document.createElement("DIV");
-      b.setAttribute("class", "select-items select-hide");
-      for (j = 1; j < ll; j++) {
-        /* For each option in the original select element,
-        create a new DIV that will act as an option item: */
-        c = document.createElement("DIV");
-        c.innerHTML = selElmnt.options[j].innerHTML;
-        c.addEventListener("click", function(e) {
-          /* When an item is clicked, update the original select box,
-          and the selected item: */
-          var y, i, k, s, h, sl, yl;
-          s = this.parentNode.parentNode.getElementsByTagName("select")[0];
-          sl = s.length;
-          h = this.parentNode.previousSibling;
-          for (i = 0; i < sl; i++) {
-            if (s.options[i].innerHTML == this.innerHTML) {
-              s.selectedIndex = i;
-              h.innerHTML = this.innerHTML;
-              y = this.parentNode.getElementsByClassName("same-as-selected");
-              yl = y.length;
-              for (k = 0; k < yl; k++) {
-                y[k].removeAttribute("class");
+    try {
+      var x, i, j, l, ll, selElmnt, a, b, c;
+      /* Look for any elements with the class "custom-select": */
+      x = document.getElementsByClassName("custom-select");
+      l = x.length;
+      for (i = 0; i < l; i++) {
+        selElmnt = x[i].getElementsByTagName("select")[0];
+        ll = selElmnt.length;
+        /* For each element, create a new DIV that will act as the selected item: */
+        a = document.createElement("DIV");
+        a.setAttribute("class", "select-selected");
+        a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+        x[i].appendChild(a);
+        /* For each element, create a new DIV that will contain the option list: */
+        b = document.createElement("DIV");
+        b.setAttribute("class", "select-items select-hide");
+        for (j = 1; j < ll; j++) {
+          /* For each option in the original select element,
+          create a new DIV that will act as an option item: */
+          c = document.createElement("DIV");
+          c.innerHTML = selElmnt.options[j].innerHTML;
+          c.addEventListener("click", function(e) {
+            /* When an item is clicked, update the original select box,
+            and the selected item: */
+            var y, i, k, s, h, sl, yl;
+            s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+            sl = s.length;
+            h = this.parentNode.previousSibling;
+            for (i = 0; i < sl; i++) {
+              if (s.options[i].innerHTML == this.innerHTML) {
+                s.selectedIndex = i;
+                h.innerHTML = this.innerHTML;
+                y = this.parentNode.getElementsByClassName("same-as-selected");
+                yl = y.length;
+                for (k = 0; k < yl; k++) {
+                  y[k].removeAttribute("class");
+                }
+                this.setAttribute("class", "same-as-selected");
+                break;
               }
-              this.setAttribute("class", "same-as-selected");
-              break;
             }
-          }
-          h.click();
+            h.click();
+          });
+          b.appendChild(c);
+        }
+        x[i].appendChild(b);
+        a.addEventListener("click", function(e) {
+          /* When the select box is clicked, close any other select boxes,
+          and open/close the current select box: */
+          e.stopPropagation();
+          closeAllSelect(this);
+          this.nextSibling.classList.toggle("select-hide");
+          this.classList.toggle("select-arrow-active");
         });
-        b.appendChild(c);
       }
-      x[i].appendChild(b);
-      a.addEventListener("click", function(e) {
-        /* When the select box is clicked, close any other select boxes,
-        and open/close the current select box: */
-        e.stopPropagation();
-        closeAllSelect(this);
-        this.nextSibling.classList.toggle("select-hide");
-        this.classList.toggle("select-arrow-active");
+
+      function closeAllSelect(elmnt) {
+        /* A function that will close all select boxes in the document,
+        except the current select box: */
+        var x, y, i, xl, yl, arrNo = [];
+        x = document.getElementsByClassName("select-items");
+        y = document.getElementsByClassName("select-selected");
+        xl = x.length;
+        yl = y.length;
+        for (i = 0; i < yl; i++) {
+          if (elmnt == y[i]) {
+            arrNo.push(i)
+          } else {
+            y[i].classList.remove("select-arrow-active");
+          }
+        }
+        for (i = 0; i < xl; i++) {
+          if (arrNo.indexOf(i)) {
+            x[i].classList.add("select-hide");
+          }
+        }
+      }
+
+      /* If the user clicks anywhere outside the select box,
+      then close all select boxes: */
+      document.addEventListener("click", closeAllSelect);
+
+      let inumber = 1;
+      let qnumber = 1;
+      $(document).ready(function() {
+        $('#btn_add_question').click(function() {
+          question_input = `<div id="qinputremoveq` + inumber + `" class="row"><div class="col-lg-11 col-xlg-11 col-md-11">
+                                <div class="form-group">
+                                    <label for="txtQuestion[]" class="col-md-12">Question</label>
+                                    <div class="col-md-12">
+                                        <input name='txtQuestion[]' id="txtQuestion[]" type="text" placeholder="Enter title here" class="form-control form-control-line" value="" required />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-1 col-xlg-1 col-md-1">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                    <label for="txtQuestion[]" class="col-md-12">&nbsp;</label>
+                                        <button type="button" class="btn btn-success w-100 btn_add_question" id="removeq` + inumber + `">Remove</button>
+                                    </div>
+                                </div>
+                            </div></div>`;
+          $('#QuantitativeQuestions').append(question_input);
+          inumber++;
+        });
+
+        $('#QuantitativeQuestions').on('click', '.btn_add_question', function() {
+          var button_id = $(this).attr('id');
+          $('#qinput' + button_id + '').remove();
+          inumber--;
+        });
+
+        $('#btn_add_category').click(function() {
+          category_input = `
+    <div class="row">
+        <div class="col-lg-12 col-xlg-12 col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-2 col-xlg-2 col-md-2">
+                            <div class="form-group">
+                                <label class="col-md-12">Category</label>
+                                <div class="col-md-12">
+                                    <select class="form-control form-control-line" name="txtCategory" required id="txtCategory">
+                                      <option value="">Select Category</option>
+                                      <option value="Emotional Wellness">Emotional Wellness</option>
+                                      <option value="Environmental Wellness">Environmental Wellness</option>
+                                      <option value="Intellectual Wellness">Intellectual Wellness</option>
+                                      <option value="Occupational Wellness">Occupational Wellness</option>
+                                      <option value="Physical Wellness">Physical Wellness</option>
+                                      <option value="Social Wellness">Social Wellness</option>
+                                      <option value="Spiritual Wellness">Spiritual Wellness</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="QuantitativeQuestions">
+                            <div class="row">
+                                <div class="col-lg-11 col-xlg-11 col-md-11">
+                                    <div class="form-group">
+                                        <label for="txtQuestion[]" class="col-md-12">Question</label>
+                                        <div class="col-md-12">
+                                            <input name='txtQuestion[]' id="txtQuestion[]" type="text" placeholder="Enter title here" class="form-control form-control-line" value="" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-xlg-2 col-md-2">
+                            <div class="form-group">
+                                <label class="col-md-12">&nbsp;</label>
+                                <div class="col-md-12">
+                                    <button type="button" class="btn btn-success w-100" id="btn_add_question">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+          $('#QuantitativeCategory').append(category_input);
+          qnumber++;
+        });
       });
-    }
 
-    function closeAllSelect(elmnt) {
-      /* A function that will close all select boxes in the document,
-      except the current select box: */
-      var x, y, i, xl, yl, arrNo = [];
-      x = document.getElementsByClassName("select-items");
-      y = document.getElementsByClassName("select-selected");
-      xl = x.length;
-      yl = y.length;
-      for (i = 0; i < yl; i++) {
-        if (elmnt == y[i]) {
-          arrNo.push(i)
-        } else {
-          y[i].classList.remove("select-arrow-active");
+      const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const data = JSON.parse('<?= json_encode($barResult) ?>')
+      // console.log(data.reverse())
+
+      let barData = months.map((d) => {
+        if (data.some((a) => a.SelectedDate === d)) {
+          const selectedBarData = data.filter((b) => b.SelectedDate === d)
+          if (selectedBarData) {
+            return Number(selectedBarData[0].CountPerMonth)
+          }
+          return 0
+        }
+        return 0
+      })
+
+      barChartOptions = {
+        series: [{
+          name: 'Student Count',
+          data: barData
+        }],
+        title: {
+          text: "Monthly Student Appointment"
+        },
+        chart: {
+          height: 350,
+          type: 'bar',
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 10,
+            dataLabels: {
+              position: 'top', // top, center, bottom
+            },
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: (val) => val,
+          offsetY: -20,
+          style: {
+            fontSize: '12px',
+            colors: ["#304758"]
+          }
+        },
+        tooltip: {
+          y: {
+            formatter: (val) => val
+          }
+        },
+
+        xaxis: {
+          categories: months,
+          position: 'bottom',
+          axisBorder: {
+            show: false
+          },
+          axisTicks: {
+            show: false
+          },
+          crosshairs: {
+            fill: {
+              type: 'gradient',
+              gradient: {
+                colorFrom: '#D8E3F0',
+                colorTo: '#BED1E6',
+                stops: [0, 100],
+                opacityFrom: 0.4,
+                opacityTo: 0.5,
+              }
+            }
+          },
+
+        },
+        yaxis: {
+          labels: {
+            formatter: (val) => val
+          },
+          axisBorder: {
+            show: false
+          },
+          axisTicks: {
+            show: false,
+          },
+        },
+
+      }
+
+      const lineData = JSON.parse('<?= json_encode($lineResults) ?>')
+
+      let posCountData = []
+      let neutralCountData = []
+      let negCountData = []
+
+      lineData.forEach((d) => {
+        switch (d.Results) {
+          case "Positive":
+            const posData = lineData.filter((d) => d.Results === "Positive")
+            if (posCountData.length === 0) {
+              for (let i = 0; i < Math.max(...posData.map(o => o.YearWeek)); i++) {
+                posCountData.push(0)
+              }
+            }
+            posCountData[d.YearWeek - 1]++
+            break;
+          case "Neutral":
+            const neuData = lineData.filter((d) => d.Results === "Neutral")
+            if (neutralCountData.length === 0) {
+              for (let i = 0; i < Math.max(...neuData.map(o => o.YearWeek)); i++) {
+                neutralCountData.push(0)
+              }
+            }
+            neutralCountData[d.YearWeek - 1]++
+            break;
+          case "Negative":
+            const negData = lineData.filter((d) => d.Results === "Negative")
+            if (negCountData.length === 0) {
+              for (let i = 0; i < Math.max(...negData.map(o => o.YearWeek)); i++) {
+                negCountData.push(0)
+              }
+            }
+            negCountData[d.YearWeek - 1]++
+
+            break;
+          default:
+            null;
+        }
+      })
+
+      // console.log(lineData);
+      // console.log(posCountData);
+      // console.log(neutralCountData);
+      // console.log(negCountData);
+
+      function getNumberWithOrdinal(n) {
+        var s = ["th", "st", "nd", "rd"],
+          v = n % 100;
+        return n + (s[(v - 20) % 10] || s[v] || s[0]);
+      }
+
+      let lineCategory = []
+
+      for (let i = 1; i <= 52; i++) {
+        lineCategory.push(getNumberWithOrdinal(i))
+      }
+
+      lineChartOptions = {
+        series: [{
+          name: 'Neutral',
+          data: neutralCountData
+        }, {
+          name: 'Positive',
+          data: posCountData
+        }, {
+          name: 'Negative',
+          data: negCountData
+        }],
+        title: {
+          text: "Weekly Sentiment Report"
+        },
+        markers: {
+          size: 5,
+        },
+        chart: {
+          height: 350,
+          type: 'line',
+          zoom: {
+            enabled: true
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'straight',
+        },
+        grid: {
+          row: {
+            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            opacity: 0.5
+          },
+        },
+        tooltip: {
+          y: {
+            formatter: (val) => val
+          }
+        },
+        xaxis: {
+          categories: lineCategory,
+        },
+        yaxis: {
+          labels: {
+            formatter: (val) => val
+          },
         }
       }
-      for (i = 0; i < xl; i++) {
-        if (arrNo.indexOf(i)) {
-          x[i].classList.add("select-hide");
-        }
-      }
-    }
 
-    /* If the user clicks anywhere outside the select box,
-    then close all select boxes: */
-    document.addEventListener("click", closeAllSelect);
+      if (document.querySelector("#barChart") && document.querySelector("#lineChart")) {
+        const barChart = new ApexCharts(document.querySelector("#barChart"), barChartOptions);
+        barChart.render();
+
+        const lineChart = new ApexCharts(document.querySelector("#lineChart"), lineChartOptions);
+        lineChart.render();
+      }
+
+    } catch (err) {}
   </script>
 </body>
 

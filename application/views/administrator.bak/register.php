@@ -78,7 +78,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   </div>
 </div>
                                 <h2 class="text-center" style="margin-bottom: 20px">Register Here</h2>
-                                <form class="form-horizontal form-material mx-2" action="<?=site_url().'admin/user_save'?>" id="frmRegister" method="post">
+                                <form class="form-horizontal form-material mx-2" action="<?=site_url().'administrator/user_save'?>" id="frmRegister" method="post">
                                     <?=$this->routines->InsertCSRF()?>
                                     <div class="row">
                                         <div class="col-md-5">
@@ -166,7 +166,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     </div>
                                     <div class="form-group">
                                         <div class="col-sm-12 mt-4">
-                                            <center><button class="btn btn-primary text-white" type="submit" style="width: 180px; background: #5271ff;">REGISTER</button><br></br>Already have an account? <a href="<?=site_url().'admin/login'?>" class="text-white" style="width: 150px;">Sign In</a></center>
+                                            <center><button class="btn btn-primary text-white" type="submit" style="width: 180px; background: #5271ff;">REGISTER</button><br></br>Already have an account? <a href="<?=site_url().'administrator/login'?>" class="text-white" style="width: 150px;">Sign In</a></center>
                                         </div>
                                         <div class="col-sm-12 mt-4">
                                             

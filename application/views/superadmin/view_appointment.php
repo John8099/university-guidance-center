@@ -26,7 +26,7 @@ $query = $this->db->query("SELECT
                           ON 
                           ta.AppointmentSchedID = tas.AppointmentSchedID  
                           WHERE 
-                          ta.AppointmentID = '4'
+                          ta.AppointmentID = '$AppointmentID'
                           ");
 foreach ($query->result() as $row) {
   $Referrer = $row->Referrer;
@@ -108,57 +108,13 @@ $College = $this->db->query("SELECT * FROM tblcollege WHERE CollegeID = '{$Colle
         </ul>
         <?php
         $this->session->set_userdata('AppointmentEmail', $Email);
-        if ($adminId != "" && $adminId == $this->session->userdata('UserID')) :
+        if (($adminId != "" && $adminId == $this->session->userdata('UserID')) || $Status == "Endorsed") :
         ?>
           <?php if ($Status == 'Pending') : ?>
             <hr>
 
             <!-- Approve Button -->
             <a style="width: 170px;" onclick="approveClick($(this), '<?= $Platform; ?>')" href="#" class="btn btn-primary btn-sm" title="Approve Appointment">Approve</a>
-            <script>
-              function approveClick(e, platform) {
-
-                const approveLink = "<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Approved'; ?>"
-                if (platform.toLowerCase().includes("google meet")) {
-                  Swal.fire({
-                    input: 'url',
-                    inputPlaceholder: 'Place your google meet link here...',
-                    showDenyButton: true,
-                    confirmButtonText: 'Submit',
-                    denyButtonText: 'Cancel',
-                  }).then((res) => {
-                    if (res.isConfirmed && res.value) {
-                      saveApprove(res.value, approveLink)
-                    }
-                  })
-
-                } else {
-                  window.location.href = approveLink;
-                }
-              }
-
-              function saveApprove(googleLink, approvedLink) {
-                swal.showLoading()
-                $.post(
-                  approvedLink, {
-                    google_link: googleLink,
-                    <?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
-                  },
-                  (data, status) => {
-                    if (status === "success") {
-                      const redirect = '<?= site_url() . "superadmin/view_appointment/" . $this->uri->segment(3) ?>'
-                      window.location.href = redirect
-                    }
-
-                  }).fail(function(e) {
-                  swal.fire({
-                    title: 'Error!',
-                    text: e.statusText,
-                    icon: 'error',
-                  })
-                });
-              }
-            </script>
 
             <!-- Reschedule -->
             <!-- <a style="width: 170px;" href="<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Rescheduled'; ?>" class="btn btn-orange btn-sm text-white" title="Rescheduled Appointment">Rescheduled</a> -->
@@ -179,7 +135,11 @@ $College = $this->db->query("SELECT * FROM tblcollege WHERE CollegeID = '{$Colle
             <!-- <a style="width: 170px;" href="<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Approved'; ?>" class="btn btn-danger text-white btn-sm" title="Accept Appointment">Accept</a>
             <a style="width: 170px;" href="<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Pending'; ?>" class="btn btn-info btn-sm" title="Decline Appointment">Decline</a> -->
 
-            <a style="width: 170px;" href="<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Rescheduled'; ?>" class="btn btn-orange btn-sm text-white" title="Rescheduled Appointment">Rescheduled</a>
+            <a style="width: 170px;" href="<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Completed'; ?>" class="btn btn-danger text-white btn-sm" title="Complete Appointment">Complete</a>
+
+            <a style="width: 170px;" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalFollowUp" title="Follow Up Appointment">Follow Up</a>
+
+            <a style="width: 170px;" data-bs-toggle="modal" data-bs-target="#rescheduleModal" class="btn btn-orange btn-sm text-white" title="Rescheduled Appointment">Rescheduled</a>
 
           <?php endif; ?>
           <?php if ($Status == 'Completed') : ?>
@@ -278,10 +238,12 @@ $query = $this->db->query("SELECT
 
 $data = [];
 foreach ($query->result() as $res) {
+  $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
+  $titleAppoint = $res->appointmentTime . '<br>' . $this->routines->getUserFullName($res->adminID) . "<br>" . $appointmentStat . ($res->appointmentID == $AppointmentID ? "<br> Current Appointment" : "");
   array_push(
     $data,
     array(
-      "title" => $res->appointmentID == $AppointmentID ? "Current Appointment:<br>$res->appointmentTime" : "$res->appointmentTime",
+      "title" => $titleAppoint,
       "start" => $res->appointmentDate,
     )
   );
@@ -382,6 +344,9 @@ foreach ($query->result() as $res) {
 
   $('#rescheduleModal').on('shown.bs.modal', function() {
     calendarReschedule.render();
+    $('.fc-event-title').each(function(data) {
+      $(this).html($(this).text());
+    });
   });
 </script>
 
@@ -425,10 +390,12 @@ $queryFollowUp = $this->db->query("SELECT
 
 $followUpData = [];
 foreach ($queryFollowUp->result() as $res) {
+  $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
+  $titleFollowUp = $res->appointmentTime . '<br>' . $this->routines->getUserFullName($res->adminID) . "<br>" . $appointmentStat . ($res->appointmentID == $AppointmentID ? "<br> Current Appointment" : "");
   array_push(
     $followUpData,
     array(
-      "title" => "$res->appointmentTime",
+      "title" => $titleFollowUp,
       "start" => $res->appointmentDate,
     )
   );
@@ -529,5 +496,51 @@ foreach ($queryFollowUp->result() as $res) {
 
   $('#modalFollowUp').on('shown.bs.modal', function() {
     calendarFollowUp.render();
+    $('.fc-event-title').each(function(data) {
+      $(this).html($(this).text());
+    });
   });
+
+  function approveClick(e, platform) {
+
+    const approveLink = "<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Approved'; ?>"
+    if (platform.toLowerCase().includes("google meet")) {
+      Swal.fire({
+        input: 'url',
+        inputPlaceholder: 'Place your google meet link here...',
+        showDenyButton: true,
+        confirmButtonText: 'Submit',
+        denyButtonText: 'Cancel',
+      }).then((res) => {
+        if (res.isConfirmed && res.value) {
+          saveApprove(res.value, approveLink)
+        }
+      })
+
+    } else {
+      window.location.href = approveLink;
+    }
+  }
+
+  function saveApprove(googleLink, approvedLink) {
+    swal.showLoading()
+    $.post(
+      approvedLink, {
+        google_link: googleLink,
+        <?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
+      },
+      (data, status) => {
+        if (status === "success") {
+          const redirect = '<?= site_url() . "superadmin/view_appointment/" . $this->uri->segment(3) ?>'
+          window.location.href = redirect
+        }
+
+      }).fail(function(e) {
+      swal.fire({
+        title: 'Error!',
+        text: e.statusText,
+        icon: 'error',
+      })
+    });
+  }
 </script>
