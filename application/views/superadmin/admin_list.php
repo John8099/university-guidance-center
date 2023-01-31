@@ -2,17 +2,18 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 ?>
 <?php
-$Fullname = $this->session->flashdata('Fullname');
-$CollegeID = $this->session->flashdata('CollegeID');
-$Email = $this->session->flashdata('Email');
-$IdentifiedGender = $this->session->flashdata('IdentifiedGender');
+
 $SchoolID = $this->routines->generateAdminID();
 $UserID = $this->uri->segment(3);
-$result = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $UserID . "'");
+$result = $this->db->query("SELECT * FROM tbluser WHERE UserID = '$UserID'");
 
-$fname = "";
-$mname = "";
-$lname = "";
+$fname = $this->session->flashdata('first_name');
+$mname = $this->session->flashdata('middle_name');
+$lname = $this->session->flashdata('last_name');
+$CollegeID = $this->session->flashdata('CollegeID');
+$Email = $this->session->flashdata('Email');
+$Gender = $this->session->flashdata('Gender');
+$SchoolID = $this->session->flashdata('SchoolID');
 
 foreach ($result->result() as $row) {
   $fname = $row->first_name;
@@ -20,7 +21,7 @@ foreach ($result->result() as $row) {
   $lname = $row->last_name;
   $CollegeID = $row->CollegeID;
   $Email = $row->Email;
-  $IdentifiedGender = $row->IdentifiedGender;
+  $Gender = $row->Gender;
   $SchoolID = $row->SchoolID;
 }
 ?>
@@ -58,33 +59,31 @@ foreach ($result->result() as $row) {
           <div class="form-group">
             <label for="txtFullname" class="col-md-12">First Name</label>
             <div class="col-md-12">
-              <input type="text" placeholder="First Name" class="form-control form-control-line" required="required" name="txtFname" id="txtFullname" value="<?= $fname; ?>" />
+              <input type="text" placeholder="First Name" class="form-control form-control-line" required="required" name="txtFname" id="txtFname" value="<?= $fname; ?>" />
             </div>
           </div>
           <div class="form-group">
             <label for="txtFullname" class="col-md-12">Middle Name</label>
             <div class="col-md-12">
-              <input type="text" placeholder="Middle Name" class="form-control form-control-line" required="required" name="txtMname" id="txtFullname" value="<?= $mname; ?>" />
+              <input type="text" placeholder="Middle Name" class="form-control form-control-line" required="required" name="txtMname" id="txtMname" value="<?= $mname; ?>" />
             </div>
           </div>
           <div class="form-group">
             <label for="txtFullname" class="col-md-12">Last Name</label>
             <div class="col-md-12">
-              <input type="text" placeholder="Last Name" class="form-control form-control-line" required="required" name="txtLname" id="txtFullname" value="<?= $lname; ?>" />
+              <input type="text" placeholder="Last Name" class="form-control form-control-line" required="required" name="txtLname" id="txtLname" value="<?= $lname; ?>" />
             </div>
           </div>
           <div class="form-group">
             <label for="txtCollege" class="col-md-12">College</label>
             <div class="col-md-12">
-              <div class="custom-select">
-                <select class="form-control form-control-line" name="txtCollege" required="required">
-                  <option value="" selected hidden>Select College</option>
-                  <?php $query = $this->db->query("SELECT CollegeID, College FROM tblcollege;");
-                  foreach ($query->result() as $row) : ?>
-                    <option value="<?= $row->CollegeID; ?>" <?= ($CollegeID == $row->CollegeID) ? 'selected' : ''; ?>><?= $row->College; ?></option>
-                  <?php endforeach; ?>
-                </select>
-              </div>
+              <select class="form-select form-control-line" name="txtCollege" required="required">
+                <option value="" selected hidden>Select College</option>
+                <?php $query = $this->db->query("SELECT CollegeID, College FROM tblcollege;");
+                foreach ($query->result() as $row) : ?>
+                  <option value="<?= $row->CollegeID; ?>" <?= ($CollegeID == $row->CollegeID) ? 'selected' : ''; ?>><?= $row->College; ?></option>
+                <?php endforeach; ?>
+              </select>
             </div>
           </div>
           <div class="form-group">
@@ -94,15 +93,25 @@ foreach ($result->result() as $row) {
             </div>
           </div>
           <div class="form-group">
-            <label for="txtIdentifiedGender" class="col-md-12">Identified Gender</label>
+            <label for="txtIdentifiedGender" class="col-md-12"> Gender</label>
             <div class="col-md-12">
-              <div class="custom-select">
-                <select class="form-control form-control-line" name="txtIdentifiedGender" required="required">
-                  <option value="" selected hidden>Select Identified Gender</option>
-                  <option value="0" <?= ($IdentifiedGender == 0) ? 'selected' : ''; ?>>Female</option>
-                  <option value="1" <?= ($IdentifiedGender == 1) ? 'selected' : ''; ?>>Male</option>
-                </select>
-              </div>
+              <select name="txtGender" class="form-select form-control-line">
+                <option value="" selected disabled>Select Gender</option>
+                <?php
+                $genders = array(
+                  "Male",
+                  "Female",
+                  "Gay",
+                  "Lesbian",
+                  "Bisexual",
+                  "Prefer not to say"
+                );
+                foreach ($genders as $genderList) :
+                ?>
+                  <option value="<?= $genderList ?>" <?= $Gender == $genderList ? "selected" : "" ?>><?= $genderList ?></option>
+                <?php endforeach; ?>
+
+              </select>
             </div>
           </div>
           <button type="submit" class="btn btn-success">Save</button>

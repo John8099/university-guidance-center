@@ -94,18 +94,14 @@ class Superadmin extends CI_Controller
     $hashPassword = hash("sha256", $email);
 
     $data = array(
-      'Fullname' => $this->input->post('txtFullname'),
+      'first_name' => $this->input->post('txtFname'),
+      'middle_name' => $this->input->post('txtMname'),
+      'last_name' => $this->input->post('txtLname'),
       'UserType' => 'Administrator',
-      'Address' => '',
-      'IdentifiedGender' => $this->input->post('txtIdentifiedGender'),
-      'BiologicalSex' => '',
-      'Course' => '',
-      'YearSec' => '',
+      'Gender' => $this->input->post('txtGender'),
       'Email' => $email,
       'SchoolID ' => $this->input->post('txtSchoolID'),
       'CollegeID ' => $this->input->post('txtCollege'),
-      'CreatedOn' => $this->routines->getCurrentDateTime(),
-      'CreatedBy' => 0,
       'Status' => 'Active',
     );
     if ($this->routines->validateEmail($email)) {
@@ -117,15 +113,17 @@ class Superadmin extends CI_Controller
         $this->main_model->insert_entry('tbluser', $data);
 
         // SEND EMAIL VERIFICATION
-        $msg = 'Your username: ' . $this->input->post('txtSchoolID') . ' password: ' . $ranpass . '';
-        $sendemail = $this->routines->sendEmail("Temporary Account", $msg, $email);
+        // $msg = 'Your username: ' . $this->input->post('txtSchoolID') . ' password: ' . $ranpass . '';
+        // $sendemail = $this->routines->sendEmail("Temporary Account", $msg, $email);
       } else {
         $this->main_model->update_entry('tbluser', $data, 'UserID', $this->uri->segment(3));
       }
       $this->session->set_flashdata('admin_list_save', 'Registration was successfully saved.');
     } else {
-      $this->session->set_flashdata('Fullname', $this->input->post('txtFullname'));
-      $this->session->set_flashdata('IdentifiedGender', $this->input->post('txtIdentifiedGender'));
+      $this->session->set_flashdata('first_name', $this->input->post('txtFname'));
+      $this->session->set_flashdata('middle_name', $this->input->post('txtMname'));
+      $this->session->set_flashdata('last_name', $this->input->post('txtLname'));
+      $this->session->set_flashdata('Gender', $this->input->post('txtGender'));
       $this->session->set_flashdata('CollegeID', $this->input->post('txtCollege'));
       $this->session->set_flashdata('SchoolID', $this->input->post('txtSchoolID'));
       $this->session->set_flashdata('Email', $email);

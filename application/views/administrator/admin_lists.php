@@ -19,12 +19,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
               <th scope="col">Full Name</th>
               <th scope="col">College</th>
               <th scope="col">Email</th>
-              <th scope="col">Identified Gender</th>
+              <th scope="col"> Gender</th>
             </tr>
           </thead>
           <tbody>
             <?php
-            $query = $this->db->query("SELECT UserID,College,Email,IdentifiedGender,SchoolID FROM tbluser INNER JOIN tblcollege ON tblcollege.CollegeID=tbluser.CollegeID WHERE tbluser.UserType = 'Administrator';");
+            $query = $this->db->query("SELECT UserID,College,Email,Gender,SchoolID FROM tbluser INNER JOIN tblcollege ON tblcollege.CollegeID=tbluser.CollegeID WHERE tbluser.UserType = 'Administrator';");
 
             foreach ($query->result() as $row) : ?>
               <tr>
@@ -32,8 +32,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <td><?= $this->routines->getUserFullName($row->UserID); ?></td>
                 <td><?= $row->College; ?></td>
                 <td><?= $row->Email; ?></td>
-                <td><?= ($row->IdentifiedGender == 1) ? 'Male' : 'Female'; ?></td>
-                
+                <td><?= $row->Gender ?></td>
               </tr>
             <?php endforeach; ?>
           </tbody>
