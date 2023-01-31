@@ -72,7 +72,7 @@ $TotalIdealScore = 0;
               }
             }
           } else {
-            $tblresult = $this->db->query("SELECT * FROM tblresult WHERE WellnessCheckID='" . $WellnessCheckID . "';");
+            $tblresult = $this->db->query("SELECT * FROM tblresult WHERE WellnessCheckID='$WellnessCheckID'");
             if ($tblresult->num_rows() <> 0) {
               $row = $tblresult->row();
             ?>

@@ -2,83 +2,65 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 ?>
 <?php
-$Fullname = '';
-$DateBirth = '';
-$PlaceBirth = '';
-$SexualOrientation = '';
-$SexBirth = '';
-$Nationality = '';
-$Religion = '';
-$CivilStatus = '';
-$Email = '';
-$MobileNo = '';
-$TelephoneNo = '';
-$DSWDHouseholdNo = '';
-$Disability = '';
-$Region = '';
-$Province = '';
-$MunicipalityCity = '';
-$Address = '';
-$Barangay = '';
-$ZipCode = '';
-$ACRNo = '';
-$PlacedIssued = '';
-$DateIssued = '';
-$AuthorizedStay = '';
-$PassportNo = '';
-$PassportExpixy = '';
-$DateArrival = '';
-$VisaType = '';
-$VisaStatus = '';
-$IdentifiedGender = '';
-$BiologicalSex = '';
-$Course = '';
-$YearSec = '';
-$SchoolID = '';
-$Status = '';
-$CreatedOn = '';
-$CreatedBy = '';
-$CollegeID = '';
+$Email = "";
+$last_name = "";
+$first_name = "";
+$middle_name = "";
+$SchoolID = "";
+$Course = "";
+$YearSec = "";
+$CollegeID = "";
+$CivilStatus = "";
+$PlaceBirth = "";
+$DateBirth = "";
+$Gender = "";
+$Address = "";
+$MobileNo = "";
+$Religion = "";
+$LivingArrangement = "";
+$MinorityGroup = "";
+$GuardianName = "";
+$GuardianContactNumber = "";
+$GuardianOccupation = "";
+$GuardianOfficeAddress = "";
+$EstAnnualIncome = "";
+$SourceOfIncome = "";
+$Disability = "";
+$GeneralCondition = "";
+$GeneralConditionReason = "";
+$FBLink = "";
+
 $UserID = $this->session->userdata('StudentUserID');
 $query = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $UserID . "'");
+
 foreach ($query->result() as $row) {
-  $Fullname = $this->routines->getUserFullName($row->UserID);;
-  $DateBirth = $row->DateBirth;
-  $PlaceBirth = $row->PlaceBirth;
-  $SexualOrientation = $row->SexualOrientation;
-  $SexBirth = $row->SexBirth;
-  $Nationality = $row->Nationality;
-  $Religion = $row->Religion;
-  $CivilStatus = $row->CivilStatus;
   $Email = $row->Email;
-  $MobileNo = $row->MobileNo;
-  $TelephoneNo = $row->TelephoneNo;
-  $DSWDHouseholdNo = $row->DSWDHouseholdNo;
-  $Disability = $row->Disability;
-  $Region = $row->Region;
-  $Province = $row->Province;
-  $MunicipalityCity = $row->MunicipalityCity;
-  $Address = $row->Address;
-  $Barangay = $row->Barangay;
-  $ZipCode = $row->ZipCode;
-  $ACRNo = $row->ACRNo;
-  $PlacedIssued = $row->PlacedIssued;
-  $DateIssued = $row->DateIssued;
-  $AuthorizedStay = $row->AuthorizedStay;
-  $PassportNo = $row->PassportNo;
-  $PassportExpixy = $row->PassportExpixy;
-  $DateArrival = $row->DateArrival;
-  $VisaType = $row->VisaType;
-  $VisaStatus = $row->VisaStatus;
-  $IdentifiedGender = $row->IdentifiedGender;
-  $BiologicalSex = $row->BiologicalSex;
+  $last_name = $row->last_name;
+  $first_name = $row->first_name;
+  $middle_name = $row->middle_name;
+  $SchoolID = $row->SchoolID;
   $Course = $row->Course;
   $YearSec = $row->YearSec;
-  $SchoolID = $row->SchoolID;
-  $Status = $row->Status;
-  $CreatedOn = $row->CreatedOn;
-  $CreatedBy = $row->CreatedBy;
   $CollegeID = $row->CollegeID;
+  $CivilStatus = $row->CivilStatus;
+  $PlaceBirth = $row->PlaceBirth;
+  $DateBirth = $row->DateBirth;
+  $Gender = $row->Gender;
+  $Address = $row->Address;
+  $MobileNo = $row->MobileNo;
+  $Religion = $row->Religion;
+  $LivingArrangement = $row->LivingArrangement;
+  $MinorityGroup = $row->MinorityGroup;
+  $GuardianName = $row->GuardianName;
+  $GuardianContactNumber = $row->GuardianContactNumber;
+  $GuardianOccupation = $row->GuardianOccupation;
+  $GuardianOfficeAddress = $row->GuardianOfficeAddress;
+  $EstAnnualIncome = $row->EstAnnualIncome;
+  $SourceOfIncome = $row->SourceOfIncome;
+  $Disability = $row->Disability;
+  $GeneralCondition = $row->GeneralCondition;
+  $GeneralConditionReason = $row->GeneralConditionReason;
+  $FBLink = $row->FBLink;
 }
 ?>
 
@@ -86,215 +68,316 @@ foreach ($query->result() as $row) {
   <!-- Column -->
   <div class="col-lg-12 col-xlg-12 col-md-12">
     <div class="card">
+      <div class="card-header">
+        <div class="container">
+          <h6>
+            <strong>Note:</strong>
+          </h6>
+          <p>
+            This e- document is confidential. All gathered information about students using this form will be solely utilized by the university guidance center and college guidance offices for guidance and counseling purposes only. Please prepare 2x2 photo and e-signature to be uploaded in this form.
+          </p>
+          <p>
+            The name and photo associated with your wvsu account will be recorded when you upload files and submit this form.
+          </p>
+          <p>
+            Any files that are uploaded will be shared with the organization they belong to.
+          </p>
+        </div>
+      </div>
       <div class="card-body">
+
+        <div class="alert alert-success d-flex align-items-center d-none" role="alert" id="alertsuccess">
+          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+            <use xlink:href="#check-circle-fill" />
+          </svg>
+          <div>
+            <?= $this->session->flashdata('updateSuccess'); ?>
+          </div>
+        </div>
+        <div class="alert alert-danger d-flex align-items-center d-none" role="alert" id="alertdanger">
+          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+            <use xlink:href="#exclamation-triangle-fill" />
+          </svg>
+          <div>
+            <?= $this->session->flashdata('updateFailed'); ?>
+          </div>
+        </div>
+
         <form method="post" action="<?= site_url() . 'student/profile_save/' . $UserID ?>" class="form-horizontal form-material mx-2">
           <?= $this->routines->InsertCSRF() ?>
-          <!-- First Section -->
           <div class="row">
             <div class="col-md-6">
-              <div class="form-group">
-                <label for="txtFullname" class="col-md-12">Full Name</label>
+
+              <div class="form-group required">
+                <label class="col-md-12 ">Email</label>
                 <div class="col-md-12">
-                  <input name='txtFullname' type="text" placeholder="Enter full name here" class="form-control form-control-line" value="<?= $Fullname; ?>" required />
+                  <input type="email" class="form-control form-control-line" required value="<?= $Email ?>" name="txtEmail" readonly />
                 </div>
               </div>
-              <div class="form-group">
-                <label for="txtDateBirth" class="col-md-12">Date of Birth</label>
+
+              <div class="form-group required">
+                <label class="col-md-12 ">Last name</label>
                 <div class="col-md-12">
-                  <input name='txtDateBirth' type="date" placeholder="Enter date of birth here" class="form-control form-control-line" value="<?= $DateBirth; ?>" />
+                  <input type="text" class="form-control form-control-line" required value="<?= $last_name ?>" name="txtLname" readonly />
                 </div>
               </div>
-              <div class="form-group">
-                <label for="txtSexBirth" class="col-md-12">Sex at Birth</label>
-                <label class="containeroption">Male
-                  <input type="radio" <?= ($SexBirth == 'Male') ? 'checked="checked"' : ''; ?> name="txtSexBirth" value='Male'>
-                  <span class="checkmark"></span>
-                </label>
-                <label class="containeroption">Female
-                  <input type="radio" <?= ($SexBirth == 'Female') ? 'checked="checked"' : ''; ?> name="txtSexBirth" value='Female'>
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="form-group">
-                <label for="txtPlaceBirth" class="col-md-12">Place of Birth</label>
+
+              <div class="form-group required">
+                <label class="col-md-12 ">First name</label>
                 <div class="col-md-12">
-                  <input name='txtPlaceBirth' type="text" placeholder="Enter place of birth here" class="form-control form-control-line" value="<?= $PlaceBirth; ?>" />
+                  <input type="text" class="form-control form-control-line" required value="<?= $first_name ?>" name="txtFname" readonly />
                 </div>
               </div>
-              <div class="form-group">
-                <label for="txtSexualOrientation" class="col-md-12">Sexual Orientation</label>
+
+              <div class="form-group required">
+                <label class="col-md-12 ">Middle name</label>
                 <div class="col-md-12">
-                  <div class="custom-select">
-                    <select class="form-control form-control-line" name="txtSexualOrientation">
-                      <option value="" selected hidden>Select Sexual Orientation</option>
-                      <option value="Straight" <?= ($SexualOrientation == 'Straight') ? ' selected' : ''; ?>>Straight</option>
-                      <option value="Lesbian" <?= ($SexualOrientation == 'Lesbian') ? ' selected' : ''; ?>>Lesbian</option>
-                      <option value="Gay" <?= ($SexualOrientation == 'Gay') ? ' selected' : ''; ?>>Gay</option>
-                      <option value="Bi-Sexual" <?= ($SexualOrientation == '"Bi-Sexual') ? ' selected' : ''; ?>>Bi-Sexual</option>
-                      <option value="Transgender" <?= ($SexualOrientation == 'Transgender') ? ' selected' : ''; ?>>Transgender</option>
-                    </select>
+                  <input type="text" class="form-control form-control-line" required value="<?= $middle_name ?>" name="txtMname" readonly />
+                </div>
+              </div>
+
+              <div class="form-group required">
+                <label class="col-md-12 ">Student ID #</label>
+                <div class="col-md-12">
+                  <input type="text" class="form-control form-control-line" required value="<?= $SchoolID ?>" name="txtStudentId" readonly />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 ">Course</label>
+                    <div class="col-md-12">
+                      <input type="text" placeholder="Course" class="form-control form-control-line" value="<?= $Course ?>" required name="txtCourse" readonly />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 ">Year & Section</label>
+                    <div class="col-md-12">
+                      <input type="text" value="<?= $YearSec ?>" class="form-control form-control-line" required name="txtYearSec" readonly />
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="txtNationality" class="col-md-12">Nationality</label>
+
+              <div class="form-group required">
+                <label class="col-md-12 ">College</label>
                 <div class="col-md-12">
-                  <input name='txtNationality' type="text" placeholder="Enter nationality here" class="form-control form-control-line" value="<?= $Nationality; ?>" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtReligion" class="col-md-12">Religion</label>
-                <div class="col-md-12">
-                  <input name='txtReligion' type="text" placeholder="Enter religion here" class="form-control form-control-line" value="<?= $Religion; ?>" />
+                  <input type="text" value="<?= $this->routines->getCollege($CollegeID) ?>" readonly class="form-control form-control-line">
                 </div>
               </div>
             </div>
+
             <div class="col-md-6">
-              <div class="form-group">
-                <label for="txtCivilStatus" class="col-md-12">Civil Status</label>
+              <div class="form-group required">
+                <label class="col-md-12 ">Civil Status</label>
                 <div class="col-md-12">
-                  <input name='txtCivilStatus' type="text" placeholder="Enter civil status here" class="form-control form-control-line" value="<?= $CivilStatus; ?>" />
+                  <input type="text" value="<?= $CivilStatus ?>" readonly class="form-control form-control-line">
+
                 </div>
               </div>
-              <div class="form-group">
-                <label for="txtMobileNo" class="col-md-12">Mobile No.</label>
-                <div class="col-md-12">
-                  <input name='txtMobileNo' type="text" placeholder="Enter Mobile No. here" class="form-control form-control-line" value="<?= $MobileNo; ?>" />
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 ">Date of Birth</label>
+                    <div class="col-md-12">
+                      <input type="date" class="form-control form-control-line" value="<?= $DateBirth ?>" required name="txtDateOfBirth" readonly />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 ">Place of Birth</label>
+                    <div class="col-md-12">
+                      <input type="text" class="form-control form-control-line" required value="<?= $PlaceBirth ?>" name="txtPlaceOfBirth" readonly />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="txtTelephoneNo" class="col-md-12">Telephone No.</label>
+
+              <div class="form-group required">
+                <label class="col-md-12 ">Gender</label>
                 <div class="col-md-12">
-                  <input name='txtTelephoneNo' type="text" placeholder="Enter Telephone No. here" class="form-control form-control-line" value="<?= $TelephoneNo; ?>" />
+                  <input type="text" value="<?= $Gender ?>" readonly class="form-control form-control-line">
                 </div>
               </div>
-              <div class="form-group">
-                <label for="txtEmail" class="col-md-12">Email Address</label>
+
+              <div class="form-group required">
+                <label class="col-md-12 ">Address</label>
                 <div class="col-md-12">
-                  <input name='txtEmail' type="text" placeholder="Enter email here" class="form-control form-control-line" value="<?= $Email; ?>" readonly="" />
+                  <input type="text" class="form-control form-control-line" required value="<?= $Address ?>" name="txtAddress" readonly readonly />
                 </div>
               </div>
-              <div class="form-group">
-                <label for="txtDSWDHouseholdNo" class="col-md-12">DSWD Household No.</label>
-                <div class="col-md-12">
-                  <input name='txtDSWDHouseholdNo' type="text" placeholder="Enter DSWD Household No. here" class="form-control form-control-line" value="<?= $DSWDHouseholdNo; ?>" />
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 ">Phone Number</label>
+                    <div class="col-md-12">
+                      <input type="text" class="form-control form-control-line" value="<?= $MobileNo ?>" required name="txtPhoneNumber" readonly />
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 ">Religion</label>
+                    <div class="col-md-12">
+                      <input type="text" class="form-control form-control-line" required value="<?= $Religion ?>" name="txtReligion" readonly />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="txtDisability" class="col-md-12">Disability</label>
+
+              <div class="form-group required">
+                <label class="col-md-12 ">Living arrangement</label>
                 <div class="col-md-12">
-                  <input name='txtDisability' type="text" placeholder="Enter Disability here" class="form-control form-control-line" value="<?= $Disability; ?>" />
+                  <input type="text" value="<?= $LivingArrangement ?>" readonly class="form-control form-control-line">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="col-md-12 ">If member of a minority group/indigenous people</label>
+                <div class="col-md-12">
+                  <input type="text" class="form-control form-control-line" value="<?= $MinorityGroup ?>" placeholder="Please specify here" required name="txtMinorityGroup" readonly />
                 </div>
               </div>
             </div>
           </div>
-          <br></br>
+
           <div class="row">
-            <div class="col-md-6">
-              <h3>Permanent Address</h3>
-              <div class="form-group">
-                <label for="txtRegion" class="col-md-12">Region</label>
-                <div class="col-md-12">
-                  <input name='txtRegion' type="text" placeholder="Enter Region here" class="form-control form-control-line" value="<?= $Region; ?>" />
+            <div class="col-md-12">
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group required">
+                      <label class="col-md-12 ">Guardian's name/ Spouse if married</label>
+                      <div class="col-md-12">
+                        <input type="text" class="form-control form-control-line" required value="<?= $GuardianName ?>" name="txtGuardianOrSpouseName" readonly />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group required">
+                      <label class="col-md-12 ">Contact Number of Guardian/ Spouse if married</label>
+                      <div class="col-md-12">
+                        <input type="text" class="form-control form-control-line" required value="<?= $GuardianContactNumber ?>" name="txtGuardianOrSpouseContact" readonly />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="form-group">
-                <label for="txtProvince" class="col-md-12">Province</label>
-                <div class="col-md-12">
-                  <input name='txtProvince' type="text" placeholder="Enter Province here" class="form-control form-control-line" value="<?= $Province; ?>" />
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group required">
+                      <label class="col-md-12 ">Occupation of Guardian/ Spouse if married</label>
+                      <div class="col-md-12">
+                        <input type="text" class="form-control form-control-line" required value="<?= $GuardianOccupation ?>" name="txtGuardianOrSpouseOccupation" readonly />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group required">
+                      <label class="col-md-12 ">Office or Address of Guardian/ Spouse if married</label>
+                      <div class="col-md-12">
+                        <input type="text" class="form-control form-control-line" required value="<?= $GuardianOfficeAddress ?>" name="txtGuardianOrSpouseOfficeAddress" readonly />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="form-group">
-                <label for="txtMunicipalityCity" class="col-md-12">Municipality / City</label>
-                <div class="col-md-12">
-                  <input name='txtMunicipalityCity' type="text" placeholder="Enter Municipality / City here" class="form-control form-control-line" value="<?= $MunicipalityCity; ?>" />
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group required">
+                      <label class="col-md-12 ">Estimated Family Annual Income</label>
+                      <div class="col-md-12">
+                        <input type="text" class="form-control form-control-line" required value="<?= $EstAnnualIncome ?>" name="txtEstAnnualIncome" readonly />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group required">
+                      <label class="col-md-12 ">Source of income</label>
+                      <div class="col-md-12">
+                        <input type="text" value="<?= $SourceOfIncome ?>" readonly class="form-control form-control-line">
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="form-group">
-                <label for="txtAddress" class="col-md-12">Complete Address</label>
-                <div class="col-md-12">
-                  <input name='txtAddress' type="text" placeholder="Enter Complete Address here" class="form-control form-control-line" value="<?= $Address; ?>" />
+
+                <div class="form-group ">
+                  <label class="col-md-12 ">Physical disabilities/ defects, if any</label>
+                  <div class="col-md-12">
+                    <input type="text" class="form-control form-control-line" value="<?= $Disability ?>" name="txtDisability" readonly />
+                  </div>
                 </div>
-              </div>
-              <div class="form-group">
-                <label for="txtBarangay" class="col-md-12">Barangay</label>
-                <div class="col-md-12">
-                  <input name='txtBarangay' type="text" placeholder="Enter Barangay here" class="form-control form-control-line" value="<?= $Barangay; ?>" />
+
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="form-group required">
+                      <label class="col-md-12 ">General Condition of Health (e.g. good; ) </label>
+                      <div class="col-md-12">
+                        <input type="text" class="form-control form-control-line" value="<?= $GeneralCondition ?>" name="txtGeneralCondition" readonly />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-7">
+                    <div class="form-group ">
+                      <label class="col-md-12 ">if not good why?</label>
+                      <div class="col-md-12">
+                        <input type="text" class="form-control form-control-line" value="<?= $GeneralConditionReason ?>" name="txtGeneralConditionReason" readonly />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="form-group">
-                <label for="txtZipCode" class="col-md-12">Zip Code</label>
-                <div class="col-md-12">
-                  <input name='txtZipCode' type="text" placeholder="Enter Zip Code here" class="form-control form-control-line" value="<?= $ZipCode; ?>" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <br></br>
-          <div class="row">
-            <div class="col-md-6">
-              <h3>For Foreign Student Only</h3>
-              <div class="form-group">
-                <label for="txtACRNo" class="col-md-12">If alien, ACR No.</label>
-                <div class="col-md-12">
-                  <input name='txtACRNo' type="text" placeholder="Enter ACR No. here" class="form-control form-control-line" value="<?= $ACRNo; ?>" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtPlacedIssued" class="col-md-12">Placed Issued</label>
-                <div class="col-md-12">
-                  <input name='txtPlacedIssued' type="text" placeholder="Enter Placed Issued here" class="form-control form-control-line" value="<?= $PlacedIssued; ?>" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtDateIssued" class="col-md-12">Date Issued</label>
-                <div class="col-md-12">
-                  <input name='txtDateIssued' type="text" placeholder="Enter Date Issued here" class="form-control form-control-line" value="<?= $DateIssued; ?>" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtAuthorizedStay" class="col-md-12">Authorized Stay</label>
-                <div class="col-md-12">
-                  <input name='txtAuthorizedStay' type="text" placeholder="Enter Authorized Stay here" class="form-control form-control-line" value="<?= $AuthorizedStay; ?>" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtPassportNo" class="col-md-12">Passport No.</label>
-                <div class="col-md-12">
-                  <input name='txtPassportNo' type="text" placeholder="Enter Passport No. here" class="form-control form-control-line" value="<?= $PassportNo; ?>" />
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="txtPassportExpixy" class="col-md-12">Passport Expixy</label>
-                <div class="col-md-12">
-                  <input name='txtPassportExpixy' type="text" placeholder="Enter Passport Expixy here" class="form-control form-control-line" value="<?= $PassportExpixy; ?>" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtDateArrival" class="col-md-12">Date of Arrival</label>
-                <div class="col-md-12">
-                  <input name='txtDateArrival' type="text" placeholder="Enter Date of Arrival here" class="form-control form-control-line" value="<?= $DateArrival; ?>" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtVisaType" class="col-md-12">Visa Type</label>
-                <div class="col-md-12">
-                  <input name='txtVisaType' type="text" placeholder="Enter Visa Type here" class="form-control form-control-line" value="<?= $VisaType; ?>" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="txtVisaStatus" class="col-md-12">Visa Status</label>
-                <div class="col-md-12">
-                  <input name='txtVisaStatus' type="text" placeholder="Enter Visa Status here" class="form-control form-control-line" value="<?= $VisaStatus; ?>" />
+
+                <div class="form-group required">
+                  <label class="col-md-12 ">Facebook profile link</label>
+                  <div class="col-md-12">
+                    <input type="text" class="form-control form-control-line" value="<?= $FBLink ?>" name="txtProfileLink" required readonly />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary w-100 text-white">Save</button>
+          <div class="w-100 text-end">
+            <button type="button" onclick="return window.location.href = '<?= site_url() . 'student/profile_edit' ?>'" class="btn btn-primary text-white">Edit Profile</button>
+
+            <button type="button" onclick="return window.location.href = '<?= site_url() . 'student/change_profile_picture' ?>'" class="btn btn-default text-white">Upload Photo</button>
+          </div>
         </form>
       </div>
     </div>
   </div>
 </div>
+<script type="text/javascript">
+  function successful() {
+
+    document.querySelector('#alertsuccess').classList.remove('d-none');
+    setTimeout(function() {
+      document.querySelector('#alertsuccess').classList.add('d-none');
+    }, 5000);
+  }
+
+  function failed() {
+
+    document.querySelector('#alertdanger').classList.remove('d-none');
+    setTimeout(function() {
+      document.querySelector('#alertdanger').classList.add('d-none');
+    }, 5000);
+  }
+</script>
+
+<?php if ($this->session->flashdata('updateSuccess') != '') : ?>
+  <script>
+    successful();
+  </script>
+<?php endif; ?>
+
+<?php if ($this->session->flashdata('updateFailed') != '') : ?>
+  <script>
+    failed();
+  </script>
+<?php endif; ?>

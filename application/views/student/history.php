@@ -57,7 +57,29 @@ foreach ($query->result() as $row) {
             </thead>
             <tbody>
               <?php
-              $query = $this->db->query("SELECT tblappointment.AppointmentID, tblappointment.StudentName, tblcollege.College, tblappointment.YearSection, tblappointment.SelectedDate, tblappointment.PreferredTime, tblappointment.Platform, tblappointment.Status, tblappointment.Remarks, tblappointment.CreatedBy, tblappointment.AppointmentSchedID FROM tblappointment INNER JOIN tblcollege ON tblcollege.CollegeID=tblappointment.CollegeID WHERE tblappointment.CollegeID='" . $this->session->userdata('StudentCollegeID') . "';");
+              $studentCollegeId = $this->session->userdata('StudentCollegeID');
+              $studentUserId = $this->session->userdata('StudentUserID');
+              $query = $this->db->query("SELECT 
+                                        a.AppointmentID, 
+                                        a.StudentName, 
+                                        c.College, 
+                                        a.YearSection, 
+                                        a.SelectedDate, 
+                                        a.PreferredTime, 
+                                        a.Platform, 
+                                        a.Status, 
+                                        a.Remarks, 
+                                        a.CreatedBy, 
+                                        a.AppointmentSchedID 
+                                        FROM tblappointment a 
+                                        INNER JOIN tblcollege c
+                                        ON 
+                                        c.CollegeID=a.CollegeID 
+                                        WHERE 
+                                        a.CollegeID='$studentCollegeId' and
+                                        a.CreatedBy = '$studentUserId' and
+                                        a.Status = 'Completed'
+                                        ");
               foreach ($query->result() as $row) :
                 $tblappointmentsched = $this->db->query("SELECT * FROM tblappointmentsched WHERE AppointmentSchedID='" . $row->AppointmentSchedID . "';");
               ?>

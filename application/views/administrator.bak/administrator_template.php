@@ -47,6 +47,18 @@
       });
 
       calendar.render();
+
+      $('.fc-prev-button').on("click", function() {
+        $('.fc-event-title').each(function(data) {
+          $(this).html($(this).text());
+        });
+      });
+
+      $('.fc-next-button').on("click", function() {
+        $('.fc-event-title').each(function(data) {
+          $(this).html($(this).text());
+        });
+      });
     });
   </script>
   <!-- Custom CSS -->
@@ -228,7 +240,7 @@
                     </span>
                   </a>
                   <div class="dropdown-menu dropdown-menu-end" aria-labelledby="Userdd">
-                    
+
                     <a class="dropdown-item" href="<?= site_url() . 'administrator/change_password'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Change Password</a>
                     <a class="dropdown-item" href="<?= site_url() . 'administrator/change_profile_picture'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Change Profile Picture</a>
                   </div>

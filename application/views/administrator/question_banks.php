@@ -41,7 +41,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <th scope="col">Date</th>
                 <th scope="col">Status</th>
                 <th scope="col">Created By</th>
-                <th scope="col">Action</th>
+                <th style="width: 10%;">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -58,15 +58,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
                   <td><?= ($row->Status == 0 ? 'Disable' : 'Enable'); ?></td>
                   <td><?= $this->routines->getUserFullName($row->CreatedBy); ?></td>
                   <td>
-                    <div class="d-flex justify-content-center">
-                      <?php if ($row->Status == 0) : ?>
-                        <a href="<?= site_url() . 'administrator/question_bank_update_status/' . $row->QuestionID . '/1'; ?>" class="btn btn-outline-warning btn-sm" title="Enable" style="width: 100px; margin: .2rem">Enable</a>
-                      <?php else : ?>
-                        <a href="<?= site_url() . 'administrator/question_bank_update_status/' . $row->QuestionID . '/0'; ?>" class="btn btn-outline-warning btn-sm" title="Disable" style="width: 100px; margin: .2rem">Disable</a>
-                      <?php endif; ?>
-                      <a href="<?= site_url() . 'administrator/question_bank/' . $row->QuestionID; ?>" class="btn btn-outline-primary btn-sm" title="Edit" style="width: 100px; margin: .2rem">Edit</a>
-                      <a href="<?= site_url() . 'administrator/question_bank_update_status/' . $row->QuestionID . '/2'; ?>" class="btn btn-outline-danger btn-sm" title="Delete" style="width: 100px; margin: .2rem">Delete</a>
-                    </div>
+                    <?php if ($row->Status == 0) : ?>
+                      <a href="<?= site_url() . 'administrator/question_bank_update_status/' . $row->QuestionID . '/1'; ?>" class="btn btn-outline-warning btn-sm" title="Enable" style="width: 100px; margin: .25rem">Enable</a>
+                    <?php else : ?>
+                      <a href="<?= site_url() . 'administrator/question_bank_update_status/' . $row->QuestionID . '/0'; ?>" class="btn btn-outline-warning btn-sm" title="Disable" style="width: 100px; margin: .25rem">Disable</a>
+                    <?php endif; ?>
+                    <a href="<?= site_url() . 'administrator/question_bank/' . $row->QuestionID; ?>" class="btn btn-outline-primary btn-sm" title="Edit" style="width: 100px; margin: .25rem">Edit</a>
+                    <a href="<?= site_url() . 'administrator/question_bank_update_status/' . $row->QuestionID . '/2'; ?>" class="btn btn-outline-danger btn-sm" title="Delete" style="width: 100px; margin: .25rem">Delete</a>
                   </td>
                 </tr>
               <?php endforeach; ?>

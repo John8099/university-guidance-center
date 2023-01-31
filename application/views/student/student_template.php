@@ -12,48 +12,78 @@
   <script src='https://github.com/mozilla-comm/ical.js/releases/download/v1.4.0/ical.js'></script>
   <script src='<?= base_url() . 'media/' ?>fullcalendar/lib/main.js'></script>
   <script src='<?= base_url() . 'media/' ?>fullcalendar/packages/icalendar/main.global.js'></script>
+  <?php
+  $studentId = $this->session->userdata("StudentUserID");
+  $query = $this->db->query("SELECT
+                          apnt.AppointmentID AS appointmentID,
+                          aschd.AppointmentDate AS appointmentDate,
+                          aschd.AppointmentTime AS appointmentTime,
+                          aschd.Status AS selectedAppointmentStatus,
+                          aschd.CreatedBy AS adminID,
+                          apnt.CreatedBy AS studentID,
+                          apnt.Status AS studentAppointmentStatus
+                          FROM tblappointmentsched aschd
+                          LEFT JOIN tblappointment apnt
+                          ON 
+                          aschd.AppointmentSchedID = apnt.AppointmentSchedID
+                          LEFT JOIN tbluser u
+                          ON u.UserID = aschd.CreatedBy
+                          WHERE 
+                          aschd.Status = 'Active' OR
+                          apnt.CreatedBy = '$studentId'
+                          ");
+
+  // $result = $query->num_rows() == 0 ? null : json_encode($query->result_object());
+  $data = [];
+  foreach ($query->result() as $res) {
+    if ($res->studentAppointmentStatus != "Completed") {
+      $adminFullName = $this->routines->getUserFullName($res->adminID);
+      $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
+      array_push(
+        $data,
+        array(
+          "title" => "$res->appointmentTime <br> $adminFullName <br> $appointmentStat",
+          "url" => site_url() . 'student/schedule_appointment/' . ($res->appointmentID == null ? "" : $res->appointmentID),
+          "start" => $res->appointmentDate
+        )
+      );
+    }
+  }
+  ?>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById('calendar');
+      const appointmentData = <?= json_encode($data) ?>;
+      const data = appointmentData != null ? appointmentData : []
 
-      var data = [];
-      <?php
-      $query = $this->db->query("SELECT * FROM tblappointmentsched WHERE Status='Active';");
-
-      foreach ($query->result() as $row) :
-        $Fullname = '';
-        $User = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $row->CreatedBy . "';")->row();
-        if (isset($User->UserID)) {
-          $Fullname = $this->routines->getUserFullName($User->UserID);;
-        }
-        $Appointment = $row->AppointmentTime . '<br>' . $Fullname;
-      ?>
-        appointment = '<?= $Appointment; ?>';
-        data.push({
-          title: appointment,
-          url: '<?= site_url() . 'student/set_schedule_date/' . $row->AppointmentSchedID; ?>',
-          start: '<?= $row->AppointmentDate; ?>'
-        });
-      <?php endforeach; ?>
-      var calendar = new FullCalendar.Calendar(calendarEl, {
+      console.log(data)
+      var calendarAppoint = new FullCalendar.Calendar(document.getElementById('calendar'), {
         displayEventTime: false,
         headerToolbar: {
           left: 'prev,next today',
           center: 'title',
         },
         events: data,
-        loading: function(bool) {
-          document.getElementById('loading').style.display =
-            bool ? 'block' : 'none';
-        }
+
       });
 
-      calendar.render();
+      calendarAppoint.render();
+
+      $('.fc-prev-button').on("click", function() {
+        $('.fc-event-title').each(function(data) {
+          $(this).html($(this).text());
+        });
+      });
+
+      $('.fc-next-button').on("click", function() {
+        $('.fc-event-title').each(function(data) {
+          $(this).html($(this).text());
+        });
+      });
     });
   </script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      var calendarEl = document.getElementById('calendar2');
+      var calendarEl2 = document.getElementById('calendar2');
 
       var data = [];
       <?php
@@ -66,7 +96,7 @@
           start: '<?= $row->AppointmentDate; ?>'
         });
       <?php endforeach; ?>
-      var calendar = new FullCalendar.Calendar(calendarEl, {
+      var calendar2 = new FullCalendar.Calendar(calendarEl2, {
         displayEventTime: false,
         headerToolbar: {
           left: 'prev,next today',
@@ -74,12 +104,25 @@
         },
         events: data,
         loading: function(bool) {
-          document.getElementById('loading2').style.display =
-            bool ? 'block' : 'none';
-        }
+          let loadingEl = document.getElementById('loading2')
+          loadingEl.style.display = bool ? 'block' : 'none';
+        },
+
       });
 
-      calendar.render();
+      calendar2.render();
+
+      $('.fc-prev-button').on("click", function() {
+        $('.fc-event-title').each(function(data) {
+          $(this).html($(this).text());
+        });
+      });
+
+      $('.fc-next-button').on("click", function() {
+        $('.fc-event-title').each(function(data) {
+          $(this).html($(this).text());
+        });
+      });
     });
   </script>
   <!-- Custom CSS -->
@@ -243,24 +286,29 @@
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav">
           <!-- User Profile-->
-          <li>
-            <!-- User Profile-->
-            <div class="user-profile dropdown m-t-20">
-              <div class="user-pic"><img src="<?= base_url('uploads/') . $this->session->userdata('StudentImageLoc'); ?>" alt="users" class="rounded-circle" width="200" /></div>
-              <div class="user-content hide-menu m-l-10 text-center">
-                <a href="#" class="" id="Userdd" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <h6 class="m-b-0 m-t-20 user-name font-small">University Guidance Counsellor <i class="fa fa-angle-down"></i></h6>
-                  <span class="op-5 user-email">Student</span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="Userdd">
-                  <a class="dropdown-item" href="<?= site_url() . 'student/profile_edit'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Edit Profile</a>
-                  <a class="dropdown-item" href="<?= site_url() . 'student/change_password'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Change Password</a>
-                  <a class="dropdown-item" href="<?= site_url() . 'student/change_profile_picture'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Change Profile Picture</a>
-                </div>
+          <!-- User Profile-->
+          <div class="user-profile dropdown m-t-20">
+            <div class="user-pic d-flex justify-content-center">
+              <img src="<?= base_url('uploads/') . $this->session->userdata('StudentImageLoc'); ?>" alt="users" class="rounded-circle" width="100" />
+            </div>
+            <div class="user-content hide-menu m-l-10 text-center">
+              <a href="#" class="" id="Userdd" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <h6 class="m-b-0 m-t-20 user-name font-small">
+                  <?= $this->session->userdata("StudentFullname") ?>
+                  <i class="fa fa-angle-down"></i>
+                </h6>
+                <span class="op-5 user-email">
+                  <?= $this->session->userdata("StudentUserType") ?>
+                </span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-end" aria-labelledby="Userdd">
+                <a class="dropdown-item" href="<?= site_url() . 'student/profile_edit'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Edit Profile</a>
+                <a class="dropdown-item" href="<?= site_url() . 'student/change_password'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Change Password</a>
+                <a class="dropdown-item" href="<?= site_url() . 'student/change_profile_picture'; ?>"><i class="ti-user m-r-5 m-l-5"></i> Change Profile Picture</a>
               </div>
             </div>
-            <!-- End User Profile-->
-          </li>
+          </div>
+          <!-- End User Profile-->
           <ul id="sidebarnav">
             <li class="sidebar-item">
               <a class="sidebar-link waves-effect waves-dark sidebar-link" href="<?= site_url() . 'student/' ?>" aria-expanded="false">
@@ -398,7 +446,7 @@
   <script src="<?= base_url() . 'media/' ?>datatables/responsive.bootstrap4.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
-      $('.fc-event-title.fc-sticky').each(function(data) {
+      $('.fc-event-title').each(function(data) {
         $(this).html($(this).text());
       });
       $('#datatable').DataTable({

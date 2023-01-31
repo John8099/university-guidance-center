@@ -38,7 +38,6 @@ foreach ($query->result() as $row) {
     <div class="card">
       <div class="card-body">
         <div class="fullcalendar">
-          <div id='loading'>loading...</div>
 
           <div id='calendar'></div>
         </div>

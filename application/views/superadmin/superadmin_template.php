@@ -51,6 +51,18 @@
       });
 
       calendar.render();
+
+      $('.fc-prev-button').on("click", function() {
+        $('.fc-event-title').each(function(data) {
+          $(this).html($(this).text());
+        });
+      });
+
+      $('.fc-next-button').on("click", function() {
+        $('.fc-event-title').each(function(data) {
+          $(this).html($(this).text());
+        });
+      });
     });
   </script>
   <!-- Custom CSS -->

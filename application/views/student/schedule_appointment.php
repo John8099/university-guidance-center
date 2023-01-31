@@ -2,50 +2,48 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 ?>
 <?php
-$MobileNo = '';
-$TelephoneNo = '';
-$UserID = $this->session->userdata('StudentUserID');
-$query = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $UserID . "'");
-foreach ($query->result() as $row) {
-  $MobileNo = $row->MobileNo;
-  $TelephoneNo = $row->TelephoneNo;
-}
-?>
-<?php
-$Referrer = '';
-$StudentName = $this->session->userdata('StudentFullname');
-$Email = $this->session->userdata('StudentEmail');
-$YearSection = '';
-$CollegeID = $this->session->userdata('StudentCollegeID');
-$Address = '';
-$PhoneNumber = $MobileNo;
-$OtherContact = '';
-$Platform = '';
+$studentName = "";
+$email = "";
+$college = "";
+$course = "";
+$yearSec = "";
+$address = "";
+$number = "";
+
 $PreferredTime = $this->session->userdata('AppointmentTime');
 $SelectedDate = $this->session->userdata('AppointmentDate');
-$Category = '';
 
-$User = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $this->session->userdata('StudentUserID') . "';")->row();
-if (isset($User->UserID)) {
-  $YearSection = $User->YearSec;
-  $Address = $User->Address;
-  $Email = $User->Email ? $User->Email : "";
+$UserID = $this->session->userdata('StudentUserID');
+
+$query = $this->db->query("SELECT * FROM tbluser WHERE UserID = '$UserID'");
+
+if ($query->num_rows() > 0) {
+  $res = $query->row();
+
+  $studentName = $this->routines->getUserFullName($res->UserID);
+  $email = $res->Email;
+  $college = $this->routines->getCollege($res->CollegeID);
+  $course = $res->Course;
+  $yearSec = $res->YearSec;
+  $address = $res->Address;
+  $number = $res->MobileNo;
 }
-$AppointmentID = $this->uri->segment(3);
-$query = $this->db->query("SELECT * FROM tblappointment WHERE AppointmentID = '" . $AppointmentID . "'");
-foreach ($query->result() as $row) {
-  $Referrer = $row->Referrer;
-  $StudentName = $row->StudentName;
-  $Email = $row->Email;
-  $YearSection = $row->YearSection;
-  $CollegeID = $row->CollegeID;
-  $Address = $row->Address;
-  $PhoneNumber = $row->PhoneNumber;
-  $OtherContact = $row->OtherContact;
-  $Platform = $row->Platform;
-  $PreferredTime = $row->PreferredTime;
-  $SelectedDate = $row->SelectedDate;
-  $Category = $row->Category;
+
+$OtherContact = "";
+$Category = "";
+$Platform = "";
+
+$appointmentId = $this->uri->segment(3);
+if ($appointmentId != "") {
+  $queryAppointment = $this->db->query("SELECT * FROM tblappointment WHERE AppointmentID='$appointmentId'");
+
+  if ($queryAppointment->num_rows() > 0) {
+    $resAppointment = $queryAppointment->row();
+
+    $OtherContact = $resAppointment->OtherContact;
+    $Category = $resAppointment->Category;
+    $Platform = $resAppointment->Platform;
+  }
 }
 ?>
 
@@ -98,89 +96,84 @@ foreach ($query->result() as $row) {
             Student referral failed, please try again.
           </div>
         </div>
-        <form method="post" id="formAppointmentSave" action="<?= site_url() . 'student/appointment_save/' . $AppointmentID ?>" class="form-horizontal form-material mx-2">
+
+        <form method="post" id="formAppointmentSave" action="<?= site_url() . 'student/appointment_save/' . $appointmentId ?>" class="form-horizontal form-material mx-2">
           <?= $this->routines->InsertCSRF() ?>
-          <div class="form-group d-none">
-            <label class="col-md-12">Referrer</label>
-            <div class="col-md-12">
-              <input name='txtReferrer' type="text" placeholder="Enter referrer here" class="form-control form-control-line" value="<?= $Referrer; ?>" />
-            </div>
-          </div>
+
           <div class="form-group">
             <label class="col-md-12">Student Name</label>
             <div class="col-md-12">
-              <input name='txtStudentName' type="text" placeholder="Enter student name here" class="form-control form-control-line" value="<?= $StudentName; ?>" required />
+              <input name='txtStudentName' type="text" placeholder="Enter student name here" class="form-control form-control-line" value="<?= $studentName; ?>" required readonly />
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-12">Student Email</label>
             <div class="col-md-12">
-              <input name='txtEmail' type="text" placeholder="Enter student email here" class="form-control form-control-line" value="<?= $Email; ?>" required />
+              <input name='txtEmail' type="text" placeholder="Enter student email here" class="form-control form-control-line" value="<?= $email; ?>" required readonly />
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-12">College</label>
             <div class="col-md-12">
               <div class="custom-select">
-                <select class="form-control form-control-line" name="txtCollege" required="required">
-                  <option value="" selected hidden>Select College</option>
-                  <?php $query = $this->db->query("SELECT CollegeID, College FROM tblcollege;");
-                  foreach ($query->result() as $row) : ?>
-                    <option value="<?= $row->CollegeID; ?>" <?= ($CollegeID == $row->CollegeID) ? 'selected' : ''; ?>><?= $row->College; ?></option>
-                  <?php endforeach; ?>
-                </select>
+                <input name='txtCollege' type="text" placeholder="Enter student email here" class="form-control form-control-line" value="<?= $college; ?>" required readonly />
               </div>
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-12">Course Year and Section</label>
             <div class="col-md-12">
-              <input name='txtYearSection' type="text" placeholder="Enter year and section here" class="form-control form-control-line" value="<?= $YearSection; ?>" required />
+              <input name='txtYearSection' type="text" placeholder="Enter year and section here" class="form-control form-control-line" value="<?= $course . " " . $yearSec; ?>" required readonly />
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-12">Address</label>
             <div class="col-md-12">
-              <input name='txtAddress' type="text" placeholder="Enter address here" class="form-control form-control-line" value="<?= $Address; ?>" required />
+              <input name='txtAddress' type="text" placeholder="Enter address here" class="form-control form-control-line" value="<?= $address; ?>" required readonly />
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-12">Phone Number</label>
             <div class="col-md-12">
-              <input name='txtPhoneNumber' type="text" placeholder="Enter phone number here" class="form-control form-control-line" value="<?= $PhoneNumber; ?>" required />
+              <input name='txtPhoneNumber' type="text" placeholder="Enter phone number here" class="form-control form-control-line" value="<?= $number; ?>" required readonly />
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-12">Other Contact Information</label>
             <div class="col-md-12">
-              <textarea name='txtOtherContact' class="form-control form-control-line" placeholder="Enter other contact info here"><?= $OtherContact; ?></textarea>
+              <textarea name='txtOtherContact' class="form-control form-control-line" placeholder="Enter other contact info here" required <?= $appointmentId == "" ? "" : "readonly" ?>><?= $OtherContact; ?></textarea>
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-12">Category</label>
+
             <div class="col-md-12">
-              <div class="custom-select">
-                <select class="form-control form-control-line" name="txtCategory" required="required">
+              <?php if ($appointmentId == "") : ?>
+                <select class="form-select form-control-line" name="txtCategory" required>
                   <option value="" selected hidden>Select Platform</option>
                   <option value="Personal" <?= ($Category == 'Personal') ? 'selected' : ''; ?>>Personal</option>
                   <option value="Social" <?= ($Category == 'Social') ? 'selected' : ''; ?>>Social</option>
                   <option value="Academic" <?= ($Category == 'Academic') ? 'selected' : ''; ?>>Academic</option>
                 </select>
-              </div>
+              <?php else : ?>
+                <input name='txtCategory' type="text" class="form-control form-control-line" value="<?= $Category; ?>" readonly />
+              <?php endif; ?>
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-12">Platform</label>
             <div class="col-md-12">
-              <div class="custom-select">
-                <select class="form-control form-control-line" name="txtPlatform" required="required">
+              <?php if ($appointmentId == "") : ?>
+                <select class="form-select form-control-line" name="txtPlatform" required>
                   <option value="" selected hidden>Select Platform</option>
                   <option value="Facebook Messenger" <?= ($Platform == 'Facebook Messenger') ? 'selected' : ''; ?>>Facebook Messenger</option>
                   <option value="Google Meet" <?= ($Platform == 'Google Meet') ? 'selected' : ''; ?>>Google Meet</option>
                   <option value="Telecounseling" <?= ($Platform == 'Telecounseling') ? 'selected' : ''; ?>>Telecounseling</option>
                   <option value="Face to Face" <?= ($Platform == 'Face to Face') ? 'selected' : ''; ?>>Face to Face</option>
                 </select>
-              </div>
+              <?php else : ?>
+                <input name='txtPlatform' type="text" class="form-control form-control-line" value="<?= $Platform; ?>" readonly />
+              <?php endif; ?>
             </div>
           </div>
           <div class="form-group">
@@ -195,8 +188,15 @@ foreach ($query->result() as $row) {
               <input name='txtSelectedDate' type="date" placeholder="Select date here" class="form-control form-control-line" value="<?= $SelectedDate; ?>" readonly />
             </div>
           </div>
-          <button type="button" class="btn btn-primary w-100 text-white" data-bs-toggle="modal" data-bs-target="#studentaddModal">Save</button>
-
+          <?php if ($appointmentId == "") : ?>
+            <button type="button" class="btn btn-primary w-100 text-white" data-bs-toggle="modal" data-bs-target="#studentaddModal">
+              Save
+            </button>
+          <?php else : ?>
+            <button type="button" class="btn btn-default w-100 text-white" onclick="return window.history.back()">
+              Go back
+            </button>
+          <?php endif; ?>
           <div class="modal fade" id="studentaddModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -204,17 +204,17 @@ foreach ($query->result() as $row) {
                   <h5 class="modal-title" id="exampleModalLabel">Saving new appointment</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                  <div class="modal-body">
-                    <div class="form-group">
-                      <label>This Privacy Notice is hereby observed in compliance with Republic Act No. 10173 of the Data Privacy Act of 2012 (DPA), implementing its rules and regulations, and other relevant policies, including issuances of the National Privacy Commission. WVSU respects and values your data privacy rights, and makes sure that all personal data collected from you, our stakeholders, are processed in adherence to the general principles of transparency, legitimate purpose, and proportionality. Your information is limited on these purposes only. WVSU will never provide your personal information to third parties for any other purpose. Do you Agree with the data privacy notice?</label>
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label>This Privacy Notice is hereby observed in compliance with Republic Act No. 10173 of the Data Privacy Act of 2012 (DPA), implementing its rules and regulations, and other relevant policies, including issuances of the National Privacy Commission. WVSU respects and values your data privacy rights, and makes sure that all personal data collected from you, our stakeholders, are processed in adherence to the general principles of transparency, legitimate purpose, and proportionality. Your information is limited on these purposes only. WVSU will never provide your personal information to third parties for any other purpose. Do you Agree with the data privacy notice?</label>
 
-                    </div>
                   </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <!-- <button name="submit" class="btn btn-primary">I agree</button> -->
-                    <button type="submit" onclick="return $('#formAppointmentSave').submit()" class="btn btn-primary text-white">I agree</button>
-                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <!-- <button name="submit" class="btn btn-primary">I agree</button> -->
+                  <button type="submit" onclick="return $('#formAppointmentSave').submit()" class="btn btn-primary text-white">I agree</button>
+                </div>
 
               </div>
             </div>

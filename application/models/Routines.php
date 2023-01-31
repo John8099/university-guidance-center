@@ -9,6 +9,16 @@ class Routines extends CI_Model
     $this->load->helper('date');
   }
 
+  function isEmailExist($email, $userId = null)
+  {
+    $query = $this->db->query("SELECT * FROM tbluser WHERE " . ($userId ? " UserID <> '$userId' and" : "") . " Email='$email'")->num_rows();
+
+    if ($query > 0) {
+      return true;
+    }
+    return false;
+  }
+
   function getCurrentDateTime()
   {
     $time = time();
@@ -133,7 +143,7 @@ class Routines extends CI_Model
   function getUserFullName($user_id)
   {
     $UserFullName = '';
-    $tblUser = $this->db->query("SELECT * FROM tbluser WHERE UserID = '" . $user_id . "';");
+    $tblUser = $this->db->query("SELECT * FROM tbluser WHERE UserID = '$user_id'");
     if ($tblUser->num_rows() > 0) {
       $user = $tblUser->row();
       $middleName = $user->middle_name != null ? $user->middle_name[0] : "";

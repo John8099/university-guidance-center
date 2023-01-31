@@ -23,8 +23,9 @@ $QScore = '';
 $SScore = '';
 $Results = '';
 $ResultID = $this->uri->segment(3);
+$StudentUserID = $this->session->userdata('StudentUserID');
 
-$tblresult = $this->db->query("SELECT * FROM tblresult WHERE WellnessCheckID = '" . $WellnessCheckID . "' AND CreatedBy='" . $this->session->userdata('StudentUserID') . "'");
+$tblresult = $this->db->query("SELECT * FROM tblresult WHERE WellnessCheckID = '$WellnessCheckID' AND CreatedBy='$StudentUserID'");
 
 foreach ($tblresult->result() as $row) {
   $Remarks = $row->Remarks;
@@ -42,7 +43,7 @@ foreach ($tblresult->result() as $row) {
         <?php
         if ($WellnessCheckID != 0) {
           if ($WellnessType == 'Quantitative') {
-            $tblwellnessquestionCategory = $this->db->query("SELECT DISTINCT Category FROM tblwellnessquestion WHERE WellnessCheckID='" . $WellnessCheckID . "';");
+            $tblwellnessquestionCategory = $this->db->query("SELECT DISTINCT Category FROM tblwellnessquestion WHERE WellnessCheckID='$WellnessCheckID'");
             if ($tblwellnessquestionCategory->num_rows() <> 0) {
         ?>
               <form method="post" action="<?= site_url() . 'student/save_wellness_check2/' . $WellnessCheckID ?>" class="form-horizontal form-material mx-2">
@@ -50,10 +51,12 @@ foreach ($tblresult->result() as $row) {
                 <?php foreach ($tblwellnessquestionCategory->result() as $CategoryRow) : ?>
                   <h4 class="card-title"><?= $CategoryRow->Category; ?> Questions</h4>
                   <?php
-                  $tblwellnessquestion = $this->db->query("SELECT * FROM tblwellnessquestion WHERE WellnessCheckID='" . $WellnessCheckID . "' AND Category='" . $CategoryRow->Category . "';");
+                  $category = $CategoryRow->Category;
+                  $tblwellnessquestion = $this->db->query("SELECT * FROM tblwellnessquestion WHERE WellnessCheckID='$WellnessCheckID' AND Category='$category'");
                   $AnswerData = '';
                   foreach ($tblwellnessquestion->result() as $row) :
-                    $tblanswer = $this->db->query("SELECT * FROM tblanswer WHERE QuestionID='" . $row->QuestionID . "';");
+                    $questionId = $row->QuestionID;
+                    $tblanswer = $this->db->query("SELECT * FROM tblanswer WHERE QuestionID='$questionId' and CreatedBy='$StudentUserID'");
                     if ($tblanswer->num_rows() <> 0) {
                       $tblanswer = $tblanswer->row();
                       $AnswerData = $tblanswer->Answer;
@@ -111,8 +114,16 @@ foreach ($tblresult->result() as $row) {
                   <?php endforeach; ?>
                 <?php endforeach; ?>
                 <div class="form-group">
-                  <label class="col-md-12">&nbsp;</label>
                   <div class="col-md-12">
+                    <small>
+                      <p>
+                        Disclaimer This test was adapted from the Princeton UMatter Wellness Self-Assessment and County Health Department Wellness Assessment and is intended for individual level self-reflection and goal-setting.
+                      </p>
+
+                      visit: <a href="https://umatter.princeton.edu/action/caring-yourself/wellness-wheel-assessment" class="link-default" target="_blank">https://umatter.princeton.edu/action/caring-yourself/wellness-wheel-assessment</a>
+                    </small>
+                  </div>
+                  <div class="col-md-12" style="margin-top: 20px;">
                     <button type="submit" class="btn btn-success w-100">Submit</button>
                   </div>
                 </div>
@@ -120,7 +131,7 @@ foreach ($tblresult->result() as $row) {
             <?php
             }
           } else {
-            $tblwellnessquestion = $this->db->query("SELECT * FROM tblwellnessquestion WHERE WellnessCheckID='" . $WellnessCheckID . "' AND Category='NONE';");
+            $tblwellnessquestion = $this->db->query("SELECT * FROM tblwellnessquestion WHERE WellnessCheckID='$WellnessCheckID' AND Category='NONE'");
 
             if ($tblwellnessquestion->num_rows() <> 0) {
             ?>
@@ -136,7 +147,8 @@ foreach ($tblresult->result() as $row) {
                         <?php
                         $AnswerData = '';
                         foreach ($tblwellnessquestion->result() as $row) :
-                          $tblanswer = $this->db->query("SELECT * FROM tblanswer WHERE QuestionID='" . $row->QuestionID . "';");
+                          $questionId = $row->QuestionID;
+                          $tblanswer = $this->db->query("SELECT * FROM tblanswer WHERE QuestionID='$questionId' and CreatedBy='$StudentUserID'");
                           if ($tblanswer->num_rows() <> 0) {
                             $tblanswer = $tblanswer->row();
                             $AnswerData = $tblanswer->Answer;

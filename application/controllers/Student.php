@@ -26,73 +26,101 @@ class Student extends CI_Controller
     // wvsu.edu.ph
     $email = $this->input->post('txtEmail');
 
-    if ($this->input->post('txtPassword') <> $this->input->post('txtConfirmPassword')) {
-      $this->session->set_flashdata('RegisterFailed', 'Password not match.');
-      $this->session->set_flashdata('Fullname', $this->input->post('txtFullname'));
-      $this->session->set_flashdata('CollegeID', $this->input->post('txtCollege'));
-      $this->session->set_flashdata('Course', $this->input->post('txtCourse'));
-      $this->session->set_flashdata('YearSec', $this->input->post('txtYearSec'));
-      $this->session->set_flashdata('BiologicalSex', $this->input->post('txtBiologicalSex'));
-      $this->session->set_flashdata('IdentifiedGender', $this->input->post('txtIdentifiedGender'));
-      $this->session->set_flashdata('Email', $email);
-      $this->session->set_flashdata('SchoolID', $this->input->post('txtSchoolID'));
-      $this->session->set_flashdata('Address', $this->input->post('txtAddress'));
-      redirect(site_url() . 'student/student_register');
-    }
-
-    $SchoolID = $this->db->query("SELECT * FROM tbluser WHERE SchoolID = '" . $this->input->post('txtSchoolID') . "';")->row()->SchoolID;
-
-    if ($SchoolID != '') {
-      $this->session->set_flashdata('RegisterFailed', 'Student ID is already exist.');
-      $this->session->set_flashdata('Fullname', $this->input->post('txtFullname'));
-      $this->session->set_flashdata('CollegeID', $this->input->post('txtCollege'));
-      $this->session->set_flashdata('Course', $this->input->post('txtCourse'));
-      $this->session->set_flashdata('YearSec', $this->input->post('txtYearSec'));
-      $this->session->set_flashdata('BiologicalSex', $this->input->post('txtBiologicalSex'));
-      $this->session->set_flashdata('IdentifiedGender', $this->input->post('txtIdentifiedGender'));
-      $this->session->set_flashdata('Email', $email);
-      $this->session->set_flashdata('SchoolID', $this->input->post('txtSchoolID'));
-      $this->session->set_flashdata('Address', $this->input->post('txtAddress'));
-      redirect(site_url() . 'student/student_register');
-    }
+    $SchoolID = $this->db->query("SELECT * FROM tbluser WHERE SchoolID = '" . $this->input->post('txtStudentId') . "';")->row()->SchoolID;
 
     $hashPassword = hash("sha256", $this->input->post('txtPassword'));
 
-    if ($this->routines->validateEmail($email)) {
-      $data = array(
-        'UserType' => 'Student',
-        'Fullname' => $this->input->post('txtFullname'),
-        'CollegeID ' => $this->input->post('txtCollege'),
-        'Course' => $this->input->post('txtCourse'),
-        'YearSec' => $this->input->post('txtYearSec'),
-        'BiologicalSex' => $this->input->post('txtBiologicalSex'),
-        'IdentifiedGender' => $this->input->post('txtIdentifiedGender'),
-        'Email' => $email,
-        'SchoolID' => $this->input->post('txtSchoolID'),
-        'Address' => $this->input->post('txtAddress'),
-        'HashedPassword' => $hashPassword,
-        'CreatedOn' => $this->routines->getCurrentDateTime(),
-        'CreatedBy' => 0,
-        'Status' => 'Inactive',
-      );
-      if ($this->uri->segment(3) == '') {
-        $this->main_model->insert_entry('tbluser', $data);
-      } else {
-        $this->main_model->update_entry('tbluser', $data, 'UserID', $this->uri->segment(3));
-      }
-      $this->session->set_flashdata('RegisterSuccess', 'Registration was successfully saved.');
+    $error = false;
+
+    if ($this->input->post('txtPassword') <> $this->input->post('txtConfirmPassword') && !$error) {
+
+      $this->session->set_flashdata('RegisterFailed', 'Password not match.');
+
+      $error = true;
+    } else if ($SchoolID != '' && !$error) {
+
+      $this->session->set_flashdata('RegisterFailed', 'Student ID is already exist.');
+
+      $error = true;
+    } else if (!$this->routines->validateEmail($email) && !$error) {
+
+      $this->session->set_flashdata('RegisterFailed', 'The email was invalid only accepts wvsu.edu.ph email.');
+
+      $error = true;
     } else {
-      $this->session->set_flashdata('Fullname', $this->input->post('txtFullname'));
-      $this->session->set_flashdata('CollegeID', $this->input->post('txtCollege'));
+      if ($this->routines->isEmailExist($email)) {
+        $this->session->set_flashdata('updateFailed', 'The email already exist.');
+
+        $error = true;
+      } else {
+        $data = array(
+          "Email" => $email,
+          "last_name" => ucfirst($this->input->post("txtLname")),
+          "first_name" => ucfirst($this->input->post("txtFname")),
+          "middle_name" => ucfirst($this->input->post("txtMname")),
+          "SchoolID" => $this->input->post("txtStudentId"),
+          "Course" => strtoupper($this->input->post("txtCourse")),
+          "YearSec" => strtoupper($this->input->post("txtYearSec")),
+          "CollegeID" => $this->input->post("txtCollege"),
+          "CivilStatus" => ucfirst($this->input->post("txtCivilStat")),
+          "PlaceBirth" => ucwords($this->input->post("txtPlaceOfBirth")),
+          "DateBirth" => $this->input->post("txtDateOfBirth"),
+          "Gender" => ucwords($this->input->post("txtGender")),
+          "Address" => ucwords($this->input->post("txtAddress")),
+          "MobileNo" => $this->input->post("txtPhoneNumber"),
+          "Religion" => ucwords($this->input->post("txtReligion")),
+          "LivingArrangement" => ucwords($this->input->post("txtLivingArrangement")),
+          "MinorityGroup" => ucwords($this->input->post("txtMinorityGroup")),
+          "GuardianName" => ucwords($this->input->post("txtGuardianOrSpouseName")),
+          "GuardianContactNumber" => $this->input->post("txtGuardianOrSpouseContact"),
+          "GuardianOccupation" => ucwords($this->input->post("txtGuardianOrSpouseOccupation")),
+          "GuardianOfficeAddress" => ucwords($this->input->post("txtGuardianOrSpouseOfficeAddress")),
+          "EstAnnualIncome" => $this->input->post("txtEstAnnualIncome"),
+          "SourceOfIncome" => $this->input->post("txtSourceOfIncome"),
+          "Disability" => ucwords($this->input->post("txtDisability")),
+          "GeneralCondition" => ucwords($this->input->post("txtGeneralCondition")),
+          "GeneralConditionReason" => ucfirst($this->input->post("txtGeneralConditionReason")),
+          "FBLink" => $this->db->escape_str($this->input->post("txtProfileLink")),
+          "UserType" => "Student",
+          "HashedPassword" => $hashPassword,
+        );
+
+        $this->main_model->insert_entry('tbluser', $data);
+        $this->session->set_flashdata('RegisterSuccess', 'Registration was successfully saved.');
+        redirect(site_url() . 'student/login');
+      }
+    }
+
+    if ($error) {
+      $this->session->set_flashdata('Email', $this->input->post('txtEmail'));
+      $this->session->set_flashdata('last_name', $this->input->post('txtLname'));
+      $this->session->set_flashdata('first_name', $this->input->post('txtFname'));
+      $this->session->set_flashdata('middle_name', $this->input->post('txtMname'));
+      $this->session->set_flashdata('SchoolID', $this->input->post('txtStudentId'));
       $this->session->set_flashdata('Course', $this->input->post('txtCourse'));
       $this->session->set_flashdata('YearSec', $this->input->post('txtYearSec'));
-      $this->session->set_flashdata('BiologicalSex', $this->input->post('txtBiologicalSex'));
-      $this->session->set_flashdata('IdentifiedGender', $this->input->post('txtIdentifiedGender'));
-      $this->session->set_flashdata('Email', $email);
-      $this->session->set_flashdata('SchoolID', $this->input->post('txtSchoolID'));
+      $this->session->set_flashdata('CollegeID', $this->input->post('txtCollege'));
+      $this->session->set_flashdata('CivilStatus', $this->input->post('txtCivilStat'));
+      $this->session->set_flashdata('PlaceBirth', $this->input->post('txtPlaceOfBirth'));
+      $this->session->set_flashdata('DateBirth', $this->input->post('txtDateOfBirth'));
+      $this->session->set_flashdata('Gender', $this->input->post('txtGender'));
       $this->session->set_flashdata('Address', $this->input->post('txtAddress'));
-      $this->session->set_flashdata('RegisterFailed', 'The email was invalid only accepts wvsu.edu.ph email.');
+      $this->session->set_flashdata('MobileNo', $this->input->post('txtPhoneNumber'));
+      $this->session->set_flashdata('Religion', $this->input->post('txtReligion'));
+      $this->session->set_flashdata('LivingArrangement', $this->input->post('txtLivingArrangement'));
+      $this->session->set_flashdata('MinorityGroup', $this->input->post('txtMinorityGroup'));
+      $this->session->set_flashdata('GuardianName', $this->input->post('txtGuardianOrSpouseName'));
+      $this->session->set_flashdata('GuardianContactNumber', $this->input->post('txtGuardianOrSpouseContact'));
+      $this->session->set_flashdata('GuardianOccupation', $this->input->post('txtGuardianOrSpouseOccupation'));
+      $this->session->set_flashdata('GuardianOfficeAddress', $this->input->post('txtGuardianOrSpouseOfficeAddress'));
+      $this->session->set_flashdata('EstAnnualIncome', $this->input->post('txtEstAnnualIncome'));
+      $this->session->set_flashdata('SourceOfIncome', $this->input->post('txtSourceOfIncome'));
+      $this->session->set_flashdata('Disability', $this->input->post('txtDisability'));
+      $this->session->set_flashdata('GeneralCondition', $this->input->post('txtGeneralCondition'));
+      $this->session->set_flashdata('GeneralConditionReason', $this->input->post('txtGeneralConditionReason'));
+      $this->session->set_flashdata('FBLink', $this->input->post('txtProfileLink'));
     }
+
     redirect(site_url() . 'student/student_register');
   }
 
@@ -227,37 +255,72 @@ class Student extends CI_Controller
 
   public function profile_save()
   {
-    $data = array(
-      'Fullname' => $this->input->post('txtFullname'),
-      'DateBirth' => $this->input->post('txtDateBirth'),
-      'PlaceBirth' => $this->input->post('txtPlaceBirth'),
-      'SexualOrientation' => $this->input->post('txtSexualOrientation'),
-      'SexBirth' => $this->input->post('txtSexBirth'),
-      'Nationality' => $this->input->post('txtNationality'),
-      'Religion' => $this->input->post('txtReligion'),
-      'CivilStatus' => $this->input->post('txtCivilStatus'),
-      'Email' => $this->input->post('txtEmail'),
-      'MobileNo' => $this->input->post('txtMobileNo'),
-      'TelephoneNo' => $this->input->post('txtTelephoneNo'),
-      'DSWDHouseholdNo' => $this->input->post('txtDSWDHouseholdNo'),
-      'Disability' => $this->input->post('txtDisability'),
-      'Region' => $this->input->post('txtRegion'),
-      'Province' => $this->input->post('txtProvince'),
-      'MunicipalityCity' => $this->input->post('txtMunicipalityCity'),
-      'Address' => $this->input->post('txtAddress'),
-      'Barangay' => $this->input->post('txtBarangay'),
-      'ZipCode' => $this->input->post('txtZipCode'),
-      'ACRNo' => $this->input->post('txtACRNo'),
-      'PlacedIssued' => $this->input->post('txtPlacedIssued'),
-      'DateIssued' => $this->input->post('txtDateIssued'),
-      'AuthorizedStay' => $this->input->post('txtAuthorizedStay'),
-      'PassportNo' => $this->input->post('txtPassportNo'),
-      'PassportExpixy' => $this->input->post('txtPassportExpixy'),
-      'DateArrival' => $this->input->post('txtDateArrival'),
-      'VisaType' => $this->input->post('txtVisaType'),
-      'VisaStatus' => $this->input->post('txtVisaStatus'),
-    );
-    $this->main_model->update_entry('tbluser', $data, 'UserID', $this->session->userdata('StudentUserID'));
+    $email = $this->input->post('txtEmail');
+    $txtSchoolId = $this->input->post('txtStudentId');
+    $userId = $this->session->userdata('StudentUserID');
+
+    $SchoolIDCount = $this->db->query("SELECT * FROM tbluser WHERE SchoolID ='$txtSchoolId' and UserID <> '$userId'")->num_rows();
+
+    $error = false;
+
+    if ($SchoolIDCount > 0 && !$error) {
+
+      $this->session->set_flashdata('updateFailed', 'Student ID is already exist.');
+
+      $error = true;
+    } else if (!$this->routines->validateEmail($email) && !$error) {
+
+      $this->session->set_flashdata('updateFailed', 'The email was invalid only accepts wvsu.edu.ph email.');
+
+      $error = true;
+    } else {
+
+      if ($this->routines->isEmailExist($email, $userId)) {
+        $this->session->set_flashdata('updateFailed', 'The email already exist.');
+
+        $error = true;
+      } else {
+        $data = array(
+          "Email" => $email,
+          "last_name" => ucfirst($this->input->post("txtLname")),
+          "first_name" => ucfirst($this->input->post("txtFname")),
+          "middle_name" => ucfirst($this->input->post("txtMname")),
+          "SchoolID" => $this->input->post("txtStudentId"),
+          "Course" => strtoupper($this->input->post("txtCourse")),
+          "YearSec" => strtoupper($this->input->post("txtYearSec")),
+          "CollegeID" => $this->input->post("txtCollege"),
+          "CivilStatus" => ucfirst($this->input->post("txtCivilStat")),
+          "PlaceBirth" => ucwords($this->input->post("txtPlaceOfBirth")),
+          "DateBirth" => $this->input->post("txtDateOfBirth"),
+          "Gender" => ucwords($this->input->post("txtGender")),
+          "Address" => ucwords($this->input->post("txtAddress")),
+          "MobileNo" => $this->input->post("txtPhoneNumber"),
+          "Religion" => ucwords($this->input->post("txtReligion")),
+          "LivingArrangement" => ucwords($this->input->post("txtLivingArrangement")),
+          "MinorityGroup" => ucwords($this->input->post("txtMinorityGroup")),
+          "GuardianName" => ucwords($this->input->post("txtGuardianOrSpouseName")),
+          "GuardianContactNumber" => $this->input->post("txtGuardianOrSpouseContact"),
+          "GuardianOccupation" => ucwords($this->input->post("txtGuardianOrSpouseOccupation")),
+          "GuardianOfficeAddress" => ucwords($this->input->post("txtGuardianOrSpouseOfficeAddress")),
+          "EstAnnualIncome" => $this->input->post("txtEstAnnualIncome"),
+          "SourceOfIncome" => $this->input->post("txtSourceOfIncome"),
+          "Disability" => ucwords($this->input->post("txtDisability")),
+          "GeneralCondition" => ucwords($this->input->post("txtGeneralCondition")),
+          "GeneralConditionReason" => ucfirst($this->input->post("txtGeneralConditionReason")),
+          "FBLink" => $this->db->escape_str($this->input->post("txtProfileLink")),
+        );
+
+        $this->main_model->update_entry('tbluser', $data, 'UserID', $userId);
+
+        $this->session->set_flashdata('updateSuccess', 'Profile Updated successfully.');
+
+        $this->session->set_userdata('StudentFullname', $this->routines->getUserFullName($userId));
+        $this->session->set_userdata('StudentEmail', $email);
+        $this->session->set_userdata('StudentCollegeID', $this->input->post("txtCollege"));
+        $this->session->set_userdata('StudentSchoolID',  $this->input->post("txtStudentId"));
+      }
+    }
+
     redirect(site_url() . 'student');
   }
 

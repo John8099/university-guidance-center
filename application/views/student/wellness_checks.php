@@ -30,7 +30,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
             $IsWellnessTaken = false;
             foreach ($query->result() as $row) :
-              $tblresult = $this->db->query("SELECT * FROM tblresult WHERE WellnessCheckID='" . $row->WellnessCheckID . "';");
+              $wellnessCheckId = $row->WellnessCheckID;
+              $studentUserId = $this->session->userdata('StudentUserID');
+              $tblresult = $this->db->query("SELECT * FROM tblresult WHERE WellnessCheckID='$wellnessCheckId' and CreatedBy='$studentUserId'");
               if ($tblresult->num_rows() <> 0) {
                 $IsWellnessTaken = true;
               }

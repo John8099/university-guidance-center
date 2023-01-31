@@ -211,8 +211,8 @@ if ($WellnessCheckID != 0) {
                       <tr>
                         <td><?= $row->Question; ?></td>
                         <td>
-                          <a href="<?= site_url() . 'superadmin/wellness_question_update/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-primary btn-sm" title="Edit" style="width: 100px;">Edit</a>
-                          <a href="<?= site_url() . 'superadmin/wellness_question_delete/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-danger btn-sm" title="Delete" style="width: 100px;">Delete</a>
+                          <a href="<?= site_url() . 'superadmin/wellness_question_update/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-primary btn-sm" title="Edit" style="width: 100px; margin: .25rem">Edit</a>
+                          <a href="<?= site_url() . 'superadmin/wellness_question_delete/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-danger btn-sm" title="Delete" style="width: 100px; margin: .25rem">Delete</a>
                         </td>
                       </tr>
                     <?php endforeach; ?>
@@ -258,8 +258,8 @@ if ($WellnessCheckID != 0) {
                     <tr>
                       <td><?= $row->Question; ?></td>
                       <td>
-                        <a href="<?= site_url() . 'superadmin/wellness_question_update/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-primary btn-sm" title="Edit" style="width: 100px;">Edit</a>
-                        <a href="<?= site_url() . 'superadmin/wellness_question_delete/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-danger btn-sm" title="Delete" style="width: 100px;">Delete</a>
+                        <a href="<?= site_url() . 'superadmin/wellness_question_update/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-primary btn-sm" title="Edit" style="width: 100px; margin: .25rem">Edit</a>
+                        <a href="<?= site_url() . 'superadmin/wellness_question_delete/' . $WellnessCheckID . '/' . $row->QuestionID; ?>" class="btn btn-outline-danger btn-sm" title="Delete" style="width: 100px; margin: .25rem">Delete</a>
                       </td>
                     </tr>
                   <?php endforeach; ?>

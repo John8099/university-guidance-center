@@ -337,6 +337,18 @@ foreach ($query->result() as $res) {
     $('.fc-event-title').each(function(data) {
       $(this).html($(this).text());
     });
+
+    $('.fc-prev-button').on("click", function() {
+      $('.fc-event-title').each(function(data) {
+        $(this).html($(this).text());
+      });
+    });
+
+    $('.fc-next-button').on("click", function() {
+      $('.fc-event-title').each(function(data) {
+        $(this).html($(this).text());
+      });
+    });
   });
 </script>
 
@@ -488,6 +500,18 @@ foreach ($queryFollowUp->result() as $res) {
     calendarFollowUp.render();
     $('.fc-event-title').each(function(data) {
       $(this).html($(this).text());
+    });
+
+    $('.fc-prev-button').on("click", function() {
+      $('.fc-event-title').each(function(data) {
+        $(this).html($(this).text());
+      });
+    });
+
+    $('.fc-next-button').on("click", function() {
+      $('.fc-event-title').each(function(data) {
+        $(this).html($(this).text());
+      });
     });
   });
 
