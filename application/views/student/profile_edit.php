@@ -377,9 +377,39 @@ foreach ($query->result() as $row) {
             </div>
           </div>
           <div class="w-100 text-end">
-            <button type="submit" class="btn btn-primary text-white">Save</button>
-
+            <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#dataPrivacy" style=" background: #5271ff;">
+              Save
+            </a>
             <button type="button" onclick="return window.location.href = '<?= site_url() . 'student/change_profile_picture' ?>'" class="btn btn-default text-white">Upload Photo</button>
+          </div>
+
+          <div class="modal fade" id="dataPrivacy" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">DATA PRIVACY NOTICE</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p>
+                    This Privacy Notice is hereby observed in compliance with Republic Act No. 10173 of the Data Privacy Act of 2012 (DPA), implementing its rules and regulations, and other relevant policies, including issuances of the National Privacy Commission.
+                  </p>
+                  <p>
+                    WVSU respects and values your data privacy rights, and makes sure that all personal data collected from you, our stakeholders are processed in adherence to the general principles of transparency, legitimate purpose, and proportionality. Your information is limited on these purposes only.
+                  </p>
+                  <p>
+                    WVSU will never provide your personal information to third parties for any other purpose.
+                  </p>
+                  <p>
+                  <h6>Do you agree with this data privacy notice?</h6>
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-default">Yes, I Agree and Save</button>
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </div>
+            </div>
           </div>
         </form>
       </div>

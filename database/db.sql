@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 31, 2023 at 08:13 PM
+-- Generation Time: Feb 01, 2023 at 03:44 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 7.4.27
 
@@ -50,21 +50,18 @@ CREATE TABLE `tblanswer` (
 --
 
 INSERT INTO `tblanswer` (`AnswerID`, `Question`, `Category`, `WellnessType`, `WellnessCheckID`, `Answer`, `Score`, `Negative`, `Neutral`, `Positive`, `Compound`, `CreatedOn`, `CreatedBy`, `ResultID`, `QuestionID`) VALUES
-(1, 'You regular make new friends.', 'Physical Wellness', 'Quantitative', 1, '3', '3.00', '0.00', '0.00', '0.00', '0.00', '2023-01-13 09:51:00', 10, 5, 1),
-(2, 'You spend a lot of your free time exploring various random topics that pique your interest.', 'Physical Wellness', 'Quantitative', 1, '3', '3.00', '0.00', '0.00', '0.00', '0.00', '2023-01-13 09:51:00', 10, 5, 2),
-(3, 'Seeing other people cry can easily make you feel like you want to cry too.', 'Physical Wellness', 'Quantitative', 1, '4', '4.00', '0.00', '0.00', '0.00', '0.00', '2023-01-13 09:51:00', 10, 5, 3),
-(4, 'You often make a backup plan for a backup plan.', 'Physical Wellness', 'Quantitative', 1, '3', '3.00', '0.00', '0.00', '0.00', '0.00', '2023-01-13 09:51:00', 10, 5, 4),
-(5, 'You usually stay calm, even under a lot of pressure.', 'Physical Wellness', 'Quantitative', 1, '2', '2.00', '0.00', '0.00', '0.00', '0.00', '2023-01-13 09:51:00', 10, 5, 5),
-(6, 'At social events, you rarely try to introduce yourself to new people and mostly talk to the ones you already know.', 'Physical Wellness', 'Quantitative', 1, '3', '3.00', '0.00', '0.00', '0.00', '0.00', '2023-01-13 09:51:00', 10, 5, 6),
-(7, 'You prefer to completely finish one project before starting another.', 'Physical Wellness', 'Quantitative', 1, '2', '2.00', '0.00', '0.00', '0.00', '0.00', '2023-01-13 09:51:00', 10, 5, 7),
-(8, 'You are very sentimental.', 'Physical Wellness', 'Quantitative', 1, '4', '4.00', '0.00', '0.00', '0.00', '0.00', '2023-01-13 09:51:00', 10, 5, 8),
-(9, 'You like to use organizing tools like schedules and lists.', 'Physical Wellness', 'Quantitative', 1, '3', '3.00', '0.00', '0.00', '0.00', '0.00', '2023-01-13 09:51:00', 10, 5, 9),
-(10, 'Even a small mistake can cause you to doubt your overall abilities and knowledge.', 'Physical Wellness', 'Quantitative', 1, '3', '3.00', '0.00', '0.00', '0.00', '0.00', '2023-01-13 09:51:00', 10, 5, 10),
-(11, '4', 'NONE', 'Qualitative', 4, 'good', '0.00', '0.00', '0.00', '1.00', '0.44', '2023-01-13 09:51:44', 10, 4, 20),
-(12, '4', 'NONE', 'Qualitative', 4, 'good', '0.00', '0.00', '0.00', '1.00', '0.44', '2023-01-13 09:51:44', 10, 4, 21),
-(13, '4', 'NONE', 'Qualitative', 4, 'good', '0.00', '0.00', '0.00', '1.00', '0.44', '2023-01-13 09:51:44', 10, 4, 22),
-(14, '4', 'NONE', 'Qualitative', 4, 'good', '0.00', '0.00', '0.00', '1.00', '0.44', '2023-01-13 09:51:44', 10, 4, 23),
-(15, '4', 'NONE', 'Qualitative', 4, 'good', '0.00', '0.00', '0.00', '1.00', '0.44', '2023-01-13 09:51:44', 10, 4, 24);
+(26, '4', 'NONE', 'Qualitative', 4, 'good', '0.00', '0.00', '0.00', '1.00', '0.44', '2023-02-01 16:44:20', 10, 13, 20),
+(27, '4', 'NONE', 'Qualitative', 4, 'good', '0.00', '0.00', '0.00', '1.00', '0.44', '2023-02-01 16:44:20', 10, 13, 21),
+(28, '4', 'NONE', 'Qualitative', 4, 'good', '0.00', '0.00', '0.00', '1.00', '0.44', '2023-02-01 16:44:20', 10, 13, 22),
+(29, '4', 'NONE', 'Qualitative', 4, 'good', '0.00', '0.00', '0.00', '1.00', '0.44', '2023-02-01 16:44:20', 10, 13, 23),
+(30, '4', 'NONE', 'Qualitative', 4, 'good', '0.00', '0.00', '0.00', '1.00', '0.44', '2023-02-01 16:44:20', 10, 13, 24),
+(31, 'You regularly make new friends.', 'Physical Wellness', 'Quantitative', 1, '3', '3.00', '0.00', '0.00', '0.00', '0.00', '2023-02-01 16:52:18', 10, 14, 1),
+(32, 'You spend a lot of your free time exploring various random topics that pique your interest.', 'Physical Wellness', 'Quantitative', 1, '3', '3.00', '0.00', '0.00', '0.00', '0.00', '2023-02-01 16:52:18', 10, 14, 2),
+(33, 'Seeing other people cry can easily make you feel like you want to cry too.', 'Physical Wellness', 'Quantitative', 1, '3', '3.00', '0.00', '0.00', '0.00', '0.00', '2023-02-01 16:52:18', 10, 14, 3),
+(34, 'You often make a backup plan for a backup plan.', 'Physical Wellness', 'Quantitative', 1, '4', '4.00', '0.00', '0.00', '0.00', '0.00', '2023-02-01 16:52:18', 10, 14, 4),
+(35, 'You usually stay calm, even under a lot of pressure.', 'Physical Wellness', 'Quantitative', 1, '2', '2.00', '0.00', '0.00', '0.00', '0.00', '2023-02-01 16:52:18', 10, 14, 5),
+(36, 'At social events, you rarely try to introduce yourself to new people and mostly talk to the ones you already know.', 'Physical Wellness', 'Quantitative', 1, '1', '1.00', '0.00', '0.00', '0.00', '0.00', '2023-02-01 16:52:18', 10, 14, 6),
+(37, 'You prefer to completely finish one project before starting another.', 'Physical Wellness', 'Quantitative', 1, '2', '2.00', '0.00', '0.00', '0.00', '0.00', '2023-02-01 16:52:18', 10, 14, 7);
 
 -- --------------------------------------------------------
 
@@ -98,7 +95,7 @@ CREATE TABLE `tblappointment` (
 --
 
 INSERT INTO `tblappointment` (`AppointmentID`, `Referrer`, `StudentName`, `YearSection`, `Address`, `PhoneNumber`, `OtherContact`, `Platform`, `PreferredTime`, `SelectedDate`, `Category`, `Email`, `Status`, `CreatedOn`, `CreatedBy`, `CollegeID`, `AppointmentSchedID`, `Remarks`) VALUES
-(2, 'White, Peter  (CAS Administrator)', 'Horry Potter', '3E', 'Manila', '09713765121', '4123', 'Face to Face', '9:00 AM - 10:00 AM', '2023-01-11', 'Personal', 'horrypotter@wvsu.edu.ph', 'Endorsed', '2023-01-09 19:10:05', 10, 2, 10, 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor '),
+(2, 'White, Peter  (CAS Administrator)', 'Horry Potter', '3E', 'Manila', '09713765121', '4123', 'Face to Face', '9:00 AM - 10:00 AM', '2023-02-01', 'Personal', 'horrypotter@wvsu.edu.ph', 'Follow Up', '2023-01-09 19:10:05', 10, 2, 10, 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor '),
 (3, '', 'Horry Potter', '3E', 'Manila', '09713765121', '09713765121', 'Face to Face', '8:00 AM - 9:00 AM', '2023-03-07', 'Academic', 'horrypotter@wvsu.edu.ph', 'Completed', '2023-01-09 19:20:28', 10, 1, 8, ''),
 (4, '', 'Horry Potter', '3E', 'Manila', '09713765121', '09713765121', 'Face to Face', '8:00 AM - 9:00 AM', '2023-01-28', 'Social', 'horrypotter@wvsu.edu.ph', 'Completed', '2023-01-09 20:41:02', 12, 1, 9, '');
 
@@ -124,7 +121,7 @@ CREATE TABLE `tblappointmentsched` (
 INSERT INTO `tblappointmentsched` (`AppointmentSchedID`, `AppointmentDate`, `AppointmentTime`, `Status`, `CreatedOn`, `CreatedBy`) VALUES
 (8, '2023-01-11', '8:00 AM - 9:00 AM', 'Occupied', '2023-01-09 17:40:26', 1),
 (9, '2023-01-28', '8:00 AM - 9:00 AM', 'Occupied', '2023-01-09 17:40:57', 1),
-(10, '2023-01-11', '9:00 AM - 10:00 AM', 'Occupied', '2023-01-09 17:58:16', 2),
+(10, '2023-02-01', '9:00 AM - 10:00 AM', 'Occupied', '2023-01-09 17:58:16', 1),
 (11, '2023-01-11', '8:00 AM - 9:00 AM', 'Active', '2023-01-09 21:54:53', 1),
 (12, '2023-01-17', '10:00 AM - 11:00 AM', 'Active', '2023-01-16 13:26:15', 2),
 (13, '2023-01-18', '9:00 AM - 10:00 AM', 'Active', '2023-01-17 21:28:27', 1),
@@ -332,13 +329,8 @@ CREATE TABLE `tblresult` (
 --
 
 INSERT INTO `tblresult` (`ResultID`, `Remarks`, `WellnessCheckID`, `QScore`, `SScore`, `Results`, `CreatedOn`, `CreatedBy`) VALUES
-(4, '', 4, 0, '5.00', 'Positive', '2023-01-16 23:27:56', 10),
-(5, '', 1, 30, '0.00', '', '2023-01-17 00:25:29', 10),
-(6, '', 4, 0, '5.00', 'Positive', '2023-01-16 23:27:56', 10),
-(7, '', 4, 0, '5.00', 'Neutral', '2023-02-01 23:27:56', 10),
-(8, '', 4, 0, '5.00', 'Neutral', '2023-02-01 23:27:56', 10),
-(9, '', 4, 0, '5.00', 'Negative', '2023-01-01 23:27:56', 10),
-(10, '', 4, 0, '5.00', 'Negative', '2023-01-11 23:27:56', 10);
+(13, '', 4, 0, '5.00', 'Positive', '2023-02-01 16:44:20', 10),
+(14, '', 1, 18, '0.00', '', '2023-02-01 16:52:18', 10);
 
 -- --------------------------------------------------------
 
@@ -362,7 +354,7 @@ CREATE TABLE `tblresultquan` (
 --
 
 INSERT INTO `tblresultquan` (`ResultQuanID`, `WellnessCheckID`, `ResultID`, `Category`, `IdealScore`, `Score`, `CreatedOn`, `CreatedBy`) VALUES
-(3, 1, 5, 'Physical Wellness', 40, 30, '2023-01-17 00:25:29', 10);
+(5, 1, 14, 'Physical Wellness', 28, 18, '2023-02-01 16:52:18', 10);
 
 -- --------------------------------------------------------
 
@@ -424,7 +416,7 @@ INSERT INTO `tbluser` (`UserID`, `Email`, `last_name`, `first_name`, `middle_nam
 (9, 'admincict@wvsu.edu.ph', 'CICT', 'Admin', NULL, '2023A00009', '', '', 1, NULL, NULL, NULL, 'Male', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Administrator', 'Inactive', 0, 'dummy-profile-pic.png	', NULL, '2023-01-09 01:36:59', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'),
 (10, 'student@wvsu.edu.ph', 'Potter', 'Horry', NULL, '04-1314-01944', 'BSIT', '3E', 2, NULL, NULL, NULL, 'Male', 'Manila', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Student', 'Active', 0, '8654961a64c7443db12710f5d1ebc756.png', NULL, '2023-01-09 12:56:16', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'),
 (11, 'mail@wvsu.edu.ph', 'st', 'te', NULL, '2023A0011', '', '', 2, NULL, NULL, NULL, 'Male', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Administrator', 'Active', 0, 'b0e47a53b79a39a76e1df8c1e514f7d3.jpg', 0, '2023-01-20 13:47:12', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'),
-(12, 'mailstudent@wvsu.edu.ph', 'Lname', 'Fname', 'Mname', '09876543', 'BSIT', '4B', 1, 'Single', 'Boac, Marinduque', '2023-01-31', 'Male', 'Address', '98765432', 'Roman ', '', 'Indegenous', 'Guardian Name', 'guardian contact', 'Guardian Occupation', 'Guardian Address', '123123', 'Business', 'Awd', 'Good', 'Awdawd', 'awdawdawd', 'Student', 'Active', NULL, 'fcb7ef44055b49bf977e0ef6a7d4b715.png', NULL, '2023-01-31 17:08:52', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08');
+(12, 'mailstudent@wvsu.edu.ph', 'Lname', 'Fname', 'Mname', '09876543', 'BSIT', '4B', 1, 'Single', 'Boac, Marinduque', '2023-01-31', 'Male', 'Address', '98765432', 'Roman ', '', 'Indegenous', 'Guardian Name', 'guardian contact', 'Guardian Occupation', 'Guardian Address', '123123', 'Business', 'Awd', 'Good', 'Awdawd', 'awdawdawd', 'Student', 'Active', NULL, 'b5c25d64b86ff777c0d94f951b1ff16a.jpg', NULL, '2023-01-31 17:08:52', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08');
 
 -- --------------------------------------------------------
 
@@ -507,9 +499,6 @@ INSERT INTO `tblwellnessquestion` (`QuestionID`, `Question`, `QuestionNumber`, `
 (5, 'You usually stay calm, even under a lot of pressure.', 5, 'Physical Wellness', 'Quantitative', 1, 'Disable', 0, '2023-01-09 13:46:03', 1),
 (6, 'At social events, you rarely try to introduce yourself to new people and mostly talk to the ones you already know.', 6, 'Physical Wellness', 'Quantitative', 1, 'Disable', 0, '2023-01-09 13:46:03', 1),
 (7, 'You prefer to completely finish one project before starting another.', 7, 'Physical Wellness', 'Quantitative', 1, 'Disable', 0, '2023-01-09 13:46:03', 1),
-(8, 'You are very sentimental.', 8, 'Physical Wellness', 'Quantitative', 1, 'Disable', 0, '2023-01-09 13:46:03', 1),
-(9, 'You like to use organizing tools like schedules and lists.', 9, 'Physical Wellness', 'Quantitative', 1, 'Disable', 0, '2023-01-09 13:46:03', 1),
-(10, 'Even a small mistake can cause you to doubt your overall abilities and knowledge.', 10, 'Physical Wellness', 'Quantitative', 1, 'Disable', 0, '2023-01-09 13:46:03', 1),
 (14, 'asdasd', 1, 'Emotional Wellness', 'Quantitative', 3, 'Disable', 0, '2023-01-09 22:10:48', 1),
 (15, 'asdasd', 2, 'Emotional Wellness', 'Quantitative', 3, 'Disable', 0, '2023-01-09 22:10:48', 1),
 (16, 'asdasdasd', 3, 'Emotional Wellness', 'Quantitative', 3, 'Disable', 0, '2023-01-09 22:10:48', 1),
@@ -684,7 +673,7 @@ ALTER TABLE `tblwellnessquestionpublish`
 -- AUTO_INCREMENT for table `tblanswer`
 --
 ALTER TABLE `tblanswer`
-  MODIFY `AnswerID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `AnswerID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `tblappointment`
@@ -732,13 +721,13 @@ ALTER TABLE `tblquestionbank`
 -- AUTO_INCREMENT for table `tblresult`
 --
 ALTER TABLE `tblresult`
-  MODIFY `ResultID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `ResultID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `tblresultquan`
 --
 ALTER TABLE `tblresultquan`
-  MODIFY `ResultQuanID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ResultQuanID` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tbluser`

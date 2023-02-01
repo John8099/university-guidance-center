@@ -74,11 +74,9 @@ $College = $this->db->query("SELECT * FROM tblcollege WHERE CollegeID = '{$Colle
           </div>
         </div>
         <div class="d-md-flex">
-
           <div>
             <h4 class="card-title">
               Appointment Details
-
             </h4>
           </div>
           <div class="ms-auto">
@@ -132,9 +130,6 @@ $College = $this->db->query("SELECT * FROM tblcollege WHERE CollegeID = '{$Colle
           <?php endif; ?>
           <?php if ($Status == 'Endorsed') : ?>
             <hr>
-            <!-- <a style="width: 170px;" href="<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Approved'; ?>" class="btn btn-danger text-white btn-sm" title="Accept Appointment">Accept</a>
-            <a style="width: 170px;" href="<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Pending'; ?>" class="btn btn-info btn-sm" title="Decline Appointment">Decline</a> -->
-
             <a style="width: 170px;" href="<?= site_url() . 'superadmin/update_status/' . $row->AppointmentID . '/Completed'; ?>" class="btn btn-danger text-white btn-sm" title="Complete Appointment">Complete</a>
 
             <a style="width: 170px;" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalFollowUp" title="Follow Up Appointment">Follow Up</a>
@@ -240,11 +235,25 @@ $data = [];
 foreach ($query->result() as $res) {
   $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
   $titleAppoint = $res->appointmentTime . '<br>' . $this->routines->getUserFullName($res->adminID) . "<br>" . $appointmentStat . ($res->appointmentID == $AppointmentID ? "<br> Current Appointment" : "");
+
+
+  $colorAppoint = "";
+  if ($appointmentStat == "Approved" || $appointmentStat == "Endorsed" || $appointmentStat == "Completed") {
+    $colorAppoint = "rgb(38 157 65)";
+  } else if ($appointmentStat == "Pending") {
+    $colorAppoint = "rgb(203 155 14)";
+  } else if ($appointmentStat == "Follow Up") {
+    $colorAppoint = "rgb(26 161 183)";
+  } else {
+    $colorAppoint = "rgb(6 93 187)";
+  }
+
   array_push(
     $data,
     array(
       "title" => $titleAppoint,
       "start" => $res->appointmentDate,
+      "color" => $colorAppoint
     )
   );
 }
@@ -252,7 +261,7 @@ foreach ($query->result() as $res) {
 
 <script>
   const appointmentData = <?= json_encode($data) ?>;
-  const data = appointmentData != null ? appointmentData : []
+  const rescheduleData = appointmentData != null ? appointmentData : []
 
   var calendarRescheduleEl = document.getElementById('calendarReschedule');
   var calendarReschedule = new FullCalendar.Calendar(calendarRescheduleEl, {
@@ -262,7 +271,7 @@ foreach ($query->result() as $res) {
       left: 'prev,next today',
       center: 'title',
     },
-    events: data,
+    events: rescheduleData,
     dateClick: function(info) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -342,7 +351,19 @@ foreach ($query->result() as $res) {
     });
   }
 
+  $('#rescheduleModal').on('hidden.bs.modal', function() {
+    var eventSources = calendarReschedule.getEventSources();
+    var len = eventSources.length;
+    for (var i = 0; i < len; i++) {
+      eventSources[i].remove();
+    }
+  });
+
   $('#rescheduleModal').on('shown.bs.modal', function() {
+    const eventSources = calendarReschedule.getEventSources();
+    if (eventSources.length == 0 && rescheduleData.length > 0) {
+      calendarReschedule.addEventSource(rescheduleData)
+    }
     calendarReschedule.render();
     $('.fc-event-title').each(function(data) {
       $(this).html($(this).text());
@@ -404,11 +425,24 @@ $followUpData = [];
 foreach ($queryFollowUp->result() as $res) {
   $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
   $titleFollowUp = $res->appointmentTime . '<br>' . $this->routines->getUserFullName($res->adminID) . "<br>" . $appointmentStat . ($res->appointmentID == $AppointmentID ? "<br> Current Appointment" : "");
+
+  $colorReschedule = "";
+  if ($appointmentStat == "Approved" || $appointmentStat == "Endorsed" || $appointmentStat == "Completed") {
+    $colorReschedule = "rgb(38 157 65)";
+  } else if ($appointmentStat == "Pending") {
+    $colorReschedule = "rgb(203 155 14)";
+  } else if ($appointmentStat == "Follow Up") {
+    $colorReschedule = "rgb(26 161 183)";
+  } else {
+    $colorReschedule = "rgb(6 93 187)";
+  }
+
   array_push(
     $followUpData,
     array(
       "title" => $titleFollowUp,
       "start" => $res->appointmentDate,
+      "color" => $colorReschedule
     )
   );
 }
@@ -506,7 +540,19 @@ foreach ($queryFollowUp->result() as $res) {
     });
   }
 
+  $('#modalFollowUp').on('hidden.bs.modal', function() {
+    var eventSources = calendarFollowUp.getEventSources();
+    var len = eventSources.length;
+    for (var i = 0; i < len; i++) {
+      eventSources[i].remove();
+    }
+  });
+
   $('#modalFollowUp').on('shown.bs.modal', function() {
+    const eventSources = calendarFollowUp.getEventSources();
+    if (eventSources.length == 0 && followUpData.length > 0) {
+      calendarFollowUp.addEventSource(followUpData)
+    }
     calendarFollowUp.render();
     $('.fc-event-title').each(function(data) {
       $(this).html($(this).text());

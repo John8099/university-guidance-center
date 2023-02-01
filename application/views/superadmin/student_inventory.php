@@ -15,7 +15,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <table id="datatable" class="table table-hover">
           <thead>
             <tr>
-              <th scope="col">Student Name</th>
+              <th scope="col">School ID</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Middle Name</th>
+              <th scope="col">Last Name</th>
               <th scope="col">College</th>
               <th scope="col">Course Year and Section</th>
             </tr>
@@ -28,9 +31,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
               <tr>
                 <td>
                   <a href="<?= site_url() . 'superadmin/student_view/' . $row->UserID; ?>">
-                    <?= $this->routines->getUserFullName($row->UserID); ?>
+                    <?= $row->SchoolID ?>
                   </a>
                 </td>
+                <td><?= $row->first_name ?></td>
+                <td><?= $row->middle_name ?></td>
+                <td><?= $row->last_name ?></td>
                 <td><?= $this->routines->getCollege($row->CollegeID); ?></td>
                 <td><?= $row->Course; ?> <?= $row->YearSec; ?></td>
               </tr>

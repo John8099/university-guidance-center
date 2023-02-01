@@ -499,10 +499,13 @@ $FBLink = $this->session->flashdata("FBLink");
               <p>
                 WVSU will never provide your personal information to third parties for any other purpose.
               </p>
+              <p>
+              <h6>Do you agree with this data privacy notice?</h6>
+              </p>
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-default">I Agree and Submit</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-default">Yes, I Agree and Save</button>
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
             </div>
           </div>
         </div>

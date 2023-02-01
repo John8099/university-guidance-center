@@ -25,7 +25,7 @@ $Results = '';
 $ResultID = $this->uri->segment(3);
 $StudentUserID = $this->session->userdata('StudentUserID');
 
-$tblresult = $this->db->query("SELECT * FROM tblresult WHERE WellnessCheckID = '$WellnessCheckID' AND CreatedBy='$StudentUserID'");
+$tblresult = $this->db->query("SELECT * FROM tblresult WHERE " . ($ResultID != "" ? " ResultID='$ResultID' and" : "") . " WellnessCheckID = '$WellnessCheckID' AND CreatedBy='$StudentUserID'");
 
 foreach ($tblresult->result() as $row) {
   $Remarks = $row->Remarks;

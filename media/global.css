@@ -46,11 +46,16 @@ body.login {
 
 }
 
+.fc-day-other .fc-scrollgrid-sync-inner {
+  display: none !important;
+}
+
+/* 
 .fc-h-event {
   background: #3c404c !important;
   padding: 2px !important;
   border-radius: 10px !important;
-}
+} */
 
 /* The container */
 .containeroption {
@@ -203,4 +208,11 @@ ul.notification {
 
 .dtb-popover-close {
   display: none !important;
+}
+
+.user-pic img {
+  border-radius: 50% !important;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
 }

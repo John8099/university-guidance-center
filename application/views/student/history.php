@@ -116,15 +116,15 @@ foreach ($query->result() as $row) {
               <?php $query = $this->db->query("SELECT * FROM tblresult WHERE CreatedBy=" . $this->session->userdata('StudentUserID') . ";");
               foreach ($query->result() as $row) : ?>
                 <tr>
-                  <td><a href="<?= site_url("student/wellness_check/" . $row->WellnessCheckID); ?>"><?= date('Y-m-d', strtotime($row->CreatedOn)); ?></a></td>
+                  <td><a href="<?= site_url("student/wellness_check/$row->WellnessCheckID/$row->ResultID"); ?>"><?= date('Y-m-d', strtotime($row->CreatedOn)); ?></a></td>
                   <td><?= $row->Remarks; ?></td>
                   <td>
                     <?php if ($row->Results == 'Negative') : ?>
-                      <img src="<?= base_url() . 'media/emoj/' ?>Negative.png" alt="Negative" style="border-radius: 50%" />
+                      <img src="<?= base_url() . 'media/emoj/' ?>Negative.png" alt="Negative" style="width: 100px" />
                     <?php elseif ($row->Results == 'Neutral') : ?>
-                      <img src="<?= base_url() . 'media/emoj/' ?>Neutral.png" alt="Neutral" />
+                      <img src="<?= base_url() . 'media/emoj/' ?>Neutral.png" alt="Neutral" style="width: 100px" />
                     <?php elseif ($row->Results == 'Positive') : ?>
-                      <img src="<?= base_url() . 'media/emoj/' ?>Positive.png" alt="Positive" />
+                      <img src="<?= base_url() . 'media/emoj/' ?>Positive.png" alt="Positive" style="width: 100px" />
                     <?php else : ?>
                     <?php endif; ?>
                   </td>

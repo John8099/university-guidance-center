@@ -268,7 +268,7 @@
     <!-- ============================================================== -->
     <!-- Left Sidebar - style you can find in sidebar.scss  -->
     <!-- ============================================================== -->
-    <aside class="left-sidebar" data-sidebarbg="skin6">
+    <aside class="left-sidebar" data-sidebarbg="skin6" id="leftSideBar">
       <!-- Sidebar scroll-->
       <div class="scroll-sidebar">
         <!-- Sidebar navigation-->
@@ -279,7 +279,7 @@
               <!-- User Profile-->
               <div class="user-profile dropdown m-t-20">
                 <div class="user-pic d-flex justify-content-center">
-                  <img src="<?= base_url('uploads/') . $this->session->userdata('ImageLoc'); ?>" alt="users" class="rounded-circle" width="100" />
+                  <img src="<?= base_url('uploads/') . $this->session->userdata('ImageLoc'); ?>" alt="users" class="rounded-circle" id="leftSideProfile" />
                 </div>
                 <div class="user-content hide-menu m-l-10 text-center">
                   <a href="#" class="" id="Userdd" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

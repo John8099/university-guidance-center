@@ -48,29 +48,40 @@ $TotalIdealScore = 0;
                     <tr>
                       <td><?= $row->Category; ?></td>
                       <td><?= $row->IdealScore; ?></td>
-                      <td><?= $row->Score; ?></td>
+                      <td><strong><?= $row->Score; ?></strong></td>
                     </tr>
                   <?php endforeach; ?>
                 </tbody>
               </table>
             <?php
             }
-            $tblresult = $this->db->query("SELECT * FROM tblresult WHERE WellnessCheckID='" . $WellnessCheckID . "';");
-            if ($tblresult->num_rows() <> 0) {
-              echo '<h1>Total: ' . $tblresult->row()->QScore . '</h1>';
-              $totalres = $tblresult->row()->QScore / $TotalIdealScore;
-              $totalres = round($totalres * 100);
-              if ($totalres >= 80 && $totalres <= 100) {
-                echo '<h4>Awesome! Your answers indicate that you\'re making positive steps in this dimension of wellness. Even though you achieved a high overall score for this dimension, you may want to check for low scores on individual items to see if there are more specific areas that you might want to address. Consider focusing on another area where your scores weren\'t so high.</h4>';
-              } elseif ($totalres >= 30 && $totalres <= 79) {
-                echo '<h4>Caution! Your behaviours in this area are good, but there is room
-                        for improvement. Take a look at the items on which you scored lower. What changes
-                        might you make it to improve your score?</h4>';
-              } else {
-                echo '<h4>Danger! Your answers indicate some potential health and
-                        well-being risks. Review those areas where you scored lower.</h4>';
-              }
-            }
+            ?>
+            <div class="row justify-content-center" style="margin-top: 20px">
+              <div class="col-md-8 ">
+                <p>
+                  <strong>Scores of 20-28:</strong>
+                  <br>
+                  Awesome! Your answers indicate that you're making
+                  positive steps in this dimension of wellness. Even though you achieved a high
+                  overall score for this dimension, you may want to check for low scores on
+                  individual items to see if there are more specific areas that you might want to
+                  address. Consider focusing on another area where your scores weren't so high.
+                  <br><br>
+                  <strong>Scores of 15-19:</strong>
+                  <br>
+                  Caution! Your behaviours in this area are good, but there is room
+                  for improvement. Take a look at the items on which you scored lower. What changes
+                  might you make it to improve your score?
+                  <br><br>
+                  <strong>Scores of 14 and below:</strong>
+                  <br>
+                  Danger! Your answers indicate some potential health and
+                  well-being risks. Review those areas where you scored lower.
+
+                </p>
+              </div>
+            </div>
+            <?php
           } else {
             $tblresult = $this->db->query("SELECT * FROM tblresult WHERE WellnessCheckID='$WellnessCheckID'");
             if ($tblresult->num_rows() <> 0) {
@@ -83,14 +94,20 @@ $TotalIdealScore = 0;
                     <div class="card-body">
                       <div class="results text-center">
                         <?php if ($row->Results == 'Negative') : ?>
-                          <h4 style="text-transform: uppercase;">Your result is</h4>
                           <img src="<?= base_url() . 'media/emoj/' ?>Negative.png" alt="Negative" />
+                          <p style="width: 500px; margin: auto;">
+                            We understand that you may be feeling overwhelmed, frustrated, or upset. We want to ensure that you are supported and have the resources to improve your wellbeing. Please let us know if there is anything we can do to help. You can schedule an appointment with us.
+                          </p>
                         <?php elseif ($row->Results == 'Neutral') : ?>
-                          <h4 style="text-transform: uppercase;">Your result is</h4>
                           <img src="<?= base_url() . 'media/emoj/' ?>Neutral.png" alt="Neutral" />
+                          <p style="width: 500px; margin: auto;">
+                            We hope that you are doing well,we are always here if you want to schedule an appointment with us. Have a Good Day!
+                          </p>
                         <?php elseif ($row->Results == 'Positive') : ?>
-                          <h4 style="text-transform: uppercase;">Your result is</h4>
                           <img src="<?= base_url() . 'media/emoj/' ?>Positive.png" alt="Positive" />
+                          <p style="width: 500px; margin: auto;">
+                            We are happy to know that you are doing well! We hope that you will be able to continue and improve your wellbeing. You are always welcome to schedule an appointment with us, even right now if you wish.
+                          </p>
                         <?php else : ?>
                           <h4 style="text-transform: uppercase;">No Results</h4>
                         <?php endif; ?>

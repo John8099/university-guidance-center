@@ -113,8 +113,8 @@ class Superadmin extends CI_Controller
         $this->main_model->insert_entry('tbluser', $data);
 
         // SEND EMAIL VERIFICATION
-        // $msg = 'Your username: ' . $this->input->post('txtSchoolID') . ' password: ' . $ranpass . '';
-        // $sendemail = $this->routines->sendEmail("Temporary Account", $msg, $email);
+        $msg = 'Your username: ' . $this->input->post('txtSchoolID') . ' password: ' . $hashPassword . '';
+        $sendemail = $this->routines->sendEmail("Temporary Account", $msg, $email);
       } else {
         $this->main_model->update_entry('tbluser', $data, 'UserID', $this->uri->segment(3));
       }
@@ -300,9 +300,12 @@ class Superadmin extends CI_Controller
     $googleLink = $this->input->post('google_link');
     $phoneNumber = "";
     $platform = "";
+    $tableAppointmentStatus = "";
 
     $AppointmentID = $this->uri->segment(3);
+
     $query = $this->db->query("SELECT * FROM tblappointment WHERE AppointmentID = '" . $AppointmentID . "'");
+
     foreach ($query->result() as $row) {
       $StudentName = $this->routines->getUserFullName($row->CreatedBy);
       $Remarks = $row->Remarks;
@@ -312,6 +315,7 @@ class Superadmin extends CI_Controller
       $CreatedBy = $row->CreatedBy;
       $phoneNumber = $row->PhoneNumber;
       $platform = $row->Platform;
+      $tableAppointmentStatus = $row->Status;
     }
 
     $CreatedBySchedule = '';
@@ -323,82 +327,104 @@ class Superadmin extends CI_Controller
     $dateSched = $this->input->post('dateSched');
     $timeSched = $this->input->post('timeSched');
 
+    $hasError = false;
+
     if ($dateSched != "" && $timeSched != "") {
       if ($this->isDuplicateAppointment($dateSched, $timeSched)) {
         $this->session->set_flashdata('Failed', 'Appointment schedule conflicts with other schedule.');
-        redirect(site_url() . 'superadmin/view_appointment/' . $this->uri->segment(3));
-        exit();
+        $hasError = true;
       }
     }
 
-    if ($this->uri->segment(3) == '') {
-    } else {
+    if (!$hasError) {
 
-      if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
-
-        $dataAppoint = array(
-          "PreferredTime" => "$timeSched",
-          "SelectedDate" => "$dateSched"
-        );
-
-        $dataAppointSchedule = array(
-          "AppointmentDate" => "$dateSched",
-          "AppointmentTime" => "$timeSched"
-        );
-
-        $this->main_model->update_entry('tblappointment', $dataAppoint, 'AppointmentID', $this->uri->segment(3));
-        $this->main_model->update_entry('tblappointmentsched', $dataAppointSchedule, 'AppointmentSchedID', $AppointmentSchedID);
-      } else if (urldecode($this->uri->segment(4)) == 'Follow Up') {
-
-        $dataAppoint = array(
-          "PreferredTime" => "$timeSched",
-          "SelectedDate" => "$dateSched",
-          "Status" => "Follow Up"
-        );
-
-        $dataAppointSchedule = array(
-          "AppointmentDate" => "$dateSched",
-          "AppointmentTime" => "$timeSched"
-        );
-
-        $this->main_model->update_entry('tblappointment', $dataAppoint, 'AppointmentID', $this->uri->segment(3));
-        $this->main_model->update_entry('tblappointmentsched', $dataAppointSchedule, 'AppointmentSchedID', $AppointmentSchedID);
+      if ($this->uri->segment(3) == '') {
       } else {
 
-        $data = array(
-          'Status' => urldecode($this->uri->segment(4))
-        );
-        $this->main_model->update_entry('tblappointment', $data, 'AppointmentID', $this->uri->segment(3));
+        if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
+          $dataAppoint = array(
+            "PreferredTime" => "$timeSched",
+            "SelectedDate" => "$dateSched"
+          );
+
+          if ($tableAppointmentStatus == "Endorsed") {
+            $dataAppointSchedule = array(
+              "CreatedBy" => $this->session->userdata("UserID"),
+              "AppointmentDate" => "$dateSched",
+              "AppointmentTime" => "$timeSched"
+            );
+          } else {
+            $dataAppointSchedule = array(
+              "CreatedBy" => $this->session->userdata("UserID"),
+              "AppointmentDate" => "$dateSched",
+              "AppointmentTime" => "$timeSched"
+            );
+          }
+
+
+          $this->main_model->update_entry('tblappointment', $dataAppoint, 'AppointmentID', $this->uri->segment(3));
+          $this->main_model->update_entry('tblappointmentsched', $dataAppointSchedule, 'AppointmentSchedID', $AppointmentSchedID);
+        } else if (urldecode($this->uri->segment(4)) == 'Follow Up') {
+
+          $dataAppoint = array(
+            "PreferredTime" => "$timeSched",
+            "SelectedDate" => "$dateSched",
+            "Status" => "Follow Up"
+          );
+
+          if ($tableAppointmentStatus == "Endorsed") {
+            $dataAppointSchedule = array(
+              "CreatedBy" => $this->session->userdata("UserID"),
+              "AppointmentDate" => "$dateSched",
+              "AppointmentTime" => "$timeSched"
+            );
+          } else {
+            $dataAppointSchedule = array(
+              "CreatedBy" => $this->session->userdata("UserID"),
+              "AppointmentDate" => "$dateSched",
+              "AppointmentTime" => "$timeSched"
+            );
+          }
+
+
+          $this->main_model->update_entry('tblappointment', $dataAppoint, 'AppointmentID', $this->uri->segment(3));
+          $this->main_model->update_entry('tblappointmentsched', $dataAppointSchedule, 'AppointmentSchedID', $AppointmentSchedID);
+        } else {
+
+          $data = array(
+            'Status' => urldecode($this->uri->segment(4))
+          );
+          $this->main_model->update_entry('tblappointment', $data, 'AppointmentID', $this->uri->segment(3));
+        }
+
+        //send email
+        $sendemail = $this->routines->sendEmail("Appointment Status", "Your appointment was " . urldecode($this->uri->segment(4)), $this->session->userdata('AppointmentEmail'));
       }
 
-      //send email
-      $sendemail = $this->routines->sendEmail("Appointment Status", "Your appointment was " . urldecode($this->uri->segment(4)), $this->session->userdata('AppointmentEmail'));
+      $this->session->set_flashdata('Success', 'Appointment data was successfully saved.');
+
+      $Notification = '';
+      if (urldecode($this->uri->segment(4)) == 'Approved') {
+
+        $firstSentence = "Hello $StudentName, Your appointment for (" . date("F d, Y", strtotime($SelectedDate)) . " at $PreferredTime) has been approved.";
+
+        $secondSentence = array(
+          "Facebook Messenger" => "Please ensure that the Facebook profile link in your student profile is yours, as we will be contacting you there. We look forward to hearing from you soon. Have a great day!",
+          "Google Meet" => "Below you will find the link to the Google Meet. Please join the meeting as scheduled.\n\nThis is the link to the Google Meet: <a href='$googleLink'  target='_blank'>$googleLink</a>",
+          "Telecounseling" => "Please ensure that the phone number indicated in your student profile is yours, the number is $phoneNumber as we will contact you there. Have a great day!",
+          "Face to Face" => "Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!"
+        );
+
+        $Notification = $firstSentence . " " . nl2br($secondSentence[$platform]);
+
+        // $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullName($CreatedBySchedule) . ' is approved. See you there!';
+        $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
+      }
+      if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
+        $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullName($CreatedBySchedule) . ' is rescheduled.';
+        $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
+      }
     }
-
-    $this->session->set_flashdata('Success', 'Appointment data was successfully saved.');
-
-    $Notification = '';
-    if (urldecode($this->uri->segment(4)) == 'Approved') {
-
-      $firstSentence = "Hello $StudentName, Your appointment for (" . date("F d, Y", strtotime($SelectedDate)) . " at $PreferredTime) has been approved.";
-
-      $secondSentence = array(
-        "Facebook Messenger" => "Please ensure that the Facebook profile link in your student profile is yours, as we will be contacting you there. We look forward to hearing from you soon. Have a great day!",
-        "Google Meet" => "Below you will find the link to the Google Meet. Please join the meeting as scheduled.\n\nThis is the link to the Google Meet: <a href='$googleLink'  target='_blank'>$googleLink</a>",
-        "Telecounseling" => "Please ensure that the phone number indicated in your student profile is yours, the number is $phoneNumber as we will contact you there. Have a great day!",
-        "Face to Face" => "Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!"
-      );
-
-      $Notification = $firstSentence . " " . nl2br($secondSentence[$platform]);
-
-      // $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullName($CreatedBySchedule) . ' is approved. See you there!';
-      $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
-    }
-    if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
-      $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullName($CreatedBySchedule) . ' is rescheduled.';
-      $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
-    }
-    redirect(site_url() . 'superadmin/view_appointment/' . $this->uri->segment(3));
   }
 
   // UPPER PART IS DONE ===================================================================================

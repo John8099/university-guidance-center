@@ -41,7 +41,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <td><?= $row->Course; ?></td>
                 <td><?= $row->YearSec; ?></td>
                 <td><?= $row->Email; ?></td>
-                <td><?= ($row->IdentifiedGender == 1) ? 'Male' : 'Female'; ?></td>
+                <td><?= $row->Gender ?></td>
               </tr>
             <?php endforeach; ?>
           </tbody>

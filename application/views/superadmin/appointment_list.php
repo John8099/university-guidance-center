@@ -13,7 +13,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
           </div>
         </div>
         <div class="fullcalendar" style="margin-top: 20px">
-          <div id='loading'>loading...</div>
 
           <div id='calendarAdmin'></div>
         </div>
@@ -45,12 +44,25 @@ $data = [];
 foreach ($query->result() as $res) {
   $adminFullName = $this->routines->getUserFullName($res->adminID);
   $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
+
+  $colorAppoint = "";
+  if ($appointmentStat == "Approved" || $appointmentStat == "Endorsed" || $appointmentStat == "Completed") {
+    $colorAppoint = "rgb(38 157 65)";
+  } else if ($appointmentStat == "Pending") {
+    $colorAppoint = "rgb(203 155 14)";
+  } else if ($appointmentStat == "Follow Up") {
+    $colorAppoint = "rgb(26 161 183)";
+  } else {
+    $colorAppoint = "rgb(6 93 187)";
+  }
+
   array_push(
     $data,
     array(
       "title" => "$res->appointmentTime <br> $adminFullName <br> $appointmentStat",
       "url" => $res->appointmentID != null ? site_url() . 'superadmin/view_appointment/' . $res->appointmentID : null,
-      "start" => $res->appointmentDate
+      "start" => $res->appointmentDate,
+      "color" => $colorAppoint
     )
   );
 }
@@ -63,7 +75,7 @@ foreach ($query->result() as $res) {
     const data = appointmentData != null ? appointmentData : []
 
     console.log(data)
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    var calendarAppointment = new FullCalendar.Calendar(calendarEl, {
       displayEventTime: false,
       headerToolbar: {
         left: 'prev,next today',
@@ -86,18 +98,18 @@ foreach ($query->result() as $res) {
       }
     });
 
-    calendar.render();
+    calendarAppointment.render();
 
     $('.fc-prev-button').on("click", function() {
-        $('.fc-event-title').each(function(data) {
-          $(this).html($(this).text());
-        });
+      $('.fc-event-title').each(function(data) {
+        $(this).html($(this).text());
       });
+    });
 
-      $('.fc-next-button').on("click", function() {
-        $('.fc-event-title').each(function(data) {
-          $(this).html($(this).text());
-        });
+    $('.fc-next-button').on("click", function() {
+      $('.fc-event-title').each(function(data) {
+        $(this).html($(this).text());
       });
+    });
   });
 </script>

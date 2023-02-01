@@ -27,7 +27,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
               <th scope="col">Course</th>
               <th scope="col">Year & Section</th>
               <th scope="col">Email</th>
-              <th scope="col">Identified Gender</th>
+              <th scope="col">Gender</th>
             </tr>
           </thead>
           <tbody>
@@ -43,7 +43,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <td><?= $row->Course; ?></td>
                 <td><?= $row->YearSec; ?></td>
                 <td><?= $row->Email; ?></td>
-                <td><?= ($row->IdentifiedGender == 1) ? 'Male' : 'Female'; ?></td>
+                <td><?= $row->Gender ?></td>
               </tr>
             <?php endforeach; ?>
           </tbody>

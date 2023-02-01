@@ -45,12 +45,25 @@ $data = [];
 foreach ($query->result() as $res) {
   $adminFullName = $this->routines->getUserFullName($res->adminID);
   $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
+
+  $colorAppoint = "";
+  if ($appointmentStat == "Approved" || $appointmentStat == "Endorsed" || $appointmentStat == "Completed") {
+    $colorAppoint = "rgb(38 157 65)";
+  } else if ($appointmentStat == "Pending") {
+    $colorAppoint = "rgb(203 155 14)";
+  } else if ($appointmentStat == "Follow Up") {
+    $colorAppoint = "rgb(26 161 183)";
+  } else {
+    $colorAppoint = "rgb(6 93 187)";
+  }
+
   array_push(
     $data,
     array(
       "title" => "$res->appointmentTime <br> $adminFullName <br> $appointmentStat",
       "url" => $res->appointmentID != null ? site_url() . 'administrator/view_appointment/' . $res->appointmentID : null,
-      "start" => $res->appointmentDate
+      "start" => $res->appointmentDate,
+      "color" => $colorAppoint
     )
   );
 }

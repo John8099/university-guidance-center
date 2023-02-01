@@ -28,23 +28,34 @@
                           aschd.AppointmentSchedID = apnt.AppointmentSchedID
                           LEFT JOIN tbluser u
                           ON u.UserID = aschd.CreatedBy
-                          WHERE 
-                          aschd.Status = 'Active' OR
-                          apnt.CreatedBy = '$studentId'
                           ");
 
   // $result = $query->num_rows() == 0 ? null : json_encode($query->result_object());
   $data = [];
   foreach ($query->result() as $res) {
-    if ($res->studentAppointmentStatus != "Completed") {
+    if ($res->studentAppointmentStatus != "Completed" || $res->studentID == $studentId) {
+      // 
       $adminFullName = $this->routines->getUserFullName($res->adminID);
       $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
+
+      $colorAppoint = "";
+      if ($appointmentStat == "Approved" || $appointmentStat == "Endorsed" || $appointmentStat == "Completed") {
+        $colorAppoint = "rgb(38 157 65)";
+      } else if ($appointmentStat == "Pending") {
+        $colorAppoint = "rgb(203 155 14)";
+      } else if ($appointmentStat == "Follow Up") {
+        $colorAppoint = "rgb(26 161 183)";
+      } else {
+        $colorAppoint = "rgb(6 93 187)";
+      }
+
       array_push(
         $data,
         array(
-          "title" => "$res->appointmentTime <br> $adminFullName <br> $appointmentStat",
+          "title" => "$res->appointmentTime <br> $adminFullName <br> <strong>$appointmentStat</strong>",
           "url" => site_url() . 'student/schedule_appointment/' . ($res->appointmentID == null ? "" : $res->appointmentID),
-          "start" => $res->appointmentDate
+          "start" => $res->appointmentDate,
+          "color" => $colorAppoint
         )
       );
     }
@@ -280,7 +291,7 @@
     <!-- ============================================================== -->
     <!-- Left Sidebar - style you can find in sidebar.scss  -->
     <!-- ============================================================== -->
-    <aside class="left-sidebar" data-sidebarbg="skin6">
+    <aside class="left-sidebar" data-sidebarbg="skin6" id="leftSideBar">
       <!-- Sidebar scroll-->
       <div class="scroll-sidebar">
         <!-- Sidebar navigation-->
@@ -289,7 +300,7 @@
           <!-- User Profile-->
           <div class="user-profile dropdown m-t-20">
             <div class="user-pic d-flex justify-content-center">
-              <img src="<?= base_url('uploads/') . $this->session->userdata('StudentImageLoc'); ?>" alt="users" class="rounded-circle" width="100" />
+              <img src="<?= base_url('uploads/') . $this->session->userdata('StudentImageLoc'); ?>" alt="users" class="rounded-circle" id="leftSideProfile" />
             </div>
             <div class="user-content hide-menu m-l-10 text-center">
               <a href="#" class="" id="Userdd" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

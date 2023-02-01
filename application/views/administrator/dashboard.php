@@ -34,11 +34,11 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
               </li>
             </a>
 
-            <a href="<?= site_url() . 'administrator/students'; ?>" class="text-warning">
+            <!-- <a href="<?= site_url() . 'administrator/students'; ?>" class="text-warning">
               <li class="feed-item">
                 <div class="feed-icon bg-warning"><i class="mdi mdi-emoticon"></i></div> Number of Students taken the Wellness Check<span class="ms-auto font-12 text-muted"><?= $TotalStudents; ?></span>
               </li>
-            </a>
+            </a> -->
           </ul>
         </div>
       </div>
@@ -263,29 +263,55 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
                               <?php endforeach; ?>
                             <?php endforeach; ?>
                           </div>
-                        </div>
-                        <h3 style="text-align: right;">Score: <?= $row->QScore ?></h3>
-                        <p>
-                          <strong>Scores of 20-28:</strong>
-                          <br>
-                          Awesome! Your answers indicate that you're making
-                          positive steps in this dimension of wellness. Even though you achieved a high
-                          overall score for this dimension, you may want to check for low scores on
-                          individual items to see if there are more specific areas that you might want to
-                          address. Consider focusing on another area where your scores weren't so high.
-                          <br><br>
-                          <strong>Scores of 15-19:</strong>
-                          <br>
-                          Caution! Your behaviours in this area are good, but there is room
-                          for improvement. Take a look at the items on which you scored lower. What changes
-                          might you make it to improve your score?
-                          <br><br>
-                          <strong>Scores of 14 and below:</strong>
-                          <br>
-                          Danger! Your answers indicate some potential health and
-                          well-being risks. Review those areas where you scored lower.
+                          <div class="col-12">
+                            <?php
+                            $tblresultquan = $this->db->query("SELECT * FROM tblresultquan WHERE WellnessCheckID='$row->wellnessCheckId'");
+                            if ($tblresultquan->num_rows() <> 0) :
+                            ?>
+                              <div class="container" style="text-align: center; margin-top: 20px">
+                                <div class="row">
+                                  <div class="col-4">Wellness Dimension</div>
+                                  <div class="col-4">Ideal Score</div>
+                                  <div class="col-4">Score</div>
+                                </div>
+                                <?php foreach ($tblresultquan->result() as $rowResQuantitative) : ?>
+                                  <div class="row" style="margin-top: 10px;">
+                                    <div class="col-4"><strong><?= $rowResQuantitative->Category; ?></strong></div>
+                                    <div class="col-4"><strong><?= $rowResQuantitative->IdealScore; ?></strong></div>
+                                    <div class="col-4"><strong><?= $rowResQuantitative->Score; ?></strong></div>
+                                  </div>
+                                <?php endforeach; ?>
+                                <div class="row justify-content-center" style="margin-top: 20px; text-align: left;">
+                                  <div class="col-md-8">
+                                    <p>
+                                      <strong>Scores of 20-28:</strong>
+                                      <br>
+                                      Awesome! Your answers indicate that you're making
+                                      positive steps in this dimension of wellness. Even though you achieved a high
+                                      overall score for this dimension, you may want to check for low scores on
+                                      individual items to see if there are more specific areas that you might want to
+                                      address. Consider focusing on another area where your scores weren't so high.
+                                      <br><br>
+                                      <strong>Scores of 15-19:</strong>
+                                      <br>
+                                      Caution! Your behaviours in this area are good, but there is room
+                                      for improvement. Take a look at the items on which you scored lower. What changes
+                                      might you make it to improve your score?
+                                      <br><br>
+                                      <strong>Scores of 14 and below:</strong>
+                                      <br>
+                                      Danger! Your answers indicate some potential health and
+                                      well-being risks. Review those areas where you scored lower.
 
-                        </p>
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            <?php
+                            endif;
+                            ?>
+                          </div>
+                        </div>
                       <?php else : ?>
                         <div class="row">
                           <div class="col-12">
