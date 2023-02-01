@@ -245,50 +245,6 @@ class Routines extends CI_Model
   }
 
   // Online
-  // public function sendEmail($subject, $content, $email) {
-  //         /* Load PHPMailer library */
-  //         $this->load->library('phpmailer_lib');
-
-  //         /* PHPMailer object */
-  //         $mail = $this->phpmailer_lib->load();
-
-  //         /* SMTP configuration */
-  //         $mail->isSMTP();
-  //         $mail->Host     = 'smtpout.secureserver.net';
-  //         $mail->SMTPAuth = false;
-  //         $mail->SMTPAutoTLS = false;
-  //         $mail->Username = 'wvsu@wvsuguidance.online';
-  //         $mail->Password = 'Qwerty123!';
-  //         $mail->Port     = 465;
-
-  //         $mail->setFrom('no-reply@princejo.store', 'Mail');
-  //         $mail->addReplyTo('no-reply@princejo.store', 'Mail');
-
-  //         /* Add a recipient */
-  //         $mail->addAddress($email);
-
-  //         /* Add cc or bcc */
-  //         // $mail->addCC('cc@example.com');
-  //         // $mail->addBCC('bcc@example.com');
-
-  //         /* Email subject */
-  //         $mail->Subject = $subject;
-
-  //         /* Set email format to HTML */
-  //         $mail->isHTML(true);
-
-  //         /* Email body content */
-  //         $mail->Body = $content;
-
-  //        	$result = '';
-  //         /* Send email */
-  //         if(!$mail->send()){
-  //             $result = 'Mail could not be sent. '.'Mailer Error: ' . $mail->ErrorInfo;
-  //         }else{
-  //             $result = 'Mail has been sent';
-  //         }
-  //         return $result;
-  // 	}
   public function sendEmail($subject, $content, $email)
   {
     /* Load PHPMailer library */
@@ -298,29 +254,17 @@ class Routines extends CI_Model
     $mail = $this->phpmailer_lib->load();
 
     /* SMTP configuration */
-    $mail->isSMTP();
-    $mail->Host     = 'localhost';
+    $mail->SMTPDebug = 2;
+    $mail->Host     = 'bom1plzcpnl493875.prod.bom1.secureserver.net';
     $mail->SMTPAuth = true;
     $mail->SMTPAutoTLS = true;
-    $mail->Username = 'wvsu@wvsuguidance.xyz';
-    $mail->Password = 'Y=1o9qi4#N';
-    $mail->Port     = 25;
-    $mail->SMTPSecure = 'tls';
+    $mail->Username = 'wvsu@wvsuguidance.com';
+    $mail->Password = 'Password123!';
+    $mail->SMTPSecure = 'tls'; // Enable TLS encryption, [ICODE]ssl[/ICODE] also accepted
+    $mail->Port     = 465;
 
-    $mail->setFrom('wvsu@wvsuguidance.xyz', 'Mail');
-    $mail->addReplyTo('wvsu@wvsuguidance.xyz', 'Mail');
-
-    // $mail->isSMTP();
-    // $mail->Host = 'smtp.gmail.com';  //gmail SMTP server
-    // $mail->SMTPAuth = true;
-    // $mail->SMTPAutoTLS = true;
-    // $mail->Username = 'tofsv1@gmail.com';
-    // $mail->Password = 'Edmund561';
-    // $mail->Port     = 465;
-    // $mail->SMTPSecure = "ssl";
-
-    // $mail->setFrom('tofsv1@gmail.com', 'Mail');
-    // $mail->addReplyTo('no-reply@example.com', 'Mail');
+    $mail->setFrom('no-reply@wvsuguidance.com', 'Mail');
+    $mail->addReplyTo('no-reply@wvsuguidance.com', 'Mail');
 
     /* Add a recipient */
     $mail->addAddress($email);
@@ -347,6 +291,64 @@ class Routines extends CI_Model
     }
     return $result;
   }
+  // public function sendEmail($subject, $content, $email)
+  // {
+  //   /* Load PHPMailer library */
+  //   $this->load->library('phpmailer_lib');
+
+  //   /* PHPMailer object */
+  //   $mail = $this->phpmailer_lib->load();
+
+  //   /* SMTP configuration */
+  //   $mail->isSMTP();
+  //   $mail->Host     = 'localhost';
+  //   $mail->SMTPAuth = true;
+  //   $mail->SMTPAutoTLS = true;
+  //   $mail->Username = 'wvsu@wvsuguidance.xyz';
+  //   $mail->Password = 'Y=1o9qi4#N';
+  //   $mail->Port     = 25;
+  //   $mail->SMTPSecure = 'tls';
+
+  //   $mail->setFrom('wvsu@wvsuguidance.xyz', 'Mail');
+  //   $mail->addReplyTo('wvsu@wvsuguidance.xyz', 'Mail');
+
+  //   // $mail->isSMTP();
+  //   // $mail->Host = 'smtp.gmail.com';  //gmail SMTP server
+  //   // $mail->SMTPAuth = true;
+  //   // $mail->SMTPAutoTLS = true;
+  //   // $mail->Username = 'tofsv1@gmail.com';
+  //   // $mail->Password = 'Edmund561';
+  //   // $mail->Port     = 465;
+  //   // $mail->SMTPSecure = "ssl";
+
+  //   // $mail->setFrom('tofsv1@gmail.com', 'Mail');
+  //   // $mail->addReplyTo('no-reply@example.com', 'Mail');
+
+  //   /* Add a recipient */
+  //   $mail->addAddress($email);
+
+  //   /* Add cc or bcc */
+  //   // $mail->addCC('cc@example.com');
+  //   // $mail->addBCC('bcc@example.com');
+
+  //   /* Email subject */
+  //   $mail->Subject = $subject;
+
+  //   /* Set email format to HTML */
+  //   $mail->isHTML(true);
+
+  //   /* Email body content */
+  //   $mail->Body = $content;
+
+  //   $result = '';
+  //   /* Send email */
+  //   if (!$mail->send()) {
+  //     $result = 'Mail could not be sent. ' . 'Mailer Error: ' . $mail->ErrorInfo;
+  //   } else {
+  //     $result = 'Mail has been sent';
+  //   }
+  //   return $result;
+  // }
 
   public function loginAuth($user_id, $location, $login_location)
   {

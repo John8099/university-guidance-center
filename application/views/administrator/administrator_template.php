@@ -582,7 +582,7 @@
   $barResult = $barChartQ->result();
 
   $lineChartQ = $this->db->query("SELECT 
-                                  CAST(REPLACE(YEARWEEK(r.CreatedOn), year(curdate()), '') AS INT)  AS YearWeek, 
+                                  REPLACE(YEARWEEK(r.CreatedOn), year(curdate()), '') AS YearWeek, 
                                   Results,
                                   wc.WellnessCheckID,
                                   wc.CreatedBy

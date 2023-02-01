@@ -588,7 +588,7 @@
 
   $barResult = $barChartQ->result();
 
-  $lineChartQ = $this->db->query("SELECT CAST(REPLACE(YEARWEEK(`CreatedOn`), year(curdate()), '') AS INT)  AS YearWeek, Results FROM tblresult WHERE year(`CreatedOn`) = year(curdate()) and Results<>'';");
+  $lineChartQ = $this->db->query("SELECT REPLACE(YEARWEEK(`CreatedOn`), year(curdate()), '')  AS YearWeek, Results FROM tblresult WHERE year(`CreatedOn`) = year(curdate()) and Results<>'';");
 
   $lineResults = $lineChartQ->result();
   ?>

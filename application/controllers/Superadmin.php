@@ -397,33 +397,37 @@ class Superadmin extends CI_Controller
           $this->main_model->update_entry('tblappointment', $data, 'AppointmentID', $this->uri->segment(3));
         }
 
+        $Notification = '';
+        if (urldecode($this->uri->segment(4)) == 'Approved') {
+
+          $firstSentence = "Hello $StudentName, Your appointment for (" . date("F d, Y", strtotime($SelectedDate)) . " at $PreferredTime) has been approved.";
+
+          $secondSentence = array(
+            "Facebook Messenger" => "Please ensure that the Facebook profile link in your student profile is yours, as we will be contacting you there. We look forward to hearing from you soon. Have a great day!",
+            "Google Meet" => "Below you will find the link to the Google Meet. Please join the meeting as scheduled.\n\nThis is the link to the Google Meet: <a href='$googleLink'  target='_blank'>$googleLink</a>",
+            "Telecounseling" => "Please ensure that the phone number indicated in your student profile is yours, the number is $phoneNumber as we will contact you there. Have a great day!",
+            "Face to Face" => "Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!"
+          );
+
+          $Notification = $firstSentence . " " . nl2br($secondSentence[$platform]);
+          $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
+        }
+        if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
+          $adminFullName = $this->routines->getUserFullName($CreatedBySchedule);
+          $Notification = "Hello $StudentName! Your scheduled appointment on $SelectedDate $PreferredTime with $adminFullName is rescheduled.";
+          $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
+        }
+
+        if ($Notification == "") {
+          $Notification = "Hello $StudentName! Your scheduled appointment on $SelectedDate $PreferredTime with $adminFullName was " . (urldecode($this->uri->segment(4))) . ".";
+        }
+
         //send email
-        $sendemail = $this->routines->sendEmail("Appointment Status", "Your appointment was " . urldecode($this->uri->segment(4)), $this->session->userdata('AppointmentEmail'));
+        $sendemail = $this->routines->sendEmail("Appointment Status", "$Notification", $this->session->userdata('AppointmentEmail'));
+        $this->session->set_flashdata('Success', $sendemail);
       }
 
       $this->session->set_flashdata('Success', 'Appointment data was successfully saved.');
-
-      $Notification = '';
-      if (urldecode($this->uri->segment(4)) == 'Approved') {
-
-        $firstSentence = "Hello $StudentName, Your appointment for (" . date("F d, Y", strtotime($SelectedDate)) . " at $PreferredTime) has been approved.";
-
-        $secondSentence = array(
-          "Facebook Messenger" => "Please ensure that the Facebook profile link in your student profile is yours, as we will be contacting you there. We look forward to hearing from you soon. Have a great day!",
-          "Google Meet" => "Below you will find the link to the Google Meet. Please join the meeting as scheduled.\n\nThis is the link to the Google Meet: <a href='$googleLink'  target='_blank'>$googleLink</a>",
-          "Telecounseling" => "Please ensure that the phone number indicated in your student profile is yours, the number is $phoneNumber as we will contact you there. Have a great day!",
-          "Face to Face" => "Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!"
-        );
-
-        $Notification = $firstSentence . " " . nl2br($secondSentence[$platform]);
-
-        // $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullName($CreatedBySchedule) . ' is approved. See you there!';
-        $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
-      }
-      if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
-        $Notification = 'Hello ' . $StudentName . '! Your scheduled appointment on ' . $SelectedDate . ' ' . $PreferredTime . ' with ' . $this->routines->getUserFullName($CreatedBySchedule) . ' is rescheduled.';
-        $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
-      }
     }
   }
 
