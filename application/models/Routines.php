@@ -350,6 +350,15 @@ class Routines extends CI_Model
   //   return $result;
   // }
 
+  public function generateOTP($keyLength)
+  {
+    $key = "";
+    for ($x = 1; $x <= $keyLength; $x++) {
+      $key .= random_int(0, 9);
+    }
+    return $key;
+  }
+
   public function loginAuth($user_id, $location, $login_location)
   {
     if ($user_id != null) {

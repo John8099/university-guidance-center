@@ -10,25 +10,8 @@ $SchoolID = $this->session->flashdata("SchoolID");
 $Course = $this->session->flashdata("Course");
 $YearSec = $this->session->flashdata("YearSec");
 $CollegeID = $this->session->flashdata("CollegeID");
-$CivilStatus = $this->session->flashdata("CivilStatus");
-$PlaceBirth = $this->session->flashdata("PlaceBirth");
-$DateBirth = $this->session->flashdata("DateBirth");
 $Gender = $this->session->flashdata("Gender");
 $Address = $this->session->flashdata("Address");
-$MobileNo = $this->session->flashdata("MobileNo");
-$Religion = $this->session->flashdata("Religion");
-$LivingArrangement = $this->session->flashdata("LivingArrangement");
-$MinorityGroup = $this->session->flashdata("MinorityGroup");
-$GuardianName = $this->session->flashdata("GuardianName");
-$GuardianContactNumber = $this->session->flashdata("GuardianContactNumber");
-$GuardianOccupation = $this->session->flashdata("GuardianOccupation");
-$GuardianOfficeAddress = $this->session->flashdata("GuardianOfficeAddress");
-$EstAnnualIncome = $this->session->flashdata("EstAnnualIncome");
-$SourceOfIncome = $this->session->flashdata("SourceOfIncome");
-$Disability = $this->session->flashdata("Disability");
-$GeneralCondition = $this->session->flashdata("GeneralCondition");
-$GeneralConditionReason = $this->session->flashdata("GeneralConditionReason");
-$FBLink = $this->session->flashdata("FBLink");
 
 ?>
 <!DOCTYPE html>
@@ -114,18 +97,7 @@ $FBLink = $this->session->flashdata("FBLink");
   </style>
 </head>
 
-<body>
-  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-    <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-    </symbol>
-    <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
-    </symbol>
-    <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-    </symbol>
-  </svg>
+<body class="login">
   <!-- ============================================================== -->
   <!-- Preloader - style you can find in spinners.css -->
   <!-- ============================================================== -->
@@ -135,385 +107,182 @@ $FBLink = $this->session->flashdata("FBLink");
       <div class="lds-pos"></div>
     </div>
   </div>
-  <div class="regBackground"></div>
-  <div class="container-fluid formReg">
 
-    <div class="card" style="border-radius: 0.25rem; background: #ffffff87">
-      <div class="card-header p-3">
-        <h4 class="card-title">
-          Registration
-        </h4>
-      </div>
-      <div class="card-body">
-        <div class="alert alert-success d-flex align-items-center d-none" role="alert" id="alertsuccess">
-          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
-            <use xlink:href="#check-circle-fill" />
-          </svg>
-          <div>
-            <?= $this->session->flashdata('RegisterSuccess'); ?>
-          </div>
-        </div>
-        <div class="alert alert-danger d-flex align-items-center d-none" role="alert" id="alertdanger">
-          <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
-            <use xlink:href="#exclamation-triangle-fill" />
-          </svg>
-          <div>
-            <?= $this->session->flashdata('RegisterFailed'); ?>
-          </div>
-        </div>
-        <form class="form-horizontal form-material mx-2" action="<?= site_url() . 'student/student_save' ?>" method="post">
-          <?= $this->routines->InsertCSRF() ?>
-          <div class="row">
-            <div class="col-md-3">
+  <div class="container-fluid" style="margin-top:100px">
 
-              <div class="form-group required">
-                <label class="col-md-12 control-label">Email</label>
-                <div class="col-md-12">
-                  <input type="email" class="form-control form-control-line" required value="<?= $Email ?>" name="txtEmail" />
-                </div>
-              </div>
+    <!-- Row -->
+    <div class="row">
+      <!-- Column -->
+      <div class="col-lg-8 offset-lg-2" style="margin-top: 50px;">
+        <div class="card" style="background: none; color: #fff;">
+          <div class="card-body">
+            <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+              <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+              </symbol>
+              <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+              </symbol>
+              <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+              </symbol>
+            </svg>
 
-              <div class="form-group required">
-                <label class="col-md-12 control-label">Last name</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" required value="<?= $last_name ?>" name="txtLname" />
-                </div>
-              </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 control-label">First name</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" required value="<?= $first_name ?>" name="txtFname" />
-                </div>
-              </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 control-label">Middle name</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" required value="<?= $middle_name ?>" name="txtMname" />
-                </div>
-              </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 control-label">Student ID #</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" required value="<?= $SchoolID ?>" name="txtStudentId" />
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Course</label>
-                    <div class="col-md-12">
-                      <input type="text" placeholder="Course" class="form-control form-control-line" value="<?= $Course ?>" required name="txtCourse" />
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Year & Section</label>
-                    <div class="col-md-12">
-                      <input type="text" value="<?= $YearSec ?>" class="form-control form-control-line" required name="txtYearSec" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 control-label">College</label>
-                <div class="col-md-12">
-                  <select class="form-select" name="txtCollege" required>
-                    <option value="" selected disabled>Select College</option>
-                    <?php $query = $this->db->query("SELECT CollegeID, College FROM tblcollege;");
-                    foreach ($query->result() as $row) : ?>
-                      <option value="<?= $row->CollegeID; ?>" <?= ($CollegeID == $row->CollegeID) ? ' selected' : ''; ?>><?= $row->College; ?></option>
-                    <?php endforeach; ?>
-                  </select>
-                </div>
+            <div class="alert alert-success d-flex align-items-center d-none" role="alert" id="alertsuccess">
+              <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:">
+                <use xlink:href="#check-circle-fill" />
+              </svg>
+              <div>
+                <?= $this->session->flashdata('RegisterSuccess'); ?>
               </div>
             </div>
-
-            <div class="col-md-3">
-              <div class="form-group required">
-                <label class="col-md-12 control-label">Civil Status</label>
-                <div class="col-md-12">
-                  <select class="form-select" name="txtCivilStat" required>
-                    <option value="" selected disabled>Select Civil Status</option>
-                    <?php
-                    $civilStats = array("Single", "Married", "Divorced");
-                    foreach ($civilStats as $civilStat) :
-                    ?>
-                      <option value="<?= $civilStat ?>" <?= $CivilStatus == $civilStat ? "selected" : "" ?>><?= $civilStat ?></option>
-                    <?php endforeach; ?>
-                  </select>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Date of Birth</label>
-                    <div class="col-md-12">
-                      <input type="date" class="form-control form-control-line" value="<?= $DateBirth ?>" required name="txtDateOfBirth" />
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Place of Birth</label>
-                    <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" required value="<?= $PlaceBirth ?>" name="txtPlaceOfBirth" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 control-label">Gender</label>
-                <div class="col-md-12">
-                  <select name="txtGender" class="form-select form-control-line">
-                    <option value="" selected disabled>Select Gender</option>
-                    <?php
-                    $genders = array(
-                      "Male",
-                      "Female",
-                      "Gay",
-                      "Lesbian",
-                      "Bisexual",
-                      "Prefer not to say"
-                    );
-                    foreach ($genders as $genderList) :
-                    ?>
-                      <option value="<?= $genderList ?>" <?= $Gender == $genderList ? "selected" : "" ?>><?= $genderList ?></option>
-                    <?php endforeach; ?>
-
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 control-label">Address</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" required value="<?= $Address ?>" name="txtAddress" />
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Phone Number</label>
-                    <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" value="<?= $MobileNo ?>" required name="txtPhoneNumber" />
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Religion</label>
-                    <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" required value="<?= $Religion ?>" name="txtReligion" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 control-label">Living arrangement</label>
-                <div class="col-md-12">
-                  <select name="txtLivingArrangement" class="form-select">
-                    <option value="" selected disabled>Select Living arrangement</option>
-                    <?php
-                    $livingArrangements = array("Living with parents", "Living with relatives", "Others");
-                    foreach ($livingArrangements as $living) :
-                    ?>
-                      <option value="<?= $living ?>" <?= $LivingArrangement == $living ? "selected" : "" ?>><?= $living ?></option>
-                    <?php endforeach; ?>
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="col-md-12 control-label">If member of a minority group/indigenous people</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" value="<?= $MinorityGroup ?>" placeholder="Please specify here" required name="txtMinorityGroup" />
-                </div>
+            <div class="alert alert-danger d-flex align-items-center d-none" role="alert" id="alertdanger">
+              <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                <use xlink:href="#exclamation-triangle-fill" />
+              </svg>
+              <div>
+                <?= $this->session->flashdata('RegisterFailed'); ?>
               </div>
             </div>
-
-            <div class="col-md-6">
+            <h2 class="text-center" style="margin-bottom: 20px">Register Here</h2>
+            <form class="form-horizontal form-material mx-2" action="<?= site_url() . 'student/student_save' ?>" id="frmRegister" method="post">
+              <?= $this->routines->InsertCSRF() ?>
               <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Guardian's name/ Spouse if married</label>
+                <div class="col-md-5">
+                  <div class="form-group">
+                    <label class="col-md-12">Fist name</label>
                     <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" required value="<?= $GuardianName ?>" name="txtGuardianOrSpouseName" />
+                      <input type="text" class="form-control form-control-line" placeholder="Fist name" required name="txtFname" />
                     </div>
                   </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Contact Number of Guardian/ Spouse if married</label>
+                  <div class="form-group">
+                    <label class="col-md-12">Middle name</label>
                     <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" required value="<?= $GuardianContactNumber ?>" name="txtGuardianOrSpouseContact" />
+                      <input type="text" class="form-control form-control-line" placeholder="Middle name" required name="txtMname" />
                     </div>
                   </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Occupation of Guardian/ Spouse if married</label>
+                  <div class="form-group">
+                    <label class="col-md-12">Last name</label>
                     <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" required value="<?= $GuardianOccupation ?>" name="txtGuardianOrSpouseOccupation" />
+                      <input type="text" class="form-control form-control-line" placeholder="Last name" required name="txtLname" />
                     </div>
                   </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Office or Address of Guardian/ Spouse if married</label>
+                  <div class="form-group">
+                    <label for="txtCollege" class="col-md-12">College</label>
                     <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" required value="<?= $GuardianOfficeAddress ?>" name="txtGuardianOrSpouseOfficeAddress" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Estimated Family Annual Income</label>
-                    <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" required value="<?= $EstAnnualIncome ?>" name="txtEstAnnualIncome" />
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">Source of income</label>
-                    <div class="col-md-12">
-                      <select name="txtSourceOfIncome" class="form-select" required>
-                        <option value="" selected disabled>Select source of income</option>
-                        <?php
-                        $sourceOfIncomes = array(
-                          "Salaries/ Wages",
-                          "Business",
-                          "Allowance",
-                          "Others"
-                        );
-                        foreach ($sourceOfIncomes as $source) :
-                        ?>
-                          <option value="<?= $source ?>" <?= $SourceOfIncome == $source ? "selected" : "" ?>><?= $source ?></option>
+                      <select class="form-select form-control-line" name="txtCollege" required id="txtCollege">
+                        <option value="" selected hidden>Select College</option>
+                        <?php $query = $this->db->query("SELECT CollegeID, College FROM tblcollege;");
+                        foreach ($query->result() as $row) : ?>
+                          <option value="<?= $row->CollegeID; ?>" <?= ($CollegeID == $row->CollegeID) ? ' selected' : ''; ?>><?= $row->College; ?></option>
                         <?php endforeach; ?>
                       </select>
                     </div>
                   </div>
-                </div>
-              </div>
-
-              <div class="form-group ">
-                <label class="col-md-12 control-label">Physical disabilities/ defects, if any</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" value="<?= $Disability ?>" name="txtDisability" />
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-5">
-                  <div class="form-group required">
-                    <label class="col-md-12 control-label">General Condition of Health (e.g. good; ) </label>
-                    <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" value="<?= $GeneralCondition ?>" name="txtGeneralCondition" />
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="txtCourse" class="col-md-12">Course</label>
+                        <div class="col-md-12">
+                          <input type="text" placeholder="Course" class="form-control form-control-line" required name="txtCourse" id="txtCourse" value="<?= $Course; ?>" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="txtYearSec" class="col-md-12">Year & Section</label>
+                        <div class="col-md-12">
+                          <input type="text" placeholder="Year & Section" class="form-control form-control-line" required name="txtYearSec" id="txtYearSec" value="<?= $YearSec; ?>" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-7">
-                  <div class="form-group ">
-                    <label class="col-md-12 control-label">if not good why?</label>
+                <div class="col-md-5 offset-lg-2">
+                  <div class="form-group">
+                    <label class="col-md-12 control-label">Gender</label>
                     <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" value="<?= $GeneralConditionReason ?>" name="txtGeneralConditionReason" />
+                      <select name="txtGender" class="form-select form-control-line">
+                        <option value="" selected disabled>Select Gender</option>
+                        <?php
+                        $genders = array(
+                          "Male",
+                          "Female",
+                          "Gay",
+                          "Lesbian",
+                          "Bisexual",
+                          "Prefer not to say"
+                        );
+                        foreach ($genders as $genderList) :
+                        ?>
+                          <option value="<?= $genderList ?>" <?= $Gender == $genderList ? "selected" : "" ?>><?= $genderList ?></option>
+                        <?php endforeach; ?>
+
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="txtEmail" class="col-md-12">School Email</label>
+                        <div class="col-md-12">
+                          <input type="text" placeholder="Email" class="form-control form-control-line" required name="txtEmail" id="txtEmail" value="<?= $Email; ?>" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="col-md-12">Student ID</label>
+                        <div class="col-md-12">
+                          <input type="text" placeholder="Student ID" class="form-control form-control-line" required name="txtStudentId" value="<?= $SchoolID; ?>" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="txtAddress" class="col-md-12">Address</label>
+                    <div class="col-md-12">
+                      <input type="text" placeholder="Address" class="form-control form-control-line" required name="txtAddress" id="txtAddress" value="<?= $Address; ?>" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="txtPassword" class="col-md-12">Password</label>
+                    <div class="col-md-12">
+                      <input type="password" placeholder="Password" value="" class="form-control form-control-line" required name="txtPassword" id="txtPassword" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="txtConfirmPassword" class="col-md-12">Confirm Password</label>
+                    <div class="col-md-12">
+                      <input type="password" placeholder="Confirm Password" value="" class="form-control form-control-line" required name="txtConfirmPassword" id="txtConfirmPassword" />
                     </div>
                   </div>
                 </div>
               </div>
+              <div class="form-group">
+                <div class="col-sm-12 mt-4">
+                  <center>
+                    <button class="btn btn-primary" type="submit" style="width: 180px; background: #5271ff;">
+                      REGISTER
+                    </button>
+                    <br>
+                    <br>
+                    <span class="text-dark">
+                      Already have an account?
+                    </span>
+                    <a href="<?= site_url() . 'student/login' ?>" class="text-default" style="width: 150px;">Sign In</a>
+                  </center>
+                </div>
+                <div class="col-sm-12 mt-4">
 
-              <div class="form-group required">
-                <label class="col-md-12 control-label">Facebook profile link</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" value="<?= $FBLink ?>" name="txtProfileLink" required />
                 </div>
               </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group ">
-                    <label class="col-md-12 control-label">Password</label>
-                    <div class="col-md-12">
-                      <input type="password" class="form-control form-control-line" name="txtPassword" required />
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group ">
-                    <label class="col-md-12 control-label">Confirm Password</label>
-                    <div class="col-md-12">
-                      <input type="password" class="form-control form-control-line" required name="txtConfirmPassword" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
+            </form>
           </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-12 mt-4">
-          <center>
-            <a class="btn btn-primary text-white" data-bs-toggle="modal" data-bs-target="#dataPrivacy" style="width: 180px; background: #5271ff;">
-              Next
-            </a>
-            <br>
-            Already have an account?
-            <a href="<?= site_url() . 'student/login' ?>" style="width: 150px;">
-              Sign In
-            </a>
-          </center>
         </div>
       </div>
-
-      <div class="modal fade" id="dataPrivacy" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">DATA PRIVACY NOTICE</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>
-                This Privacy Notice is hereby observed in compliance with Republic Act No. 10173 of the Data Privacy Act of 2012 (DPA), implementing its rules and regulations, and other relevant policies, including issuances of the National Privacy Commission.
-              </p>
-              <p>
-                WVSU respects and values your data privacy rights, and makes sure that all personal data collected from you, our stakeholders are processed in adherence to the general principles of transparency, legitimate purpose, and proportionality. Your information is limited on these purposes only.
-              </p>
-              <p>
-                WVSU will never provide your personal information to third parties for any other purpose.
-              </p>
-              <p>
-              <h6>Do you agree with this data privacy notice?</h6>
-              </p>
-            </div>
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-default">Yes, I Agree and Save</button>
-              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      </form>
+      <!-- Column -->
     </div>
-  </div>
-
   </div>
   <!-- ============================================================== -->
   <!-- All Jquery -->

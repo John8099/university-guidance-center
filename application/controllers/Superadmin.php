@@ -178,7 +178,7 @@ class Superadmin extends CI_Controller
       'CollegeID ' => $this->input->post('txtCollege'),
       'CreatedOn' => $this->routines->getCurrentDateTime(),
       'CreatedBy' => 0,
-      'Status' => 'Inactive',
+      'Status' => 'Active',
     );
     if ($this->routines->validateEmail($email)) {
       if ($this->uri->segment(3) == '') {
@@ -424,7 +424,6 @@ class Superadmin extends CI_Controller
 
         //send email
         $sendemail = $this->routines->sendEmail("Appointment Status", "$Notification", $this->session->userdata('AppointmentEmail'));
-        $this->session->set_flashdata('Success', $sendemail);
       }
 
       $this->session->set_flashdata('Success', 'Appointment data was successfully saved.');

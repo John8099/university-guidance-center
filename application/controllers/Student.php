@@ -26,7 +26,14 @@ class Student extends CI_Controller
     // wvsu.edu.ph
     $email = $this->input->post('txtEmail');
 
-    $SchoolID = $this->db->query("SELECT * FROM tbluser WHERE SchoolID = '" . $this->input->post('txtStudentId') . "';")->row()->SchoolID;
+    $SchoolID = $this->input->post('txtStudentId');
+    $SchoolIDQuery = $this->db->query("SELECT * FROM tbluser WHERE SchoolID = '$SchoolID'");
+
+    $isSchoolIdExist = false;
+
+    if ($SchoolIDQuery->num_rows() > 0) {
+      $isSchoolIdExist = true;
+    }
 
     $hashPassword = hash("sha256", $this->input->post('txtPassword'));
 
@@ -37,7 +44,7 @@ class Student extends CI_Controller
       $this->session->set_flashdata('RegisterFailed', 'Password not match.');
 
       $error = true;
-    } else if ($SchoolID != '' && !$error) {
+    } else if ($isSchoolIdExist && !$error) {
 
       $this->session->set_flashdata('RegisterFailed', 'Student ID is already exist.');
 
@@ -62,32 +69,19 @@ class Student extends CI_Controller
           "Course" => strtoupper($this->input->post("txtCourse")),
           "YearSec" => strtoupper($this->input->post("txtYearSec")),
           "CollegeID" => $this->input->post("txtCollege"),
-          "CivilStatus" => ucfirst($this->input->post("txtCivilStat")),
-          "PlaceBirth" => ucwords($this->input->post("txtPlaceOfBirth")),
-          "DateBirth" => $this->input->post("txtDateOfBirth"),
           "Gender" => ucwords($this->input->post("txtGender")),
           "Address" => ucwords($this->input->post("txtAddress")),
-          "MobileNo" => $this->input->post("txtPhoneNumber"),
-          "Religion" => ucwords($this->input->post("txtReligion")),
-          "LivingArrangement" => ucwords($this->input->post("txtLivingArrangement")),
-          "MinorityGroup" => ucwords($this->input->post("txtMinorityGroup")),
-          "GuardianName" => ucwords($this->input->post("txtGuardianOrSpouseName")),
-          "GuardianContactNumber" => $this->input->post("txtGuardianOrSpouseContact"),
-          "GuardianOccupation" => ucwords($this->input->post("txtGuardianOrSpouseOccupation")),
-          "GuardianOfficeAddress" => ucwords($this->input->post("txtGuardianOrSpouseOfficeAddress")),
-          "EstAnnualIncome" => $this->input->post("txtEstAnnualIncome"),
-          "SourceOfIncome" => $this->input->post("txtSourceOfIncome"),
-          "Disability" => ucwords($this->input->post("txtDisability")),
-          "GeneralCondition" => ucwords($this->input->post("txtGeneralCondition")),
-          "GeneralConditionReason" => ucfirst($this->input->post("txtGeneralConditionReason")),
-          "FBLink" => $this->db->escape_str($this->input->post("txtProfileLink")),
           "UserType" => "Student",
+          "Status" => "Inactive",
           "HashedPassword" => $hashPassword,
         );
 
-        $this->main_model->insert_entry('tbluser', $data);
+        $userID = $this->main_model->insert_entry('tbluser', $data);
         $this->session->set_flashdata('RegisterSuccess', 'Registration was successfully saved.');
-        redirect(site_url() . 'student/login');
+        $otp = $this->routines->generateOTP(6);
+        $this->session->set_userdata("OTP", $otp);
+        $send_email = $this->routines->sendEmail("Email verification", "Your OTP Code is: $otp", $email);
+        redirect(site_url() . "student/email_verification/$userID");
       }
     }
 
@@ -100,25 +94,8 @@ class Student extends CI_Controller
       $this->session->set_flashdata('Course', $this->input->post('txtCourse'));
       $this->session->set_flashdata('YearSec', $this->input->post('txtYearSec'));
       $this->session->set_flashdata('CollegeID', $this->input->post('txtCollege'));
-      $this->session->set_flashdata('CivilStatus', $this->input->post('txtCivilStat'));
-      $this->session->set_flashdata('PlaceBirth', $this->input->post('txtPlaceOfBirth'));
-      $this->session->set_flashdata('DateBirth', $this->input->post('txtDateOfBirth'));
       $this->session->set_flashdata('Gender', $this->input->post('txtGender'));
       $this->session->set_flashdata('Address', $this->input->post('txtAddress'));
-      $this->session->set_flashdata('MobileNo', $this->input->post('txtPhoneNumber'));
-      $this->session->set_flashdata('Religion', $this->input->post('txtReligion'));
-      $this->session->set_flashdata('LivingArrangement', $this->input->post('txtLivingArrangement'));
-      $this->session->set_flashdata('MinorityGroup', $this->input->post('txtMinorityGroup'));
-      $this->session->set_flashdata('GuardianName', $this->input->post('txtGuardianOrSpouseName'));
-      $this->session->set_flashdata('GuardianContactNumber', $this->input->post('txtGuardianOrSpouseContact'));
-      $this->session->set_flashdata('GuardianOccupation', $this->input->post('txtGuardianOrSpouseOccupation'));
-      $this->session->set_flashdata('GuardianOfficeAddress', $this->input->post('txtGuardianOrSpouseOfficeAddress'));
-      $this->session->set_flashdata('EstAnnualIncome', $this->input->post('txtEstAnnualIncome'));
-      $this->session->set_flashdata('SourceOfIncome', $this->input->post('txtSourceOfIncome'));
-      $this->session->set_flashdata('Disability', $this->input->post('txtDisability'));
-      $this->session->set_flashdata('GeneralCondition', $this->input->post('txtGeneralCondition'));
-      $this->session->set_flashdata('GeneralConditionReason', $this->input->post('txtGeneralConditionReason'));
-      $this->session->set_flashdata('FBLink', $this->input->post('txtProfileLink'));
     }
 
     redirect(site_url() . 'student/student_register');
@@ -761,18 +738,22 @@ class Student extends CI_Controller
 
   public function student_verify()
   {
-    $data = array(
-      'Status' => 'Active',
-    );
-    $this->main_model->update_entry('tbluser', $data, 'UserID', $this->uri->segment(3));
-    echo '<script>alert("Your email was successfully verified");window.location="' . site_url() . 'student/login' . '";</script>';
+    $userID = $this->uri->segment(3);
+    if ($this->input->post("txtOTPCode") != "") {
+      if ($this->input->post("txtOTPCode") == $this->session->userdata("OTP")) {
+        $data = array(
+          'Status' => 'Active',
+        );
+        $this->main_model->update_entry('tbluser', $data, 'UserID', $userID);
+        $this->session->set_flashdata('Success', "Your email is verified.\nPlease remain for the system will redirect you to the login page.");
+      } else {
+        $this->session->set_flashdata('Failed', "OTP Code not match.");
+      }
+    } else {
+      $this->session->set_flashdata('Failed', "We didn't get your OTP Code.\nPlease try again.");
+    }
+    redirect(site_url() . "student/email_verification/$userID");
   }
-
-
-
-
-
-
 
   public function testdata()
   {

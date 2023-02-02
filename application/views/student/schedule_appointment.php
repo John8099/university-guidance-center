@@ -13,22 +13,7 @@ $number = "";
 $PreferredTime = $this->session->userdata('AppointmentTime');
 $SelectedDate = $this->session->userdata('AppointmentDate');
 
-$UserID = $this->session->userdata('StudentUserID');
-
-$query = $this->db->query("SELECT * FROM tbluser WHERE UserID = '$UserID'");
-
-if ($query->num_rows() > 0) {
-  $res = $query->row();
-
-  $studentName = $this->routines->getUserFullName($res->UserID);
-  $email = $res->Email;
-  $college = $this->routines->getCollege($res->CollegeID);
-  $course = $res->Course;
-  $yearSec = $res->YearSec;
-  $address = $res->Address;
-  $number = $res->MobileNo;
-}
-
+$appointScheduleCreatedBy = "";
 $OtherContact = "";
 $Category = "";
 $Platform = "";
@@ -43,6 +28,24 @@ if ($appointmentId != "") {
     $OtherContact = $resAppointment->OtherContact;
     $Category = $resAppointment->Category;
     $Platform = $resAppointment->Platform;
+    $appointScheduleCreatedBy = $resAppointment->CreatedBy;
+  }
+
+  if ($appointScheduleCreatedBy != "") {
+
+    $query = $this->db->query("SELECT * FROM tbluser WHERE UserID = '$appointScheduleCreatedBy'");
+
+    if ($query->num_rows() > 0) {
+      $res = $query->row();
+
+      $studentName = $this->routines->getUserFullName($res->UserID);
+      $email = $res->Email;
+      $college = $this->routines->getCollege($res->CollegeID);
+      $course = $res->Course;
+      $yearSec = $res->YearSec;
+      $address = $res->Address;
+      $number = $res->MobileNo;
+    }
   }
 }
 ?>

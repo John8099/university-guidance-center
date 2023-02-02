@@ -114,7 +114,13 @@ foreach ($query->result() as $row) {
             </thead>
             <tbody>
               <?php $query = $this->db->query("SELECT * FROM tblresult WHERE CreatedBy=" . $this->session->userdata('StudentUserID') . ";");
-              foreach ($query->result() as $row) : ?>
+              foreach ($query->result() as $row) :
+                $wellnessQ = $this->db->query("SELECT * FROM tblwellnesscheck WHERE CreatedBy='$row->WellnessCheckID'");
+                $guidanceID = "";
+                if ($wellnessQ->num_rows() > 0) {
+                  $guidanceID = $wellnessQ->row()->CreatedBy;
+                }
+              ?>
                 <tr>
                   <td><a href="<?= site_url("student/wellness_check/$row->WellnessCheckID/$row->ResultID"); ?>"><?= date('Y-m-d', strtotime($row->CreatedOn)); ?></a></td>
                   <td><?= $row->Remarks; ?></td>
@@ -128,7 +134,7 @@ foreach ($query->result() as $row) {
                     <?php else : ?>
                     <?php endif; ?>
                   </td>
-                  <td><?= $this->routines->getUserFullName($row->CreatedBy); ?></td>
+                  <td><?= $guidanceID == "" ? "" : $this->routines->getUserFullName($guidanceID); ?></td>
                   <td><?= $row->Remarks; ?></td>
 
                 </tr>
