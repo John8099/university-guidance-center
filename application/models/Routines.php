@@ -190,7 +190,7 @@ class Routines extends CI_Model
   {
     $Root = $_SERVER['DOCUMENT_ROOT'] . '/' . $this->AppName();
     $mb = $maxfilesize;
-    $config['upload_path']          = $Root . $dir;
+    $config['upload_path']          = "./uploads";
     $config['allowed_types']        = $allowed;
     $config['max_size']             = 1024 * $mb;
     $config['encrypt_name'] = TRUE;

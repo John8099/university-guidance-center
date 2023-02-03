@@ -113,7 +113,7 @@ class Superadmin extends CI_Controller
         $this->main_model->insert_entry('tbluser', $data);
 
         // SEND EMAIL VERIFICATION
-        $msg = 'Your username: ' . $this->input->post('txtSchoolID') . ' password: ' . $hashPassword . '';
+        $msg = 'Your username: ' . $this->input->post('txtSchoolID') . ' password: ' . $email . '';
         $sendemail = $this->routines->sendEmail("Temporary Account", $msg, $email);
       } else {
         $this->main_model->update_entry('tbluser', $data, 'UserID', $this->uri->segment(3));
@@ -412,8 +412,8 @@ class Superadmin extends CI_Controller
           $Notification = $firstSentence . " " . nl2br($secondSentence[$platform]);
           $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
         }
+        $adminFullName = $this->routines->getUserFullName($CreatedBySchedule);
         if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
-          $adminFullName = $this->routines->getUserFullName($CreatedBySchedule);
           $Notification = "Hello $StudentName! Your scheduled appointment on $SelectedDate $PreferredTime with $adminFullName is rescheduled.";
           $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
         }

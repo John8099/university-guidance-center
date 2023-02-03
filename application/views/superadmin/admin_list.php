@@ -5,24 +5,26 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 $SchoolID = $this->routines->generateAdminID();
 $UserID = $this->uri->segment(3);
-$result = $this->db->query("SELECT * FROM tbluser WHERE UserID = '$UserID'");
 
-$fname = $this->session->flashdata('first_name');
-$mname = $this->session->flashdata('middle_name');
-$lname = $this->session->flashdata('last_name');
-$CollegeID = $this->session->flashdata('CollegeID');
-$Email = $this->session->flashdata('Email');
-$Gender = $this->session->flashdata('Gender');
-$SchoolID = $this->session->flashdata('SchoolID');
+$fname = "";
+$mname = "";
+$lname = "";
+$CollegeID = "";
+$Email = "";
+$Gender = "";
 
-foreach ($result->result() as $row) {
-  $fname = $row->first_name;
-  $mname = $row->middle_name;
-  $lname = $row->last_name;
-  $CollegeID = $row->CollegeID;
-  $Email = $row->Email;
-  $Gender = $row->Gender;
-  $SchoolID = $row->SchoolID;
+if ($UserID != "") {
+  $result = $this->db->query("SELECT * FROM tbluser WHERE UserID = '$UserID'");
+
+  foreach ($result->result() as $row) {
+    $fname = $row->first_name;
+    $mname = $row->middle_name;
+    $lname = $row->last_name;
+    $CollegeID = $row->CollegeID;
+    $Email = $row->Email;
+    $Gender = $row->Gender;
+    $SchoolID = $row->SchoolID;
+  }
 }
 ?>
 

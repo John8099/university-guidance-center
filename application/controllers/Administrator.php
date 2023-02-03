@@ -414,8 +414,8 @@ class Administrator extends CI_Controller
           $Notification = $firstSentence . " " . nl2br($secondSentence[$platform]);
           $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
         }
+        $adminFullName = $this->routines->getUserFullName($CreatedBySchedule);
         if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
-          $adminFullName = $this->routines->getUserFullName($CreatedBySchedule);
           $Notification = "Hello $StudentName! Your scheduled appointment on $SelectedDate $PreferredTime with $adminFullName is rescheduled.";
           $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
         }

@@ -16,7 +16,6 @@ foreach ($result->result() as $row) {
   $EndDate = $row->EndDate;
   $CreatedOn = date('Y-m-d', strtotime($row->CreatedOn));
 }
-$TotalIdealScore = 0;
 ?>
 
 <div class="row">
@@ -43,11 +42,10 @@ $TotalIdealScore = 0;
                 </thead>
                 <tbody>
                   <?php foreach ($tblresultquan->result() as $row) :
-                    $TotalIdealScore = $TotalIdealScore + $row->IdealScore;
                   ?>
                     <tr>
                       <td><?= $row->Category; ?></td>
-                      <td><?= $row->IdealScore; ?></td>
+                      <td>28</td>
                       <td><strong><?= $row->Score; ?></strong></td>
                     </tr>
                   <?php endforeach; ?>

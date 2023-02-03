@@ -12,6 +12,8 @@
   <script src='https://github.com/mozilla-comm/ical.js/releases/download/v1.4.0/ical.js'></script>
   <script src='<?= base_url() . 'media/' ?>fullcalendar/lib/main.js'></script>
   <script src='<?= base_url() . 'media/' ?>fullcalendar/packages/icalendar/main.global.js'></script>
+
+  <script src="<?= base_url() . 'media/' ?>assets/libs/jquery/dist/jquery.min.js"></script>
   <?php
   $studentId = $this->session->userdata("StudentUserID");
   $query = $this->db->query("SELECT
@@ -74,7 +76,20 @@
           center: 'title',
         },
         events: data,
+        eventClick: function(info) {
+          // info.jsEvent.preventDefault(); // don't let the browser navigate
+          const title = info.event.title.split("<br>")
+          const selectedTime = title[0]
 
+          const eventDate = info.event.start;
+          eventDate.setDate(eventDate.getDate() + 1);
+          const eventDateSplitted = eventDate.toISOString().split("T")
+          const selectedDate = eventDateSplitted[0]
+
+          sessionStorage.setItem("selectedTime", selectedTime);
+          sessionStorage.setItem("selectedDate", selectedDate);
+
+        }
       });
 
       calendarAppoint.render();
@@ -432,7 +447,6 @@
 
   <!-- All Jquery -->
   <!-- ============================================================== -->
-  <script src="<?= base_url() . 'media/' ?>assets/libs/jquery/dist/jquery.min.js"></script>
   <!-- Bootstrap tether Core JavaScript -->
   <script src="<?= base_url() . 'media/' ?>assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="<?= base_url() . 'media/' ?>dist/js/app-style-switcher.js"></script>

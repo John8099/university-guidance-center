@@ -278,7 +278,7 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
                                 <?php foreach ($tblresultquan->result() as $rowResQuantitative) : ?>
                                   <div class="row" style="margin-top: 10px;">
                                     <div class="col-4"><strong><?= $rowResQuantitative->Category; ?></strong></div>
-                                    <div class="col-4"><strong><?= $rowResQuantitative->IdealScore; ?></strong></div>
+                                    <div class="col-4"><strong>28</strong></div>
                                     <div class="col-4"><strong><?= $rowResQuantitative->Score; ?></strong></div>
                                   </div>
                                 <?php endforeach; ?>

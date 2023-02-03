@@ -47,6 +47,21 @@ if ($appointmentId != "") {
       $number = $res->MobileNo;
     }
   }
+} else {
+  $userID = $this->session->userdata("StudentUserID");
+  $query = $this->db->query("SELECT * FROM tbluser WHERE UserID = '$userID'");
+
+  if ($query->num_rows() > 0) {
+    $res = $query->row();
+
+    $studentName = $this->routines->getUserFullName($res->UserID);
+    $email = $res->Email;
+    $college = $this->routines->getCollege($res->CollegeID);
+    $course = $res->Course;
+    $yearSec = $res->YearSec;
+    $address = $res->Address;
+    $number = $res->MobileNo;
+  }
 }
 ?>
 
@@ -182,13 +197,13 @@ if ($appointmentId != "") {
           <div class="form-group">
             <label class="col-md-12">Preferred Time</label>
             <div class="col-md-12">
-              <input name='txtPreferredTime' type="text" placeholder="Select preferred time here" class="form-control form-control-line" value="<?= $PreferredTime; ?>" readonly />
+              <input name='txtPreferredTime' type="text" placeholder="Select preferred time here" class="form-control form-control-line" value="<?= $PreferredTime; ?>" id="selectedTime" readonly />
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-12">Select Date</label>
             <div class="col-md-12">
-              <input name='txtSelectedDate' type="date" placeholder="Select date here" class="form-control form-control-line" value="<?= $SelectedDate; ?>" readonly />
+              <input name='txtSelectedDate' type="date" placeholder="Select date here" class="form-control form-control-line" value="<?= $SelectedDate; ?>" id="selectedDate" readonly />
             </div>
           </div>
           <?php if ($appointmentId == "") : ?>
@@ -227,3 +242,7 @@ if ($appointmentId != "") {
     </div>
   </div>
 </div>
+<script>
+  $("#selectedTime").val(sessionStorage.getItem("selectedTime"));
+  $("#selectedDate").val(sessionStorage.getItem("selectedDate"));
+</script>
