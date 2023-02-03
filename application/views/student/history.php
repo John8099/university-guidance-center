@@ -137,15 +137,12 @@ foreach ($query->result() as $row) {
                                                 INNER JOIN
                                                 tbluser u
                                                 ON
+                                                u.UserID = wc.CreatedBy
+                                                WHERE
                                                 r.CreatedBy = '$studentUserId'
                                                 ");
 
               foreach ($query->result() as $row) :
-                $wellnessQ = $this->db->query("SELECT * FROM tblwellnesscheck WHERE CreatedBy='$row->wellnessCheckId'");
-                $guidanceID = "";
-                if ($wellnessQ->num_rows() > 0) {
-                  $guidanceID = $wellnessQ->row()->CreatedBy;
-                }
               ?>
                 <tr data-bs-toggle="modal" data-bs-target="#historyModal<?= $row->resultId ?>">
                   <td>
@@ -162,7 +159,7 @@ foreach ($query->result() as $row) {
                     <?php else : ?>
                     <?php endif; ?>
                   </td>
-                  <td><?= $guidanceID == "" ? "" : $this->routines->getUserFullName($guidanceID); ?></td>
+                  <td><?= $row->CreatedById == "" ? "" : $this->routines->getUserFullName($row->CreatedById); ?></td>
 
                 </tr>
                 <div class="modal fade" id="historyModal<?= $row->resultId ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
