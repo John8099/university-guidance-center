@@ -189,11 +189,12 @@ class Student extends CI_Controller
     $email = $this->input->post('txtEmail');
 
     if ($this->routines->validateEmail($email)) {
+
       $data = array(
         'Referrer' => $this->input->post('txtReferrer'),
         'StudentName' => $this->input->post('txtStudentName'),
         'Email' => $this->input->post('txtEmail'),
-        'CollegeID' => $this->input->post('txtCollege'),
+        'CollegeID' => $this->session->userdata('StudentCollegeID'),
         'YearSection' => $this->input->post('txtYearSection'),
         'Address' => $this->input->post('txtAddress'),
         'PhoneNumber' => $this->input->post('txtPhoneNumber'),
@@ -203,17 +204,18 @@ class Student extends CI_Controller
         'PreferredTime' => $this->input->post('txtPreferredTime'),
         'SelectedDate' => $this->input->post('txtSelectedDate'),
         'CreatedBy' => $this->session->userdata('StudentUserID'),
-        'AppointmentSchedID' => $this->session->userdata('AppointmentSchedID'),
+        'AppointmentSchedID' => $this->input->post('txtAppointScheduleBy'),
       );
       if ($this->uri->segment(3) == '') {
         $this->main_model->insert_entry('tblappointment', $data);
+
+        $updateData = array(
+          "Status" => "Occupied"
+        );
+        $this->main_model->update_entry('tblappointmentsched', $updateData, 'AppointmentSchedID', $this->input->post('txtAppointScheduleBy'));
       } else {
         $this->main_model->update_entry('tblappointment', $data, 'AppointmentID', $this->uri->segment(3));
       }
-      $data = array(
-        'Status' => 'Occupied',
-      );
-      $this->main_model->update_entry('tblappointmentsched', $data, 'AppointmentSchedID', $this->session->userdata('AppointmentSchedID'));
       $this->session->set_flashdata('AppointmentSuccess', 'true');
     } else {
       $this->session->set_flashdata('AppointmentSuccess', 'false');

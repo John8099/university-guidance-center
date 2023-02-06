@@ -13,12 +13,12 @@ $number = "";
 $PreferredTime = $this->session->userdata('AppointmentTime');
 $SelectedDate = $this->session->userdata('AppointmentDate');
 
-$appointScheduleCreatedBy = "";
+$appointScheduleCreatedBy = $this->uri->segment(3);
 $OtherContact = "";
 $Category = "";
 $Platform = "";
 
-$appointmentId = $this->uri->segment(3);
+$appointmentId = $this->uri->segment(4);
 if ($appointmentId != "") {
   $queryAppointment = $this->db->query("SELECT * FROM tblappointment WHERE AppointmentID='$appointmentId'");
 
@@ -117,6 +117,7 @@ if ($appointmentId != "") {
 
         <form method="post" id="formAppointmentSave" action="<?= site_url() . 'student/appointment_save/' . $appointmentId ?>" class="form-horizontal form-material mx-2">
           <?= $this->routines->InsertCSRF() ?>
+          <input type="text" name="txtAppointScheduleBy" value="<?= $appointScheduleCreatedBy ?>"  readonly>
 
           <div class="form-group">
             <label class="col-md-12">Student Name</label>

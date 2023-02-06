@@ -23,7 +23,8 @@
                           aschd.Status AS selectedAppointmentStatus,
                           aschd.CreatedBy AS adminID,
                           apnt.CreatedBy AS studentID,
-                          apnt.Status AS studentAppointmentStatus
+                          apnt.Status AS studentAppointmentStatus,
+                          aschd.AppointmentSchedID AS appointmentScheduleID
                           FROM tblappointmentsched aschd
                           LEFT JOIN tblappointment apnt
                           ON 
@@ -55,7 +56,7 @@
         $data,
         array(
           "title" => "$res->appointmentTime <br> $adminFullName <br> <strong>$appointmentStat</strong>",
-          "url" => site_url() . 'student/schedule_appointment/' . ($res->appointmentID == null ? "" : $res->appointmentID),
+          "url" => site_url() . "student/schedule_appointment/$res->appointmentScheduleID" . ($res->appointmentID == null ? "" : "/$res->appointmentID"),
           "start" => $res->appointmentDate,
           "color" => $colorAppoint
         )

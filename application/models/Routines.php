@@ -254,7 +254,7 @@ class Routines extends CI_Model
     $mail = $this->phpmailer_lib->load();
 
     /* SMTP configuration */
-    $mail->SMTPDebug = 2;
+    // $mail->SMTPDebug = 2;
     $mail->Host     = 'bom1plzcpnl493875.prod.bom1.secureserver.net';
     $mail->SMTPAuth = true;
     $mail->SMTPAutoTLS = true;
