@@ -18,6 +18,7 @@
   $studentId = $this->session->userdata("StudentUserID");
   $query = $this->db->query("SELECT
                           apnt.AppointmentID AS appointmentID,
+                          apnt.CollegeID as collegeId,
                           aschd.AppointmentDate AS appointmentDate,
                           aschd.AppointmentTime AS appointmentTime,
                           aschd.Status AS selectedAppointmentStatus,
@@ -37,30 +38,34 @@
   $data = [];
   foreach ($query->result() as $res) {
     if ($res->studentAppointmentStatus != "Completed" || $res->studentID == $studentId) {
-      // 
       $adminFullName = $this->routines->getUserFullName($res->adminID);
-      $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
+      $adminCollegeId = $this->db->query("SELECT CollegeID FROM tbluser WHERE UserID='$res->adminID'")->row()->CollegeID;
+      $studentCollegeId = $this->session->userdata("StudentCollegeID");
 
-      $colorAppoint = "";
-      if ($appointmentStat == "Approved" || $appointmentStat == "Endorsed" || $appointmentStat == "Completed") {
-        $colorAppoint = "rgb(38 157 65)";
-      } else if ($appointmentStat == "Pending") {
-        $colorAppoint = "rgb(203 155 14)";
-      } else if ($appointmentStat == "Follow Up") {
-        $colorAppoint = "rgb(26 161 183)";
-      } else {
-        $colorAppoint = "rgb(6 93 187)";
+      if ($adminCollegeId == $studentCollegeId || $adminCollegeId == 0) {
+        $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
+
+        $colorAppoint = "";
+        if ($appointmentStat == "Approved" || $appointmentStat == "Endorsed" || $appointmentStat == "Completed") {
+          $colorAppoint = "rgb(38 157 65)";
+        } else if ($appointmentStat == "Pending") {
+          $colorAppoint = "rgb(203 155 14)";
+        } else if ($appointmentStat == "Follow Up") {
+          $colorAppoint = "rgb(26 161 183)";
+        } else {
+          $colorAppoint = "rgb(6 93 187)";
+        }
+
+        array_push(
+          $data,
+          array(
+            "title" => "$res->appointmentTime <br> $adminFullName <br> <strong>$appointmentStat</strong>",
+            "url" => site_url() . "student/schedule_appointment/$res->appointmentScheduleID" . ($res->appointmentID == null ? "" : "/$res->appointmentID"),
+            "start" => $res->appointmentDate,
+            "color" => $colorAppoint
+          )
+        );
       }
-
-      array_push(
-        $data,
-        array(
-          "title" => "$res->appointmentTime <br> $adminFullName <br> <strong>$appointmentStat</strong>",
-          "url" => site_url() . "student/schedule_appointment/$res->appointmentScheduleID" . ($res->appointmentID == null ? "" : "/$res->appointmentID"),
-          "start" => $res->appointmentDate,
-          "color" => $colorAppoint
-        )
-      );
     }
   }
   ?>

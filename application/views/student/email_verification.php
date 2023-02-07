@@ -123,7 +123,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <h2 class="card-title">Welcome!</h2>
 
             <p>Thanks for signing up! <br> We just need you to verify your email address to complete setting up your account.</p>
-            <p>Please input the OTP code that we send on your email.</p>
+            <p>Please input the OTP code that we sent to your email.</p>
             <form class="form-horizontal form-material mx-2" action="<?= site_url() . 'student/student_verify/' . $this->uri->segment(3); ?>" method="post">
               <?= $this->routines->InsertCSRF() ?>
               <div class="form-group d-flex justify-content-center">

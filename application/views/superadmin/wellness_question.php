@@ -30,9 +30,11 @@ foreach ($result->result() as $row) {
             for ($a = 1; $a <= $numberOfCategory; $a++) :
             ?>
               <div class="form-group">
-                <label class="col-md-12"><strong>Category <?= $a ?></strong></label>
+                <label class="col-md-12" style="font-weight: bold;" id="labelCategory<?= $a ?>">
+                  Category <?= $a ?>
+                </label>
                 <div class="col-md-12">
-                  <select class="form-control form-control-line" name="txtCategory[]" required>
+                  <select class="form-control form-control-line categories" name="txtCategory[]" id="inputCategory<?= $a ?>" onchange="categoryChange(this, '<?= $a ?>')" required>
                     <option value="" selected disabled>Select Category</option>
                     <option value="Emotional Wellness">Emotional Wellness</option>
                     <option value="Environmental Wellness">Environmental Wellness</option>
@@ -64,6 +66,22 @@ foreach ($result->result() as $row) {
                 </script>
             <?php endfor;
             endfor;
+            ?>
+            <script>
+              function categoryChange(elem, id) {
+                $('.categories').find("option").show();
+                $('.categories').each(function(index, el) {
+                  var val = $(el).val();
+                  if (val) {
+                    var $other = $('.categories').not(this);
+                    $other.find(`option[value='${$(el).val()}']`).hide();
+                  }
+                });
+
+                $(`#labelCategory${id}`).html(`Category: ${elem.value}`);
+              }
+            </script>
+          <?php
           else : ?>
             <input name='txtCategory' type="hidden" value="NONE" />
             <h2>Qualitative Questions</h2>

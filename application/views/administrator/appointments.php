@@ -37,21 +37,54 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
           <tbody>
             <?php
-            $query = $this->db->query("SELECT ta.AppointmentID, ta.StudentName, tc.College, ta.YearSection, ta.SelectedDate, ta.PreferredTime, ta.Platform, ta.Status, ta.Remarks FROM tblappointment ta INNER JOIN tblcollege tc ON tc.CollegeID=ta.CollegeID WHERE ta.Status<>'Completed' and ta.CollegeID='" . $this->session->userdata('CollegeID') . "' ORDER BY FIELD(ta.Status, 'Pending') DESC;");
+            $adminCollegeID = $this->session->userdata('CollegeID');
+            $query = $this->db->query("SELECT
+                                      apnt.AppointmentID AS appointmentID,
+                                      apnt.CreatedBy AS studentID,
+                                      aschd.AppointmentDate AS appointmentDate,
+                                      aschd.AppointmentTime AS appointmentTime,
+                                      apnt.Status AS appointmentStatus,
+                                      apnt.Platform AS Platform,
+                                      apnt.Remarks AS Remarks,
+                                      apnt.YearSection AS YearSection,
+                                      aschd.CreatedBy AS adminID,
+                                      apnt.Status AS studentAppointmentStatus
+                                      FROM tblappointmentsched aschd
+                                      LEFT JOIN tblappointment apnt
+                                      ON 
+                                      aschd.AppointmentSchedID = apnt.AppointmentSchedID
+                                      LEFT JOIN tbluser u
+                                      ON u.UserID = aschd.CreatedBy
+                                      WHERE 
+                                      apnt.Status<>'Completed' and ta.CollegeID='$adminCollegeID'
+                                      ORDER BY FIELD(apnt.Status, 'Pending') DESC
+                                      ");
+            // $query = $this->db->query("SELECT ta.AppointmentID, ta.StudentName, tc.College, ta.YearSection, ta.SelectedDate, ta.PreferredTime, ta.Platform, ta.Status, ta.Remarks FROM tblappointment ta INNER JOIN tblcollege tc ON tc.CollegeID=ta.CollegeID WHERE ta.Status<>'Completed' ORDER BY FIELD(ta.Status, 'Pending') DESC;");
 
-            foreach ($query->result() as $row) : ?>
+            foreach ($query->result() as $row) :
+              $studentData = $this->routines->getUserData($row->studentID);
+            ?>
               <tr>
-                <td><a href="<?= site_url() . 'administrator/view_appointment/' . $row->AppointmentID; ?>"><?= $row->StudentName; ?></a></td>
-                <td><?= $row->College; ?></td>
-                <td><?= $row->YearSection; ?></td>
-                <td><?= $row->SelectedDate; ?></td>
-                <td><?= $row->PreferredTime; ?></td>
-                <td><?= $row->Platform; ?></td>
-                <td><?= $row->Status; ?></td>
-                <td><a href="<?= site_url() . 'administrator/view_appointment/' . $row->AppointmentID; ?>" class="btn btn-outline-info btn-sm" title="View Appointment">Change Status</a></td>
-                <td><?php #if ($row->Status == 'Completed') : 
-                    ?>
-                  <!-- <a href="<?= site_url() . 'administrator/view_appointment/' . $row->AppointmentID; ?>" class="btn btn-outline-info btn-sm" title="View Appointment">Add Remarks</a> -->
+                <td>
+                  <a href="<?= site_url() . 'administrator/view_appointment/' . $row->appointmentID; ?>">
+                    <?= $this->routines->getUserFullName($row->studentID) ?>
+                  </a>
+                </td>
+                <td><?= $this->routines->getCollege($studentData->CollegeID); ?></td>
+                <td><?= "$studentData->Course $studentData->YearSec" ?></td>
+                <td><?= $row->appointmentDate ?></td>
+                <td><?= $row->appointmentTime ?></td>
+                <td><?= $row->Platform ?></td>
+                <td><?= $row->appointmentStatus ?></td>
+                <td>
+                  <a href="<?= site_url() . 'administrator/view_appointment/' . $row->appointmentID; ?>" class="btn btn-outline-info btn-sm" title="View Appointment">
+                    Change Status
+                  </a>
+                </td>
+                <td>
+                  <?php #if ($row->Status == 'Completed') : 
+                  ?>
+                  <!-- <a href="<?= site_url() . 'administrator/view_appointment/' . $row->appointmentID; ?>" class="btn btn-outline-info btn-sm" title="View Appointment">Add Remarks</a> -->
                   <?php #endif; 
                   ?>
                   <?= $row->Remarks ? substr($row->Remarks, 0, 70) . "..." : "" ?>

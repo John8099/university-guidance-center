@@ -152,6 +152,15 @@ class Routines extends CI_Model
     return $UserFullName;
   }
 
+  function getUserData($user_id)
+  {
+    $tblUser = $this->db->query("SELECT * FROM tbluser WHERE UserID = '$user_id'");
+    if ($tblUser->num_rows() > 0) {
+      return $tblUser->row();
+    }
+    return null;
+  }
+
   function generateAdminID($length = 1)
   {
     $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

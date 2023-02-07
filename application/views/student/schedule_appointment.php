@@ -117,7 +117,7 @@ if ($appointmentId != "") {
 
         <form method="post" id="formAppointmentSave" action="<?= site_url() . 'student/appointment_save/' . $appointmentId ?>" class="form-horizontal form-material mx-2">
           <?= $this->routines->InsertCSRF() ?>
-          <input type="text" name="txtAppointScheduleBy" value="<?= $appointScheduleCreatedBy ?>"  readonly>
+          <input type="text" name="txtAppointScheduleBy" value="<?= $appointScheduleCreatedBy ?>" readonly hidden>
 
           <div class="form-group">
             <label class="col-md-12">Student Name</label>
@@ -154,7 +154,7 @@ if ($appointmentId != "") {
           <div class="form-group">
             <label class="col-md-12">Phone Number</label>
             <div class="col-md-12">
-              <input name='txtPhoneNumber' type="text" placeholder="Enter phone number here" class="form-control form-control-line" value="<?= $number; ?>" required readonly />
+              <input name='txtPhoneNumber' type="text" placeholder="Enter phone number here" class="form-control form-control-line" value="<?= $number; ?>" required <?= $number == "" && $appointmentId == "" ? "" : "readonly" ?> />
             </div>
           </div>
           <div class="form-group">
@@ -232,7 +232,7 @@ if ($appointmentId != "") {
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                   <!-- <button name="submit" class="btn btn-primary">I agree</button> -->
-                  <button type="submit" onclick="return $('#formAppointmentSave').submit()" class="btn btn-primary text-white">I agree</button>
+                  <button type="submit" class="btn btn-primary text-white">I agree</button>
                 </div>
 
               </div>
