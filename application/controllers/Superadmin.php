@@ -93,22 +93,22 @@ class Superadmin extends CI_Controller
     $ranpass = $this->routines->generateRandomString(8);
     $hashPassword = hash("sha256", $email);
 
-    $data = array(
-      'first_name' => $this->input->post('txtFname'),
-      'middle_name' => $this->input->post('txtMname'),
-      'last_name' => $this->input->post('txtLname'),
-      'UserType' => 'Administrator',
-      'Gender' => $this->input->post('txtGender'),
-      'Email' => $email,
-      'SchoolID ' => $this->input->post('txtSchoolID'),
-      'CollegeID ' => $this->input->post('txtCollege'),
-      'Status' => 'Active',
-    );
     if ($this->routines->validateEmail($email)) {
 
       if ($this->uri->segment(3) == '') {
-        $data['HashedPassword'] = $hashPassword;
-        $data["isNew"] = 1;
+        $data = array(
+          'first_name' => $this->input->post('txtFname'),
+          'middle_name' => $this->input->post('txtMname'),
+          'last_name' => $this->input->post('txtLname'),
+          'UserType' => 'Administrator',
+          'Gender' => $this->input->post('txtGender'),
+          'Email' => $email,
+          'SchoolID ' => $this->input->post('txtSchoolID'),
+          'CollegeID ' => $this->input->post('txtCollege'),
+          'Status' => 'Active',
+          "HashedPassword" => $hashPassword,
+          "isNew" => 1
+        );
 
         $this->main_model->insert_entry('tbluser', $data);
 
@@ -116,6 +116,16 @@ class Superadmin extends CI_Controller
         $msg = 'Your username: ' . $this->input->post('txtSchoolID') . ' password: ' . $email . '';
         $sendemail = $this->routines->sendEmail("Temporary Account", $msg, $email);
       } else {
+        $data = array(
+          'first_name' => $this->input->post('txtFname'),
+          'middle_name' => $this->input->post('txtMname'),
+          'last_name' => $this->input->post('txtLname'),
+          'UserType' => 'Administrator',
+          'Gender' => $this->input->post('txtGender'),
+          'Email' => $email,
+          'SchoolID ' => $this->input->post('txtSchoolID'),
+          'CollegeID ' => $this->input->post('txtCollege'),
+        );
         $this->main_model->update_entry('tbluser', $data, 'UserID', $this->uri->segment(3));
       }
       $this->session->set_flashdata('admin_list_save', 'Registration was successfully saved.');

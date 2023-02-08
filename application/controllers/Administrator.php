@@ -36,25 +36,19 @@ class Administrator extends CI_Controller
         $this->session->set_flashdata('Failed', 'Login authentication failed, please verify your email.');
         redirect(site_url() . 'administrator/login');
       }
-      if ($rowdata->UserType == 'Administrator') {
-        $this->session->set_userdata('UserID', $rowdata->UserID);
-        $this->session->set_userdata('UserType', $rowdata->UserType);
-        $this->session->set_userdata('Fullname', $this->routines->getUserFullName($rowdata->UserID));
-        $this->session->set_userdata('Email', $rowdata->Email);
-        $this->session->set_userdata('CollegeID', $rowdata->CollegeID);
-        $this->session->set_userdata('SchoolID', $rowdata->SchoolID);
-        $this->session->set_userdata('ImageLoc', $rowdata->ImageLoc);
-        $this->session->set_userdata('Location', site_url() . 'administrator');
-        redirect(site_url() . 'administrator');
+
+      $this->session->set_userdata('UserID', $rowdata->UserID);
+      $this->session->set_userdata('UserType', $rowdata->UserType);
+      $this->session->set_userdata('Fullname', $this->routines->getUserFullName($rowdata->UserID));
+      $this->session->set_userdata('Email', $rowdata->Email);
+      $this->session->set_userdata('CollegeID', $rowdata->CollegeID);
+      $this->session->set_userdata('SchoolID', $rowdata->SchoolID);
+      $this->session->set_userdata('ImageLoc', $rowdata->ImageLoc);
+      $this->session->set_userdata('Location', site_url() . 'administrator');
+      
+      if ($rowdata->isNew == '1') {
+        redirect(site_url() . 'administrator/change_password');
       } else {
-        $this->session->set_userdata('UserID', $rowdata->UserID);
-        $this->session->set_userdata('UserType', $rowdata->UserType);
-        $this->session->set_userdata('Fullname', $this->routines->getUserFullName($rowdata->UserID));
-        $this->session->set_userdata('Email', $rowdata->Email);
-        $this->session->set_userdata('CollegeID', $rowdata->CollegeID);
-        $this->session->set_userdata('SchoolID', $rowdata->SchoolID);
-        $this->session->set_userdata('ImageLoc', $rowdata->ImageLoc);
-        $this->session->set_userdata('Location', site_url() . 'administrator');
         redirect(site_url() . 'administrator');
       }
     } else {
@@ -217,10 +211,11 @@ class Administrator extends CI_Controller
     if ($Query->num_rows() <> 0) {
       $data = array(
         'HashedPassword' => $hashPassword,
+        "isNew" => 0
       );
       $this->main_model->update_entry('tbluser', $data, 'UserID', $this->session->userdata('UserID'));
       $this->session->set_flashdata('pass_msg', 'Password was successfully changed.');
-      redirect(site_url() . 'administrator/change_password');
+      redirect(site_url() . 'administrator');
     } else {
       $this->session->set_flashdata('pass_msg', 'Old password was incorrect.');
       redirect(site_url() . 'administrator/change_password');
