@@ -37,6 +37,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
           <tbody>
             <?php
+            $adminId = $this->session->userdata("UserID");
             $adminCollegeID = $this->session->userdata('CollegeID');
             $query = $this->db->query("SELECT
                                       apnt.AppointmentID AS appointmentID,
@@ -56,7 +57,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                       LEFT JOIN tbluser u
                                       ON u.UserID = aschd.CreatedBy
                                       WHERE 
-                                      apnt.Status<>'Completed' and ta.CollegeID='$adminCollegeID'
+                                      apnt.Status<>'Completed' and apnt.CollegeID='$adminCollegeID' and aschd.CreatedBy='$adminId'
                                       ORDER BY FIELD(apnt.Status, 'Pending') DESC
                                       ");
             // $query = $this->db->query("SELECT ta.AppointmentID, ta.StudentName, tc.College, ta.YearSection, ta.SelectedDate, ta.PreferredTime, ta.Platform, ta.Status, ta.Remarks FROM tblappointment ta INNER JOIN tblcollege tc ON tc.CollegeID=ta.CollegeID WHERE ta.Status<>'Completed' ORDER BY FIELD(ta.Status, 'Pending') DESC;");

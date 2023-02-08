@@ -37,10 +37,14 @@
   // $result = $query->num_rows() == 0 ? null : json_encode($query->result_object());
   $data = [];
   foreach ($query->result() as $res) {
-    if ($res->studentAppointmentStatus != "Completed" || $res->studentID == $studentId) {
+    if (($res->studentAppointmentStatus != "Completed" || $res->selectedAppointmentStatus == "Active")) {
       $adminFullName = $this->routines->getUserFullName($res->adminID);
       $adminCollegeId = $this->db->query("SELECT CollegeID FROM tbluser WHERE UserID='$res->adminID'")->row()->CollegeID;
       $studentCollegeId = $this->session->userdata("StudentCollegeID");
+
+      if ($studentId != $res->studentID && $res->studentID != NULL) {
+        continue;
+      }
 
       if ($adminCollegeId == $studentCollegeId || $adminCollegeId == 0) {
         $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;

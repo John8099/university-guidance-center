@@ -183,7 +183,7 @@ $College = $this->db->query("SELECT * FROM tblcollege WHERE CollegeID = '{$Colle
 <?php endif; ?>
 
 <!-- Modal Reschedule -->
-<div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="rescheduleModal" data-bs-focus="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
@@ -314,28 +314,68 @@ foreach ($query->result() as $res) {
 
   function saveReschedule(reScheduleLink, selectedDate, time) {
 
-    $.post(
-      reScheduleLink, {
-        dateSched: selectedDate,
-        timeSched: time,
-        <?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
-      },
-      (data, status) => {
+    if ("<?= $Platform ?>" === "Google Meet") {
+      Swal.fire({
+        input: 'url',
+        inputPlaceholder: 'Place your google meet link here...',
+        showDenyButton: true,
+        confirmButtonText: 'Submit',
+        denyButtonText: 'Cancel',
+      }).then((res) => {
+        if (res.isConfirmed && res.value) {
+          $(".preloader").show();
 
-        if (status === "success") {
-          const redirect = '<?= site_url() . "administrator/view_appointment/" . $this->uri->segment(3) ?>'
-          window.location.href = redirect
+          $.post(
+            reScheduleLink, {
+              dateSched: selectedDate,
+              timeSched: time,
+              google_link: res.value,
+              <?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
+            },
+            (data, status) => {
+
+              if (status === "success") {
+                const redirect = '<?= site_url() . "administrator/view_appointment/" . $this->uri->segment(3) ?>'
+                window.location.href = redirect
+              }
+
+            }).fail(function(e) {
+            $(".preloader").hide();
+
+            swal.fire({
+              title: 'Error!',
+              text: e.statusText,
+              icon: 'error',
+            })
+          });
         }
-
-      }).fail(function(e) {
-      $(".preloader").hide();
-
-      swal.fire({
-        title: 'Error!',
-        text: e.statusText,
-        icon: 'error',
       })
-    });
+    } else {
+      $(".preloader").show();
+
+      $.post(
+        reScheduleLink, {
+          dateSched: selectedDate,
+          timeSched: time,
+          <?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
+        },
+        (data, status) => {
+
+          if (status === "success") {
+            const redirect = '<?= site_url() . "administrator/view_appointment/" . $this->uri->segment(3) ?>'
+            window.location.href = redirect
+          }
+
+        }).fail(function(e) {
+        $(".preloader").hide();
+
+        swal.fire({
+          title: 'Error!',
+          text: e.statusText,
+          icon: 'error',
+        })
+      });
+    }
   }
 
   $('#rescheduleModal').on('hidden.bs.modal', function() {
@@ -372,7 +412,7 @@ foreach ($query->result() as $res) {
 
 
 <!-- Modal Follow up -->
-<div class="modal fade" id="modalFollowUp" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalFollowUp" data-bs-focus="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-fullscreen modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
@@ -480,7 +520,6 @@ foreach ($queryFollowUp->result() as $res) {
           }
         }).then((res) => {
           if (res.isConfirmed) {
-            $(".preloader").show();
 
             const selectedStrDate = info.dateStr;
             const time = res.value;
@@ -501,29 +540,68 @@ foreach ($queryFollowUp->result() as $res) {
   });
 
   function saveFollowUp(followUpLink, selectedDate, time) {
+    if ("<?= $Platform ?>" === "Google Meet") {
+      Swal.fire({
+        input: 'url',
+        inputPlaceholder: 'Place your google meet link here...',
+        showDenyButton: true,
+        confirmButtonText: 'Submit',
+        denyButtonText: 'Cancel',
+      }).then((res) => {
+        if (res.isConfirmed && res.value) {
+          $(".preloader").show();
 
-    $.post(
-      followUpLink, {
-        dateSched: selectedDate,
-        timeSched: time,
-        <?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
-      },
-      (data, status) => {
+          $.post(
+            followUpLink, {
+              dateSched: selectedDate,
+              timeSched: time,
+              google_link: res.value,
+              <?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
+            },
+            (data, status) => {
 
-        if (status === "success") {
-          const redirect = '<?= site_url() . "administrator/view_appointment/" . $this->uri->segment(3) ?>'
-          window.location.href = redirect
+              if (status === "success") {
+                const redirect = '<?= site_url() . "administrator/view_appointment/" . $this->uri->segment(3) ?>'
+                window.location.href = redirect
+              }
+
+            }).fail(function(e) {
+            $(".preloader").hide();
+
+            swal.fire({
+              title: 'Error!',
+              text: e.statusText,
+              icon: 'error',
+            })
+          });
         }
-
-      }).fail(function(e) {
-      $(".preloader").hide();
-
-      swal.fire({
-        title: 'Error!',
-        text: e.statusText,
-        icon: 'error',
       })
-    });
+    } else {
+      $(".preloader").show();
+
+      $.post(
+        followUpLink, {
+          dateSched: selectedDate,
+          timeSched: time,
+          <?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
+        },
+        (data, status) => {
+
+          if (status === "success") {
+            const redirect = '<?= site_url() . "administrator/view_appointment/" . $this->uri->segment(3) ?>'
+            window.location.href = redirect
+          }
+
+        }).fail(function(e) {
+        $(".preloader").hide();
+
+        swal.fire({
+          title: 'Error!',
+          text: e.statusText,
+          icon: 'error',
+        })
+      });
+    }
   }
 
   $('#modalFollowUp').on('hidden.bs.modal', function() {

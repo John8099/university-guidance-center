@@ -400,23 +400,39 @@ class Administrator extends CI_Controller
         }
 
         $Notification = '';
+
+        $firstSentence = "Hello $StudentName, Your appointment for (" . date("F d, Y", strtotime($SelectedDate)) . " at $PreferredTime) has been approved.";
+
+        $secondSentence = array(
+          "Facebook Messenger" => "Please ensure that the Facebook profile link in your student profile is yours, as we will be contacting you there. We look forward to hearing from you soon. Have a great day!",
+          "Google Meet" => "Below you will find the link to the Google Meet. Please join the meeting as scheduled.\n\nThis is the link to the Google Meet: <a href='$googleLink'  target='_blank'>$googleLink</a>",
+          "Telecounseling" => "Please ensure that the phone number indicated in your student profile is yours, the number is $phoneNumber as we will contact you there. Have a great day!",
+          "Face to Face" => "Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!"
+        );
+
         if (urldecode($this->uri->segment(4)) == 'Approved') {
-
-          $firstSentence = "Hello $StudentName, Your appointment for (" . date("F d, Y", strtotime($SelectedDate)) . " at $PreferredTime) has been approved.";
-
-          $secondSentence = array(
-            "Facebook Messenger" => "Please ensure that the Facebook profile link in your student profile is yours, as we will be contacting you there. We look forward to hearing from you soon. Have a great day!",
-            "Google Meet" => "Below you will find the link to the Google Meet. Please join the meeting as scheduled.\n\nThis is the link to the Google Meet: <a href='$googleLink'  target='_blank'>$googleLink</a>",
-            "Telecounseling" => "Please ensure that the phone number indicated in your student profile is yours, the number is $phoneNumber as we will contact you there. Have a great day!",
-            "Face to Face" => "Kindly arrive at the faculty office to have your counseling. We look forward to seeing you soon. Have a great day!"
-          );
 
           $Notification = $firstSentence . " " . nl2br($secondSentence[$platform]);
           $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
         }
+
         $adminFullName = $this->routines->getUserFullName($CreatedBySchedule);
         if (urldecode($this->uri->segment(4)) == 'Rescheduled') {
-          $Notification = "Hello $StudentName! Your scheduled appointment on $SelectedDate $PreferredTime with $adminFullName is rescheduled.";
+          $Notification = "Hello $StudentName! Your scheduled appointment on " . (date("F d, Y", strtotime($SelectedDate))) . " $PreferredTime with $adminFullName is rescheduled to " . (date("F d, Y", strtotime($dateSched))) . " $timeSched.";
+          if ($googleLink != "") {
+            $Notification .= " " . nl2br($secondSentence["Google Meet"]);
+          }
+
+          $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
+        }
+
+        if (urldecode($this->uri->segment(4)) == 'Follow Up') {
+          $Notification = "Hello $StudentName! You have scheduled follow up on " . (date("F d, Y", strtotime($dateSched))) . " $timeSched with $adminFullName.";
+
+          if ($googleLink != "") {
+            $Notification .= " " . nl2br($secondSentence["Google Meet"]);
+          }
+
           $this->routines->createNotification($Notification, $CreatedBy, $this->session->userdata('UserID'));
         }
 
@@ -429,6 +445,9 @@ class Administrator extends CI_Controller
       }
 
       $this->session->set_flashdata('Success', 'Appointment data was successfully saved.');
+      if (urldecode($this->uri->segment(4)) == 'Completed' || urldecode($this->uri->segment(4)) == 'Endorsed') {
+        redirect(site_url() . "superadmin/view_appointment/" . $this->uri->segment(3));
+      }
     }
   }
 
