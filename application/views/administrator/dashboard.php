@@ -118,7 +118,27 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
                   <td><?= $row->SelectedDate; ?></td>
                   <td><?= $row->PreferredTime; ?></td>
                   <td><?= $row->Platform; ?></td>
-                  <td><label class="label <?= ($row->Status == 'Pending') ? 'label-warning' : ''; ?><?= ($row->Status == 'Approved') ? 'label-primary' : ''; ?><?= ($row->Status == 'Endorsed') ? 'label-secondary' : ''; ?><?= ($row->Status == 'Completed') ? 'label-danger' : ''; ?><?= ($row->Status == 'Follow Up') ? 'label-orange' : ''; ?><?= ($row->Status == 'Rescheduled') ? 'label-info' : ''; ?>"><?= $row->Status; ?></label></td>
+                  <td>
+                    <?php
+                    $color = "";
+                    if ($row->Status == 'Pending') {
+                      $color = "label-warning";
+                    } else if ($row->Status == 'Approved') {
+                      $color = "label-primary";
+                    } else if ($row->Status == 'Endorsed') {
+                      $color = "label-secondary";
+                    } else if ($row->Status == 'Completed') {
+                      $color = "label-danger";
+                    } else if ($row->Status == 'Follow Up') {
+                      $color = "label-megna";
+                    } else if ($row->Status == 'Rescheduled') {
+                      $color = "label-info";
+                    }
+                    ?>
+                    <label class="label <?= $color ?>">
+                      <?= $row->Status; ?>
+                    </label>
+                  </td>
                 </tr>
             <?php
               }
