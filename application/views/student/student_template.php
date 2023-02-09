@@ -38,13 +38,18 @@
   $data = [];
   foreach ($query->result() as $res) {
     if (($res->studentAppointmentStatus != "Completed" || $res->selectedAppointmentStatus == "Active")) {
-      $adminFullName = $this->routines->getUserFullName($res->adminID);
-      $adminCollegeId = $this->db->query("SELECT CollegeID FROM tbluser WHERE UserID='$res->adminID'")->row()->CollegeID;
-      $studentCollegeId = $this->session->userdata("StudentCollegeID");
-
       if ($studentId != $res->studentID && $res->studentID != NULL) {
         continue;
       }
+
+      $adminFullName = $this->routines->getUserFullName($res->adminID);
+
+      $collegeIDRow = $this->db->query("SELECT CollegeID FROM tbluser WHERE UserID='$res->adminID'")->row();
+      $adminCollegeId = 0;
+      if ($collegeIDRow) {
+        $adminCollegeId = $collegeIDRow->CollegeID;
+      }
+      $studentCollegeId = $this->session->userdata("StudentCollegeID");
 
       if ($adminCollegeId == $studentCollegeId || $adminCollegeId == 0) {
         $appointmentStat = $res->studentAppointmentStatus != null ? $res->studentAppointmentStatus : $res->selectedAppointmentStatus;
