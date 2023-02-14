@@ -575,33 +575,7 @@
       failed();
     </script>
   <?php endif; ?>
-  <?php
-  $barChartQ = $this->db->query("SELECT MAX(MONTHNAME(tbl_A.SelectedDate)) AS SelectedDate, COUNT(1) AS CountPerMonth
-        FROM tblappointment tbl_A WHERE tbl_A.status='Completed' and tbl_A.CollegeID='" . $this->session->userdata('CollegeID') . "' GROUP BY MONTHNAME(tbl_A.SelectedDate);");
-
-  $barResult = $barChartQ->result();
-
-  $lineChartQ = $this->db->query("SELECT 
-                                  REPLACE(YEARWEEK(r.CreatedOn), year(curdate()), '') AS YearWeek, 
-                                  Results,
-                                  wc.WellnessCheckID,
-                                  wc.CreatedBy
-                                  FROM tblresult r
-                                  LEFT JOIN tblwellnesscheck wc
-                                  ON
-                                  r.WellnessCheckID = wc.WellnessCheckID
-                                  LEFT JOIN tbluser u
-                                  ON
-                                  wc.CreatedBy = u.UserID
-                                  WHERE 
-                                  year(r.CreatedOn) = year(curdate()) and 
-                                  Results<>'' and
-                                  u.CollegeID = '" . $this->session->userdata('CollegeID') . "'
-                                  
-                                  ");
-
-  $lineResults = $lineChartQ->result();
-  ?>
+  
   <script>
     try {
       var x, i, j, l, ll, selElmnt, a, b, c;
@@ -770,138 +744,8 @@
         });
       });
 
+
       const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-      const data = JSON.parse('<?= json_encode($barResult) ?>')
-      // console.log(data.reverse())
-
-      let barData = months.map((d) => {
-        if (data.some((a) => a.SelectedDate === d)) {
-          const selectedBarData = data.filter((b) => b.SelectedDate === d)
-          if (selectedBarData) {
-            return Number(selectedBarData[0].CountPerMonth)
-          }
-          return 0
-        }
-        return 0
-      })
-
-      barChartOptions = {
-        series: [{
-          name: 'Student Count',
-          data: barData
-        }],
-        title: {
-          text: "Monthly Student Appointment"
-        },
-        chart: {
-          height: 350,
-          type: 'bar',
-        },
-        plotOptions: {
-          bar: {
-            borderRadius: 10,
-            dataLabels: {
-              position: 'top', // top, center, bottom
-            },
-          }
-        },
-        dataLabels: {
-          enabled: true,
-          formatter: (val) => val,
-          offsetY: -20,
-          style: {
-            fontSize: '12px',
-            colors: ["#304758"]
-          }
-        },
-        tooltip: {
-          y: {
-            formatter: (val) => val
-          }
-        },
-
-        xaxis: {
-          categories: months,
-          position: 'bottom',
-          axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false
-          },
-          crosshairs: {
-            fill: {
-              type: 'gradient',
-              gradient: {
-                colorFrom: '#D8E3F0',
-                colorTo: '#BED1E6',
-                stops: [0, 100],
-                opacityFrom: 0.4,
-                opacityTo: 0.5,
-              }
-            }
-          },
-
-        },
-        yaxis: {
-          labels: {
-            formatter: (val) => val
-          },
-          axisBorder: {
-            show: false
-          },
-          axisTicks: {
-            show: false,
-          },
-        },
-
-      }
-
-      const lineData = JSON.parse('<?= json_encode($lineResults) ?>')
-
-      let posCountData = []
-      let neutralCountData = []
-      let negCountData = []
-
-      lineData.forEach((d) => {
-        switch (d.Results) {
-          case "Positive":
-            const posData = lineData.filter((d) => d.Results === "Positive")
-            if (posCountData.length === 0) {
-              for (let i = 0; i < Math.max(...posData.map(o => o.YearWeek)); i++) {
-                posCountData.push(0)
-              }
-            }
-            posCountData[d.YearWeek - 1]++
-            break;
-          case "Neutral":
-            const neuData = lineData.filter((d) => d.Results === "Neutral")
-            if (neutralCountData.length === 0) {
-              for (let i = 0; i < Math.max(...neuData.map(o => o.YearWeek)); i++) {
-                neutralCountData.push(0)
-              }
-            }
-            neutralCountData[d.YearWeek - 1]++
-            break;
-          case "Negative":
-            const negData = lineData.filter((d) => d.Results === "Negative")
-            if (negCountData.length === 0) {
-              for (let i = 0; i < Math.max(...negData.map(o => o.YearWeek)); i++) {
-                negCountData.push(0)
-              }
-            }
-            negCountData[d.YearWeek - 1]++
-
-            break;
-          default:
-            null;
-        }
-      })
-
-      // console.log(lineData);
-      // console.log(posCountData);
-      // console.log(neutralCountData);
-      // console.log(negCountData);
 
       function getNumberWithOrdinal(n) {
         var s = ["th", "st", "nd", "rd"],
@@ -909,71 +753,616 @@
         return n + (s[(v - 20) % 10] || s[v] || s[0]);
       }
 
-      let lineCategory = []
+      let lineData, barData;
+      let barChart, lineChart;
+      const d = new Date();
 
-      for (let i = 1; i <= 52; i++) {
-        lineCategory.push(getNumberWithOrdinal(i))
-      }
+      if (document.querySelector("#barChart")) {
+        $.get(
+          `<?= site_url() . 'administrator/get_bar_data/' ?>`,
+          (res, status) => {
+            barData = JSON.parse(res)
+            console.log(barData)
+            let filterBarData = months.map((d) => {
+              if (barData.some((a) => a.SelectedDate === d)) {
+                const selectedBarData = barData.filter((b) => b.SelectedDate === d)
+                if (selectedBarData) {
+                  return Number(selectedBarData[0].CountPerMonth)
+                }
+                return 0
+              }
+              return 0
+            })
 
-      lineChartOptions = {
-        series: [{
-          name: 'Neutral',
-          data: neutralCountData
-        }, {
-          name: 'Positive',
-          data: posCountData
-        }, {
-          name: 'Negative',
-          data: negCountData
-        }],
-        title: {
-          text: "Weekly Sentiment Report"
-        },
-        markers: {
-          size: 5,
-        },
-        chart: {
-          height: 350,
-          type: 'line',
-          zoom: {
-            enabled: true
+            barChartOptions = {
+              series: [{
+                name: 'Student Count',
+                data: filterBarData
+              }],
+              title: {
+                text: "Monthly Student Appointment"
+              },
+              chart: {
+                height: 350,
+                type: 'bar',
+              },
+              plotOptions: {
+                bar: {
+                  borderRadius: 10,
+                  dataLabels: {
+                    position: 'top', // top, center, bottom
+                  },
+                }
+              },
+              dataLabels: {
+                enabled: true,
+                formatter: (val) => val,
+                offsetY: -20,
+                style: {
+                  fontSize: '12px',
+                  colors: ["#304758"]
+                }
+              },
+              tooltip: {
+                y: {
+                  formatter: (val) => val
+                }
+              },
+              xaxis: {
+                categories: months,
+                position: 'bottom',
+                axisBorder: {
+                  show: false
+                },
+                axisTicks: {
+                  show: false
+                },
+                crosshairs: {
+                  fill: {
+                    type: 'gradient',
+                    gradient: {
+                      colorFrom: '#D8E3F0',
+                      colorTo: '#BED1E6',
+                      stops: [0, 100],
+                      opacityFrom: 0.4,
+                      opacityTo: 0.5,
+                    }
+                  }
+                },
+
+              },
+              yaxis: {
+                labels: {
+                  formatter: (val) => val
+                },
+                axisBorder: {
+                  show: false
+                },
+                axisTicks: {
+                  show: false,
+                },
+              },
+
+            }
+
+            barChart = new ApexCharts(document.querySelector("#barChart"), barChartOptions);
+
+            barChart.render();
+
+          })
+
+        $("#barFilterBy").on("change", function(e) {
+          switch (e.target.value) {
+            case "course":
+              $("#barDivCourse").show();
+              $("#barDivGender").hide();
+              $("#barDivStudentYear").hide();
+              break;
+            case "gender":
+              $("#barDivCourse").hide();
+              $("#barDivGender").show();
+              $("#barDivStudentYear").hide();
+              break;
+            case "studentYear":
+              $("#barDivCourse").hide();
+              $("#barDivGender").hide();
+              $("#barDivStudentYear").show();
+              break;
+            default:
+              $("#barDivCourse").hide();
+              $("#barDivGender").hide();
+              $("#barDivStudentYear").hide();
           }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: 'straight',
-        },
-        grid: {
-          row: {
-            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-            opacity: 0.5
-          },
-        },
-        tooltip: {
-          y: {
-            formatter: (val) => val
-          }
-        },
-        xaxis: {
-          categories: lineCategory,
-        },
-        yaxis: {
-          labels: {
-            formatter: (val) => val
-          },
+          $("#btnBarClear").show();
+        })
+
+        $("#barCourseFilter").on("change", function(e) {
+          const value = e.target.value
+          $.get(
+            `<?= site_url() . 'administrator/get_bar_data?filterBy=course&&filterByValue=' ?>${value}`,
+            (res, status) => {
+              barData = JSON.parse(res)
+              let filterBarData = months.map((d) => {
+                if (barData.some((a) => a.SelectedDate === d)) {
+                  const selectedBarData = barData.filter((b) => b.SelectedDate === d)
+                  if (selectedBarData) {
+                    return Number(selectedBarData[0].CountPerMonth)
+                  }
+                  return 0
+                }
+                return 0
+              })
+              barChart.updateSeries([{
+                name: 'Student Count',
+                data: filterBarData
+              }])
+            })
+        })
+
+        $("#barGenderFilter").on("change", function(e) {
+          const value = e.target.value
+          $.get(
+            `<?= site_url() . 'administrator/get_bar_data?filterBy=gender&&filterByValue=' ?>${value}`,
+            (res, status) => {
+              barData = JSON.parse(res)
+              let filterBarData = months.map((d) => {
+                if (barData.some((a) => a.SelectedDate === d)) {
+                  const selectedBarData = barData.filter((b) => b.SelectedDate === d)
+                  if (selectedBarData) {
+                    return Number(selectedBarData[0].CountPerMonth)
+                  }
+                  return 0
+                }
+                return 0
+              })
+              barChart.updateSeries([{
+                name: 'Student Count',
+                data: filterBarData
+              }])
+            })
+        })
+
+        $("#barStudentYearFilter").on("change", function(e) {
+          const value = e.target.value
+          $.get(
+            `<?= site_url() . 'administrator/get_bar_data?filterBy=studentYear&&filterByValue=' ?>${value}`,
+            (res, status) => {
+              barData = JSON.parse(res)
+              let filterBarData = months.map((d) => {
+                if (barData.some((a) => a.SelectedDate === d)) {
+                  const selectedBarData = barData.filter((b) => b.SelectedDate === d)
+                  if (selectedBarData) {
+                    return Number(selectedBarData[0].CountPerMonth)
+                  }
+                  return 0
+                }
+                return 0
+              })
+              barChart.updateSeries([{
+                name: 'Student Count',
+                data: filterBarData
+              }])
+            })
+        })
+
+        function handleBarClear() {
+          $.get(
+            `<?= site_url() . 'administrator/get_bar_data/' ?>`,
+            (res, status) => {
+              barData = JSON.parse(res)
+              let filterBarData = months.map((d) => {
+                if (barData.some((a) => a.SelectedDate === d)) {
+                  const selectedBarData = barData.filter((b) => b.SelectedDate === d)
+                  if (selectedBarData) {
+                    return Number(selectedBarData[0].CountPerMonth)
+                  }
+                  return 0
+                }
+                return 0
+              })
+              barChart.updateSeries([{
+                name: 'Student Count',
+                data: filterBarData
+              }])
+
+              $("#barFilterBy").val("");
+              $("#barCourseFilter").val("");
+              $("#barGenderFilter").val("");
+              $("#barStudentYearFilter").val("");
+              $("#barDivCourse").hide();
+              $("#barDivGender").hide();
+              $("#barDivStudentYear").hide();
+              $("#btnBarClear").hide()
+            })
         }
       }
 
-      if (document.querySelector("#barChart") && document.querySelector("#lineChart")) {
-        const barChart = new ApexCharts(document.querySelector("#barChart"), barChartOptions);
-        barChart.render();
+      if (document.querySelector("#lineChart")) {
+        $.get(
+          `<?= site_url() . 'administrator/get_line_data/' ?>`,
+          (res, status) => {
 
-        const lineChart = new ApexCharts(document.querySelector("#lineChart"), lineChartOptions);
-        lineChart.render();
+            lineData = JSON.parse(res)
+            console.log(lineData)
+
+            let posCountData = []
+            let neutralCountData = []
+            let negCountData = []
+
+            lineData.forEach((d) => {
+              switch (d.Results) {
+                case "Positive":
+                  const posData = lineData.filter((d) => d.Results === "Positive")
+                  if (posCountData.length === 0) {
+                    for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                      posCountData.push(0)
+                    }
+                  }
+                  posCountData[d.WeekNumber - 1]++
+                  break;
+                case "Neutral":
+                  const neuData = lineData.filter((d) => d.Results === "Neutral")
+                  if (neutralCountData.length === 0) {
+                    for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                      neutralCountData.push(0)
+                    }
+                  }
+                  neutralCountData[d.WeekNumber - 1]++
+                  break;
+                case "Negative":
+                  const negData = lineData.filter((d) => d.Results === "Negative")
+                  if (negCountData.length === 0) {
+                    for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                      negCountData.push(0)
+                    }
+                  }
+                  negCountData[d.WeekNumber - 1]++
+
+                  break;
+                default:
+                  null;
+              }
+            })
+
+            let lineCategory = []
+
+            for (let i = 1; i <= 52; i++) {
+              lineCategory.push(getNumberWithOrdinal(i))
+            }
+
+            lineChartOptions = {
+              series: [{
+                name: 'Neutral',
+                data: neutralCountData
+              }, {
+                name: 'Positive',
+                data: posCountData
+              }, {
+                name: 'Negative',
+                data: negCountData
+              }],
+              title: {
+                text: `${months[d.getMonth()]} Weekly Sentiment Report`
+              },
+              markers: {
+                size: 5,
+              },
+              chart: {
+                height: 350,
+                type: 'line',
+                zoom: {
+                  enabled: false
+                }
+              },
+              dataLabels: {
+                enabled: false
+              },
+              stroke: {
+                curve: 'straight',
+              },
+              grid: {
+                row: {
+                  colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                  opacity: 0.5
+                },
+              },
+              tooltip: {
+                y: {
+                  formatter: (val) => val === undefined ? 0 : val
+                }
+              },
+              xaxis: {
+                categories: lineCategory,
+              },
+              yaxis: {
+                labels: {
+                  formatter: (val) => val === undefined ? 0 : val
+                },
+                min: 0
+              },
+            }
+
+            lineChart = new ApexCharts(document.querySelector("#lineChart"), lineChartOptions);
+            lineChart.render();
+
+          })
+
+        $("#lineFilterBy").on("change", function(e) {
+          switch (e.target.value) {
+            case "month":
+              $("#lineDivMonth").show();
+              $("#lineDivCourse").hide();
+              $("#lineDivGender").hide();
+              $("#lineDivStudentYear").hide();
+              break;
+            case "course":
+              $("#lineDivMonth").hide();
+              $("#lineDivCourse").show();
+              $("#lineDivGender").hide();
+              $("#lineDivStudentYear").hide();
+              break;
+            case "gender":
+              $("#lineDivMonth").hide();
+              $("#lineDivCourse").hide();
+              $("#lineDivGender").show();
+              $("#lineDivStudentYear").hide();
+              break;
+            case "studentYear":
+              $("#lineDivMonth").hide();
+              $("#lineDivCourse").hide();
+              $("#lineDivGender").hide();
+              $("#lineDivStudentYear").show();
+              break;
+            default:
+              $("#lineDivMonth").hide();
+              $("#lineDivCourse").hide();
+              $("#lineDivGender").hide();
+              $("#lineDivStudentYear").hide();
+          }
+          $("#btnLineClear").show();
+        })
+
+        $("#lineMonthFilter").on("change", function(e) {
+          const value = e.target.value
+          $.get(
+            `<?= site_url() . 'administrator/get_line_data?filterBy=month&&filterByValue=' ?>${value}`,
+            (res, status) => {
+              const d = new Date();
+              lineData = JSON.parse(res)
+              console.log(lineData)
+
+              let posCountData = []
+              let neutralCountData = []
+              let negCountData = []
+
+              lineData.forEach((d) => {
+                switch (d.Results) {
+                  case "Positive":
+                    const posData = lineData.filter((d) => d.Results === "Positive")
+                    if (posCountData.length === 0) {
+                      for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                        posCountData.push(0)
+                      }
+                    }
+                    posCountData[d.WeekNumber - 1]++
+                    break;
+                  case "Neutral":
+                    const neuData = lineData.filter((d) => d.Results === "Neutral")
+                    if (neutralCountData.length === 0) {
+                      for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                        neutralCountData.push(0)
+                      }
+                    }
+                    neutralCountData[d.WeekNumber - 1]++
+                    break;
+                  case "Negative":
+                    const negData = lineData.filter((d) => d.Results === "Negative")
+                    if (negCountData.length === 0) {
+                      for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                        negCountData.push(0)
+                      }
+                    }
+                    negCountData[d.WeekNumber - 1]++
+
+                    break;
+                  default:
+                    null;
+                }
+              })
+
+              lineChart.updateOptions({
+                title: {
+                  text: `${months[Number(e.target.value) - 1]} Weekly Sentiment Report`
+                }
+              })
+
+              lineChart.updateSeries([{
+                name: 'Neutral',
+                data: neutralCountData
+              }, {
+                name: 'Positive',
+                data: posCountData
+              }, {
+                name: 'Negative',
+                data: negCountData
+              }])
+
+            })
+
+
+        })
+
+        $("#lineCourseFilter").on("change", function(e) {
+          const value = e.target.value
+          $.get(
+            `<?= site_url() . 'administrator/get_line_data?filterBy=course&&filterByValue=' ?>${value}`,
+            (res, status) => {
+              const d = new Date();
+              lineData = JSON.parse(res)
+              console.log(lineData)
+
+              let posCountData = []
+              let neutralCountData = []
+              let negCountData = []
+
+              lineData.forEach((d) => {
+                switch (d.Results) {
+                  case "Positive":
+                    const posData = lineData.filter((d) => d.Results === "Positive")
+                    if (posCountData.length === 0) {
+                      for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                        posCountData.push(0)
+                      }
+                    }
+                    posCountData[d.WeekNumber - 1]++
+                    break;
+                  case "Neutral":
+                    const neuData = lineData.filter((d) => d.Results === "Neutral")
+                    if (neutralCountData.length === 0) {
+                      for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                        neutralCountData.push(0)
+                      }
+                    }
+                    neutralCountData[d.WeekNumber - 1]++
+                    break;
+                  case "Negative":
+                    const negData = lineData.filter((d) => d.Results === "Negative")
+                    if (negCountData.length === 0) {
+                      for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                        negCountData.push(0)
+                      }
+                    }
+                    negCountData[d.WeekNumber - 1]++
+
+                    break;
+                  default:
+                    null;
+                }
+              })
+
+              lineChart.updateSeries([{
+                name: 'Neutral',
+                data: neutralCountData
+              }, {
+                name: 'Positive',
+                data: posCountData
+              }, {
+                name: 'Negative',
+                data: negCountData
+              }])
+
+            })
+        })
+
+        $("#lineCourseFilter").on("change", function(e) {
+          const value = e.target.value
+
+
+          // lineChart.updateSeries([{
+          //   name: 'Neutral',
+          //   data: neutralCountData
+          // }, {
+          //   name: 'Positive',
+          //   data: posCountData
+          // }, {
+          //   name: 'Negative',
+          //   data: negCountData
+          // }])
+        })
+
+        $("#lineCourseFilter").on("change", function(e) {
+          const value = e.target.value
+
+        })
+
+        $("#lineGenderFilter").on("change", function(e) {
+          const value = e.target.value
+
+        })
+
+        $("#lineStudentYearFilter").on("change", function(e) {
+          const value = e.target.value
+        })
+
+        function handleLineClear() {
+          $.get(
+            `<?= site_url() . 'administrator/get_line_data/' ?>`,
+            (res, status) => {
+              const d = new Date();
+              lineData = JSON.parse(res)
+              console.log(lineData)
+
+              let posCountData = []
+              let neutralCountData = []
+              let negCountData = []
+
+              lineData.forEach((d) => {
+                switch (d.Results) {
+                  case "Positive":
+                    const posData = lineData.filter((d) => d.Results === "Positive")
+                    if (posCountData.length === 0) {
+                      for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                        posCountData.push(0)
+                      }
+                    }
+                    posCountData[d.WeekNumber - 1]++
+                    break;
+                  case "Neutral":
+                    const neuData = lineData.filter((d) => d.Results === "Neutral")
+                    if (neutralCountData.length === 0) {
+                      for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                        neutralCountData.push(0)
+                      }
+                    }
+                    neutralCountData[d.WeekNumber - 1]++
+                    break;
+                  case "Negative":
+                    const negData = lineData.filter((d) => d.Results === "Negative")
+                    if (negCountData.length === 0) {
+                      for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                        negCountData.push(0)
+                      }
+                    }
+                    negCountData[d.WeekNumber - 1]++
+
+                    break;
+                  default:
+                    null;
+                }
+              })
+
+              lineChart.updateSeries([{
+                name: 'Neutral',
+                data: neutralCountData
+              }, {
+                name: 'Positive',
+                data: posCountData
+              }, {
+                name: 'Negative',
+                data: negCountData
+              }])
+
+              lineChart.updateOptions({
+                title: {
+                  text: `${months[d.getMonth()]} Weekly Sentiment Report`
+                }
+              })
+
+              $("#lineMonthFilter").val("");
+              $("#lineFilterBy").val("");
+              $("#lineCourseFilter").val("");
+              $("#lineGenderFilter").val("");
+              $("#lineStudentYearFilter").val("");
+              $("#lineDivMonth").hide();
+              $("#lineDivCourse").hide();
+              $("#lineDivGender").hide();
+              $("#lineDivStudentYear").hide();
+              $("#btnLineClear").hide()
+
+            })
+        }
+
       }
-
     } catch (err) {}
   </script>
 </body>

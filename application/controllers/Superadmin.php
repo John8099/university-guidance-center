@@ -13,6 +13,211 @@ class Superadmin extends CI_Controller
     $this->load->model('analyzer_model');
   }
 
+  public function get_bar_data()
+  {
+    $filterBy = $this->input->get("filterBy", TRUE);
+    $filterByValue = $this->input->get("filterByValue", TRUE);
+    $barChartQ = null;
+
+    if (!$filterBy && !$filterByValue) {
+      $barChartQ = $this->db->query("SELECT 
+                                    MAX(MONTHNAME(tbl_A.SelectedDate)) AS SelectedDate,
+                                    COUNT(1) AS CountPerMonth 
+                                    FROM 
+                                    tblappointment tbl_A 
+                                    WHERE 
+                                    tbl_A.status='Completed' 
+                                    GROUP BY 
+                                    MONTHNAME(tbl_A.SelectedDate)
+                                    ");
+    } else {
+      switch ($filterBy) {
+        case "course":
+          $barChartQ = $this->db->query("SELECT 
+                                        MAX(MONTHNAME(tbl_A.SelectedDate)) AS SelectedDate,
+                                        COUNT(1) AS CountPerMonth 
+                                        FROM 
+                                        tblappointment tbl_A 
+                                        LEFT JOIN 
+                                        tbluser u
+                                        ON
+                                        u.UserID = tbl_A.CreatedBy
+                                        WHERE 
+                                        tbl_A.status='Completed' and
+                                        u.Course = '$filterByValue'
+                                        GROUP BY 
+                                        MONTHNAME(tbl_A.SelectedDate)
+                                        ");
+          break;
+        case "gender":
+          $barChartQ = $this->db->query("SELECT 
+                                        MAX(MONTHNAME(tbl_A.SelectedDate)) AS SelectedDate,
+                                        COUNT(1) AS CountPerMonth 
+                                        FROM 
+                                        tblappointment tbl_A 
+                                        LEFT JOIN 
+                                        tbluser u
+                                        ON
+                                        u.UserID = tbl_A.CreatedBy
+                                        WHERE 
+                                        tbl_A.status='Completed' and
+                                        u.Gender = '$filterByValue'
+                                        GROUP BY 
+                                        MONTHNAME(tbl_A.SelectedDate)
+                                        ");
+          break;
+        case "studentYear":
+          $barChartQ = $this->db->query("SELECT 
+                                        MAX(MONTHNAME(tbl_A.SelectedDate)) AS SelectedDate,
+                                        COUNT(1) AS CountPerMonth 
+                                        FROM 
+                                        tblappointment tbl_A 
+                                        LEFT JOIN 
+                                        tbluser u
+                                        ON
+                                        u.UserID = tbl_A.CreatedBy
+                                        WHERE 
+                                        tbl_A.status='Completed' and
+                                        u.YearSec LIKE '%$filterByValue%'
+                                        GROUP BY 
+                                        MONTHNAME(tbl_A.SelectedDate)
+                                        ");
+          break;
+        default:
+          null;
+      }
+    }
+
+    print_r(
+      json_encode(
+        $barChartQ ? $barChartQ->result() : []
+      )
+    );
+  }
+
+  public function get_line_data()
+  {
+    $filterBy = $this->input->get("filterBy", TRUE);
+    $filterByValue = $this->input->get("filterByValue", TRUE);
+    $lineChartQ = null;
+
+    $first_day_this_month = date('Y-m-01');
+    $last_day_this_month  = date('Y-m-t');
+
+    if (!$filterBy && !$filterByValue) {
+      $lineChartQ = $this->db->query("SELECT 
+                                      FLOOR((DayOfMonth(r.CreatedOn)-1)/7)+1 AS WeekNumber,
+                                      Results
+                                      FROM 
+                                      tblresult r 
+                                      LEFT JOIN
+                                      tbluser u
+                                      ON
+                                      u.UserID = r.CreatedBy
+                                      WHERE 
+                                      r.Results<>'' and
+                                      r.CreatedOn BETWEEN '$first_day_this_month' AND '$last_day_this_month'
+                                    ");
+    } else {
+      switch ($filterBy) {
+        case "month":
+          $first_day_this_month = date("Y-$filterByValue-01");
+          $last_day_this_month  = date("Y-$filterByValue-t");
+          $lineChartQ = $this->db->query("SELECT 
+                                          FLOOR((DayOfMonth(r.CreatedOn)-1)/7)+1 AS WeekNumber,
+                                          Results
+                                          FROM 
+                                          tblresult r 
+                                          LEFT JOIN
+                                          tbluser u
+                                          ON
+                                          u.UserID = r.CreatedBy
+                                          WHERE 
+                                          r.Results<>'' and
+                                          r.CreatedOn BETWEEN '$first_day_this_month' AND '$last_day_this_month'
+                                        ");
+          break;
+        case "course":
+          $lineChartQ = $this->db->query("SELECT 
+                                          FLOOR((DayOfMonth(r.CreatedOn)-1)/7)+1 AS WeekNumber,
+                                          Results
+                                          FROM 
+                                          tblresult r 
+                                          LEFT JOIN
+                                          tbluser u
+                                          ON
+                                          u.UserID = r.CreatedBy
+                                          WHERE 
+                                          r.Results<>'' and
+                                          r.CreatedOn BETWEEN '$first_day_this_month' AND '$last_day_this_month' and
+                                          u.Course = '$filterByValue'
+                                        ");
+          break;
+        case "gender":
+          $lineChartQ = $this->db->query("SELECT 
+                                          FLOOR((DayOfMonth(r.CreatedOn)-1)/7)+1 AS WeekNumber,
+                                          Results
+                                          FROM 
+                                          tblresult r 
+                                          LEFT JOIN
+                                          tbluser u
+                                          ON
+                                          u.UserID = r.CreatedBy
+                                          WHERE 
+                                          r.Results<>'' and
+                                          r.CreatedOn BETWEEN '$first_day_this_month' AND '$last_day_this_month' and
+                                          u.Gender = '$filterByValue'
+                                        ");
+          break;
+        case "studentYear":
+          $lineChartQ = $this->db->query("SELECT 
+                                          FLOOR((DayOfMonth(r.CreatedOn)-1)/7)+1 AS WeekNumber,
+                                          Results
+                                          FROM 
+                                          tblresult r 
+                                          LEFT JOIN
+                                          tbluser u
+                                          ON
+                                          u.UserID = r.CreatedBy
+                                          WHERE 
+                                          r.Results<>'' and
+                                          r.CreatedOn BETWEEN '$first_day_this_month' AND '$last_day_this_month' and
+                                          u.YearSec LIKE '%$filterByValue%'
+                                        ");
+          break;
+        default:
+          null;
+      }
+    }
+
+    print_r(
+      json_encode(
+        $lineChartQ ? $lineChartQ->result() : []
+      )
+    );
+  }
+
+  public function save_remarks()
+  {
+    $resp = array(
+      "success" => false,
+      "message" => ""
+    );
+    $remarks = $this->input->post("remark");
+    $resultId = $this->input->post("resultId");
+
+    $q = $this->db->query("UPDATE tblresult SET Remarks='$remarks' WHERE ResultID='$resultId'");
+
+    if ($q) {
+      $resp["success"] = true;
+      $resp["message"] = "Remarks successfully saved.";
+    } else {
+      $resp["message"] = $this->db->_error_message();
+    }
+
+    print_r(json_encode($resp));
+  }
+
   public function login()
   {
     $this->routines->ifLogin($this->session->userdata('UserID'), $this->session->userdata('Location'), false);
@@ -759,24 +964,26 @@ class Superadmin extends CI_Controller
       $type = "Quantitative Questions";
     }
 
-    $questions = $this->input->post('txtQuestion');
     $category = $this->input->post('txtCategory');
 
-    if (is_array($questions) && is_array($category)) {
+    if (is_array($category)) {
       for ($a = 0; $a < $numberOfCategory; $a++) {
         $questionCount = 1;
-        foreach ($questions as $question) {
-          $data = array(
-            'QuestionNumber' => $questionCount,
-            'Question' => $question,
-            'Category' => $this->input->post('txtCategory')[$a],
-            'WellnessCheckID' => $WellnessCheckID,
-            'WellnessType' => $WellnessType,
-            'CreatedBy' => $this->session->userdata('UserID'),
-          );
-          $QuestionID = $this->main_model->insert_entry('tblwellnessquestion', $data);
-          if ($QuestionID) {
-            $this->checkAndInsertInQuestionBank($question, $type);
+        $questions = $this->input->post('txtQuestion' . ($a + 1));
+        if (is_array($questions)) {
+          foreach ($questions as $question) {
+            $data = array(
+              'QuestionNumber' => $questionCount,
+              'Question' => $question,
+              'Category' => $this->input->post('txtCategory')[$a],
+              'WellnessCheckID' => $WellnessCheckID,
+              'WellnessType' => $WellnessType,
+              'CreatedBy' => $this->session->userdata('UserID'),
+            );
+            $QuestionID = $this->main_model->insert_entry('tblwellnessquestion', $data);
+            if ($QuestionID) {
+              $this->checkAndInsertInQuestionBank($question, $type);
+            }
             $questionCount++;
           }
         }
@@ -833,6 +1040,7 @@ class Superadmin extends CI_Controller
         'Category' => $this->input->post('txtType'),
         'CreatedOn' => $this->input->post('txtDate'),
         'CreatedBy' => $this->session->userdata('UserID'),
+        'Status' => '1'
       );
       $QuestionID = $this->main_model->insert_entry('tblquestionbank', $data);
     } else {

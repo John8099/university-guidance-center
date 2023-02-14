@@ -50,7 +50,7 @@ foreach ($result->result() as $row) {
                 <div class="form-group" style="margin-left: 20px;">
                   <label class="col-md-12">Question <?= $i; ?></label>
                   <div class="col-md-12">
-                    <select class="form-control form-control-line" name="txtQuestion[]" required id="txtQuestion<?= $a . $i ?>">
+                    <select class="form-control form-control-line" name="txtQuestion<?= $a ?>[]" required id="txtQuestion<?= $a . $i ?>">
                       <?php
                       $questionQ = $this->db->query("SELECT * FROM tblquestionbank WHERE  Category='Quantitative Questions' and `Status`=1");
                       foreach ($questionQ->result() as $question) {

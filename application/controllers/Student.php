@@ -559,7 +559,8 @@ class Student extends CI_Controller
               'Score' => $TotalScoreCategory,
               'CreatedBy' => $this->session->userdata('StudentUserID'),
             );
-            $tblresultquan = $this->db->query("SELECT * FROM tblresultquan WHERE WellnessCheckID='" . $WellnessCheckID . "' AND ResultID='" . $ResultID . "' AND CreatedBy='" . $this->session->userdata('StudentUserID') . "';");
+            $StudentUserID = $this->session->userdata('StudentUserID');
+            $tblresultquan = $this->db->query("SELECT * FROM tblresultquan WHERE WellnessCheckID='$WellnessCheckID' AND ResultID='$ResultID' AND CreatedBy='$StudentUserID' AND Category='$CategoryRow->Category'");
             if ($tblresultquan->num_rows() <> 0) {
               $tblresultquan = $tblresultquan->row();
               $ResultQuanID = $tblresultquan->ResultQuanID;

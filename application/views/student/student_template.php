@@ -44,9 +44,10 @@
 
       $adminFullName = $this->routines->getUserFullName($res->adminID);
 
-      $collegeIDRow = $this->db->query("SELECT CollegeID FROM tbluser WHERE UserID='$res->adminID'")->row();
+      $collegeIDQ = $this->db->query("SELECT CollegeID FROM tbluser WHERE UserID='$res->adminID'");
       $adminCollegeId = 0;
-      if ($collegeIDRow) {
+      if ($collegeIDQ->num_rows() > 0) {
+        $collegeIDRow = $collegeIDQ->row();
         $adminCollegeId = $collegeIDRow->CollegeID;
       }
       $studentCollegeId = $this->session->userdata("StudentCollegeID");

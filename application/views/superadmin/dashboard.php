@@ -49,6 +49,60 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
 <div class="row">
   <div class="col-6">
     <div class="card">
+      <div class="card-header">
+        <div class="input-group">
+          <div class="form-outline" style="margin: .2rem">
+            <select id="barFilterBy" class="form-select">
+              <option value="" selected disabled>Filter by</option>
+              <option value="course">Course</option>
+              <option value="gender">Gender</option>
+              <option value="studentYear">Student year</option>
+            </select>
+          </div>
+
+          <div id="barDivCourse" style="margin: .2rem; display:none">
+            <select id="barCourseFilter" class="form-select">
+              <option value="" selected disabled>select course</option>
+              <?php
+              $courseQ = $this->db->query("SELECT DISTINCT Course FROM tbluser WHERE Course <> ''");
+              foreach ($courseQ->result() as $courseRes) {
+                echo "<option value='$courseRes->Course'>$courseRes->Course</option>";
+              }
+              ?>
+            </select>
+          </div>
+
+          <div id="barDivGender" style="margin: .2rem; display:none">
+            <select id="barGenderFilter" class="form-select">
+              <option value="" selected disabled>select gender</option>
+              <?php
+              $genderQ = $this->db->query("SELECT DISTINCT Gender FROM tbluser WHERE Gender <> ''");
+              foreach ($genderQ->result() as $genderRes) {
+                echo "<option value='$genderRes->Gender'>$genderRes->Gender</option>";
+              }
+              ?>
+            </select>
+          </div>
+
+          <div id="barDivStudentYear" style="margin: .2rem; display:none">
+            <select id="barStudentYearFilter" class="form-select">
+              <option value="" selected disabled>select student year</option>
+              <?php
+              $studentYearQ = $this->db->query("SELECT DISTINCT LEFT(YearSec, 1) as YearSec FROM tbluser WHERE YearSec <> ''");
+              foreach ($studentYearQ->result() as $studentYearRes) {
+                $studentYear = $studentYearRes->YearSec[0];
+                echo "<option value='$studentYear'>$studentYear</option>";
+              }
+              ?>
+            </select>
+          </div>
+          <div class="form-outline" style="margin: .2rem">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnBarClear" style="height: 35px; display: none" onclick="handleBarClear()">
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="card-body">
         <div id="barChart"></div>
       </div>
@@ -56,6 +110,74 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
   </div>
   <div class="col-6">
     <div class="card">
+      <div class="card-header">
+        <div class="input-group">
+          <div class="form-outline" style="margin: .2rem">
+            <select id="lineFilterBy" class="form-select">
+              <option value="" selected disabled>Filter by</option>
+              <option value="month">Month</option>
+              <option value="course">Course</option>
+              <option value="gender">Gender</option>
+              <option value="studentYear">Student year</option>
+            </select>
+          </div>
+
+          <div id="lineDivMonth" style="margin: .2rem; display:none">
+            <select id="lineMonthFilter" class="form-select">
+              <option value="" selected disabled>select month</option>
+              <?php
+              $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+              foreach ($months as $month) {
+                $indexOfMonth = array_search($month, $months) + 1;
+                echo "<option value='$indexOfMonth'>$month</option>";
+              }
+              ?>
+            </select>
+          </div>
+
+          <div id="lineDivCourse" style="margin: .2rem; display:none">
+            <select id="lineCourseFilter" class="form-select">
+              <option value="" selected disabled>select course</option>
+              <?php
+              $courseQ = $this->db->query("SELECT DISTINCT Course FROM tbluser WHERE Course <> ''");
+              foreach ($courseQ->result() as $courseRes) {
+                echo "<option value='$courseRes->Course'>$courseRes->Course</option>";
+              }
+              ?>
+            </select>
+          </div>
+
+          <div id="lineDivGender" style="margin: .2rem; display:none">
+            <select id="lineGenderFilter" class="form-select">
+              <option value="" selected disabled>select gender</option>
+              <?php
+              $genderQ = $this->db->query("SELECT DISTINCT Gender FROM tbluser WHERE Gender <> ''");
+              foreach ($genderQ->result() as $genderRes) {
+                echo "<option value='$genderRes->Gender'>$genderRes->Gender</option>";
+              }
+              ?>
+            </select>
+          </div>
+
+          <div id="lineDivStudentYear" style="margin: .2rem; display:none">
+            <select id="lineStudentYearFilter" class="form-select">
+              <option value="" selected disabled>select student year</option>
+              <?php
+              $studentYearQ = $this->db->query("SELECT DISTINCT LEFT(YearSec, 1) as YearSec FROM tbluser WHERE YearSec <> ''");
+              foreach ($studentYearQ->result() as $studentYearRes) {
+                $studentYear = $studentYearRes->YearSec[0];
+                echo "<option value='$studentYear'>$studentYear</option>";
+              }
+              ?>
+            </select>
+          </div>
+          <div class="form-outline" style="margin: .2rem">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnLineClear" style="height: 35px; display: none" onclick="handleLineClear()">
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="card-body">
         <div id="lineChart"></div>
       </div>
@@ -174,6 +296,7 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
               <th scope="col">Date taken</th>
               <th scope="col">Created By</th>
               <th scope="col">Remarks</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -204,13 +327,30 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
                                         ");
 
             foreach ($assessmentQ->result() as $row) : ?>
-              <tr data-bs-toggle="modal" data-bs-target="#historyModal<?= $row->resultId ?>">
-                <td><?= $this->routines->getUserFullName($row->studentId); ?></td>
+              <tr>
+                <td>
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#historyModal<?= $row->resultId ?>">
+                    <?= $this->routines->getUserFullName($row->studentId); ?>
+                  </a>
+                </td>
                 <td><?= $row->assessmentTitle; ?></td>
                 <td><?= $row->wellnessType; ?></td>
                 <td><?= date("M d, Y h:i:s A", strtotime($row->dateTaken)) ?></td>
                 <td><?= $this->routines->getUserFullName($row->CreatedBy); ?></td>
-                <td><?= $row->remarks ? substr($row->remarks, 0, 70) . "..." : "" ?></td>
+                <td>
+                  <?= $row->remarks ? substr($row->remarks, 0, 70) . "..." : "" ?>
+                </td>
+                <td>
+                  <?php if (!$row->remarks) : ?>
+                    <button class='btn btn-outline-info btn-sm' type='button' onclick='handleSaveRemarks("<?= $row->resultId ?>", "<?= $row->remarks ?>")'>
+                      Add Remark
+                    </button>
+                  <?php else : ?>
+                    <button class='btn btn-outline-warning btn-sm' type='button' onclick='handleSaveRemarks("<?= $row->resultId ?>", "<?= $row->remarks ?>")'>
+                      Edit Remark
+                    </button>
+                  <?php endif; ?>
+                </td>
               </tr>
 
               <div class="modal fade" id="historyModal<?= $row->resultId ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -404,3 +544,60 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
     </div>
   </div>
 </div>
+
+<script>
+  function handleSaveRemarks(resultId, remarks) {
+    swal.fire({
+      input: 'textarea',
+      title: '<h3>Remarks</h3>',
+      inputPlaceholder: 'Type your remarks here...',
+      inputAttributes: {
+        'aria-label': 'Type your remarks here'
+      },
+      showCancelButton: true,
+      confirmButtonText: "Submit",
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to write something!'
+        }
+      },
+      inputValue: remarks
+    }).then((res) => {
+      if (res.isConfirmed) {
+        saveRemarks(res.value, resultId)
+      }
+    })
+  }
+
+  function saveRemarks(remarks, resultId) {
+    swal.showLoading();
+    $.post(
+      `<?= site_url() . 'superadmin/save_remarks/' ?>`, {
+        remark: remarks,
+        resultId: resultId,
+        <?= $this->security->get_csrf_token_name() ?>: '<?= $this->security->get_csrf_hash() ?>'
+      },
+      (data, status) => {
+        const res = JSON.parse(data);
+        if (res.success) {
+          swal.fire({
+            title: 'Success!',
+            text: res.message,
+            icon: 'success',
+          }).then(() => window.location.reload())
+        } else {
+          swal.fire({
+            title: 'Error!',
+            text: res.message,
+            icon: 'error',
+          })
+        }
+      }).fail(function(e) {
+      swal.fire({
+        title: 'Error!',
+        text: e.statusText,
+        icon: 'error',
+      })
+    });
+  }
+</script>
