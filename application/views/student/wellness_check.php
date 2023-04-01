@@ -117,7 +117,7 @@ foreach ($tblresult->result() as $row) {
                   <div class="col-md-12">
                     <small>
                       <p>
-                        Disclaimer This test was adapted from the Princeton UMatter Wellness Self-Assessment and County Health Department Wellness Assessment and is intended for individual level self-reflection and goal-setting.
+                        Disclaimer This test was adapted from the Princeton UMatter Wellness Self-Assessment and is intended for individual level self-reflection and goal-setting.
                       </p>
 
                       visit: <a href="https://umatter.princeton.edu/action/caring-yourself/wellness-wheel-assessment" class="link-default" target="_blank">https://umatter.princeton.edu/action/caring-yourself/wellness-wheel-assessment</a>
