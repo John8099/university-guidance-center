@@ -46,12 +46,12 @@ class Student extends CI_Controller
       $error = true;
     } else if ($isSchoolIdExist && !$error) {
 
-      $this->session->set_flashdata('RegisterFailed', 'Student ID is already exist.');
+      $this->session->set_flashdata('RegisterFailed', 'Student ID already exist.');
 
       $error = true;
     } else if (!$this->routines->validateEmail($email) && !$error) {
 
-      $this->session->set_flashdata('RegisterFailed', 'The email was invalid only accepts wvsu.edu.ph email.');
+      $this->session->set_flashdata('RegisterFailed', 'The email was invalid and only accepts wvsu.edu.ph email.');
 
       $error = true;
     } else {
@@ -80,7 +80,7 @@ class Student extends CI_Controller
         $this->session->set_flashdata('RegisterSuccess', 'Registration was successfully saved.');
         $otp = $this->routines->generateOTP(6);
         $this->session->set_userdata("OTP", $otp);
-        $send_email = $this->routines->sendEmail("Email verification", "Your OTP Code is: $otp", $email);
+        $send_email = $this->routines->sendEmail("Email verification", "Hello! $username Your OTP Code is: $otp", $email);
         redirect(site_url() . "student/email_verification/$userID");
       }
     }
