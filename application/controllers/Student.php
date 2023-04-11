@@ -77,10 +77,11 @@ class Student extends CI_Controller
         );
 
         $userID = $this->main_model->insert_entry('tbluser', $data);
+        $fullName = $this->routines->getUserData($userID);
         $this->session->set_flashdata('RegisterSuccess', 'Registration was successfully saved.');
         $otp = $this->routines->generateOTP(6);
         $this->session->set_userdata("OTP", $otp);
-        $send_email = $this->routines->sendEmail("Email verification", "Hello! $username Your OTP Code is: $otp", $email);
+        $send_email = $this->routines->sendEmail("Email verification", "Hello! $fullName Your OTP Code is: $otp", $email);
         redirect(site_url() . "student/email_verification/$userID");
       }
     }

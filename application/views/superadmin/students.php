@@ -22,6 +22,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <table id="datatable" class="table table-hover">
           <thead>
             <tr>
+              <th scope="col">School ID</th>
               <th scope="col">Student Name</th>
               <th scope="col">College</th>
               <th scope="col">Course</th>
@@ -32,12 +33,16 @@ defined('BASEPATH') or exit('No direct script access allowed');
           </thead>
           <tbody>
             <?php
-            $query = $this->db->query("SELECT * FROM tbluser WHERE UserType = 'Student';");
+            $query = $this->db->query("SELECT * FROM tbluser WHERE UserType = 'Student' and `status`='Active'");
 
             foreach ($query->result() as $row) :
-
             ?>
               <tr>
+                <td>
+                <a href="<?= site_url() . 'superadmin/student_view/' . $row->UserID; ?>">
+                  <?= $row->SchoolID ?>
+                </a>
+                </td>
                 <td><?= $this->routines->getUserFullName($row->UserID) ?></td>
                 <td><?= $this->db->query("SELECT * FROM tblcollege WHERE CollegeID = '" . $row->CollegeID . "';")->row()->College; ?></td>
                 <td><?= $row->Course; ?></td>

@@ -19,7 +19,25 @@ class Superadmin extends CI_Controller
     $filterByValue = $this->input->get("filterByValue", TRUE);
     $barChartQ = null;
 
-    if (!$filterBy && !$filterByValue) {
+    if ($this->uri->segment(3) != "") {
+      $userId = $this->uri->segment(3);
+      $barChartQ = $this->db->query("SELECT 
+                                    MAX(MONTHNAME(tbl_A.SelectedDate)) AS SelectedDate,
+                                    COUNT(1) AS CountPerMonth 
+                                    FROM 
+                                    tblappointment tbl_A 
+                                    LEFT JOIN 
+                                    tbluser u
+                                    ON
+                                    u.UserID = tbl_A.CreatedBy
+                                    WHERE 
+                                    tbl_A.status='Completed' and
+                                    u.YearSec LIKE '%$filterByValue%' and
+                                    u.UserID = '$userId'
+                                    GROUP BY 
+                                    MONTHNAME(tbl_A.SelectedDate)
+                                    ");
+    } else if (!$filterBy && !$filterByValue) {
       $barChartQ = $this->db->query("SELECT 
                                     MAX(MONTHNAME(tbl_A.SelectedDate)) AS SelectedDate,
                                     COUNT(1) AS CountPerMonth 
@@ -103,8 +121,25 @@ class Superadmin extends CI_Controller
 
     $first_day_this_month = date('Y-m-01');
     $last_day_this_month  = date('Y-m-t');
+    $userId = $this->uri->segment(3);
 
-    if (!$filterBy && !$filterByValue) {
+    if ($userId != "" && !$filterBy) {
+
+      $lineChartQ = $this->db->query("SELECT 
+                                      FLOOR((DayOfMonth(r.CreatedOn)-1)/7)+1 AS WeekNumber,
+                                      Results
+                                      FROM 
+                                      tblresult r 
+                                      LEFT JOIN
+                                      tbluser u
+                                      ON
+                                      u.UserID = r.CreatedBy
+                                      WHERE 
+                                      u.UserID = '$userId' and
+                                      r.Results<>'' and
+                                      r.CreatedOn BETWEEN '$first_day_this_month' AND '$last_day_this_month'
+                                    ");
+    } else if (!$filterBy && !$filterByValue) {
       $lineChartQ = $this->db->query("SELECT 
                                       FLOOR((DayOfMonth(r.CreatedOn)-1)/7)+1 AS WeekNumber,
                                       Results
@@ -133,6 +168,7 @@ class Superadmin extends CI_Controller
                                           ON
                                           u.UserID = r.CreatedBy
                                           WHERE 
+                                         " . ($userId != "" ? "u.UserID = '$userId' and" : "") . "
                                           r.Results<>'' and
                                           r.CreatedOn BETWEEN '$first_day_this_month' AND '$last_day_this_month'
                                         ");

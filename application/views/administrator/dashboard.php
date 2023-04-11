@@ -233,7 +233,11 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
               if ($SchoolID->num_rows() <> 0) {
               ?>
                 <tr>
-                  <td><?= $SchoolID->row()->SchoolID; ?></td>
+                  <td>
+                    <a href="<?= site_url() . 'administrator/view_appointment/' . $row->AppointmentID; ?>">
+                      <?= $SchoolID->row()->SchoolID; ?>
+                    </a>
+                  </td>
                   <td><?= $row->StudentName; ?></td>
                   <td><?= $row->College; ?></td>
                   <td><?= $row->YearSection; ?></td>
