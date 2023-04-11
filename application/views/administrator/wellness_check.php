@@ -44,10 +44,10 @@ foreach ($result->result() as $row) {
             </div>
             <div class="col-lg-12 col-xlg-12 col-md-12">
               <div class="form-group">
-                <label class="col-md-12">Date</label>
+                <label class="col-md-12">Duration</label>
                 <div class="col-md-12">
                   <select class="form-control form-control-line" name="txtEndDate" required id="txtEndDate">
-                    <option value="">Select End Date</option>
+                    <option value="">Select Duration</option>
                     <option value="7" <?= ($EndDate == '7') ? 'selected' : ''; ?>>7 days</option>
                     <option value="15" <?= ($EndDate == '15') ? 'selected' : ''; ?>>15 days</option>
                     <option value="30" <?= ($EndDate == '30') ? 'selected' : ''; ?>>1 month</option>
