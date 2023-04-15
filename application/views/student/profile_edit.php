@@ -9,21 +9,28 @@ $middle_name = "";
 $SchoolID = "";
 $Course = "";
 $YearSec = "";
+$Age = "";
 $CollegeID = "";
 $CivilStatus = "";
+$ifMarried = "";
 $PlaceBirth = "";
 $DateBirth = "";
 $Gender = "";
 $Address = "";
+$HomeAddress = "";
 $MobileNo = "";
 $Religion = "";
 $LivingArrangement = "";
 $MinorityGroup = "";
 $GuardianName = "";
+$GuardianAge = "";
 $GuardianContactNumber = "";
 $GuardianOccupation = "";
 $GuardianOfficeAddress = "";
+$SiblingsNameAge = "";
+$sibling = "";
 $EstAnnualIncome = "";
+$ChildrenNameAge = ""; 
 $SourceOfIncome = "";
 $Disability = "";
 $GeneralCondition = "";
@@ -41,21 +48,28 @@ foreach ($query->result() as $row) {
   $SchoolID = $row->SchoolID;
   $Course = $row->Course;
   $YearSec = $row->YearSec;
+  $Age = $row->Age;
   $CollegeID = $row->CollegeID;
   $CivilStatus = $row->CivilStatus;
+  $ifMarried = $row->ifMarried;  
   $PlaceBirth = $row->PlaceBirth;
   $DateBirth = $row->DateBirth;
   $Gender = $row->Gender;
   $Address = $row->Address;
+  $HomeAddress = $row->HomeAddress;
   $MobileNo = $row->MobileNo;
   $Religion = $row->Religion;
   $LivingArrangement = $row->LivingArrangement;
   $MinorityGroup = $row->MinorityGroup;
   $GuardianName = $row->GuardianName;
+  $GuardianAge = $row->GuardianAge;
   $GuardianContactNumber = $row->GuardianContactNumber;
   $GuardianOccupation = $row->GuardianOccupation;
   $GuardianOfficeAddress = $row->GuardianOfficeAddress;
+  $SiblingsNameAge = $row->SiblingsNameAge;
+  $sibling = $row->sibling;
   $EstAnnualIncome = $row->EstAnnualIncome;
+  $ChildrenNameAge = $row->ChildrenNameAge;
   $SourceOfIncome = $row->SourceOfIncome;
   $Disability = $row->Disability;
   $GeneralCondition = $row->GeneralCondition;
@@ -145,6 +159,15 @@ foreach ($query->result() as $row) {
                   </div>
                 </div>
               </div>
+              <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 control-label">Age</label>
+                    <div class="col-md-12">
+                      <input type="text" value="<?= $Age ?>" class="form-control form-control-line" required name="txtAge" />
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <div class="form-group required">
                 <label class="col-md-12 control-label">College</label>
@@ -175,6 +198,22 @@ foreach ($query->result() as $row) {
                   </select>
                 </div>
               </div>
+
+              <div class="form-group required">
+              <?php if ($isMarried) { ?>
+           <div class="form-group">
+         <label class="col-md-12 control-label">Spouse's name</label>
+        <div class="col-md-12">
+           <input type="text" class="form-control form-control-line" value="<?= $SpouseName ?>" name="txtSpouseName" />
+            </div>
+             </div>
+             <div class="form-group">
+            <label class="col-md-12 control-label">Spouse's contact number</label>
+           <div class="col-md-12">
+          <input type="text" class="form-control form-control-line" value="<?= $SpouseContact ?>" name="txtSpouseContact" />
+          </div>
+            </div>
+               <?php } ?>
 
               <div class="row">
                 <div class="col-md-6">
@@ -222,6 +261,13 @@ foreach ($query->result() as $row) {
                 <label class="col-md-12 control-label">Address</label>
                 <div class="col-md-12">
                   <input type="text" class="form-control form-control-line" required value="<?= $Address ?>" name="txtAddress" />
+                </div>
+              </div>
+
+              <div class="form-group required">
+                <label class="col-md-12 control-label">Home/Provincial Address</label>
+                <div class="col-md-12">
+                  <input type="text" class="form-control form-control-line" required value="<?= $HomeAddress ?>" name="txtHomeAddress" />
                 </div>
               </div>
 
@@ -282,6 +328,15 @@ foreach ($query->result() as $row) {
                   </div>
                   <div class="col-md-6">
                     <div class="form-group required">
+                      <label class="col-md-12 control-label">Guardian's Age</label>
+                      <div class="col-md-12">
+                        <input type="text" class="form-control form-control-line" required value="<?= $GuardianAge ?>" name="txtGuardianAge" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                  <div class="col-md-6">
+                    <div class="form-group required">
                       <label class="col-md-12 control-label">Contact Number of Guardian/ Spouse if married</label>
                       <div class="col-md-12">
                         <input type="text" class="form-control form-control-line" required value="<?= $GuardianContactNumber ?>" name="txtGuardianOrSpouseContact" />
@@ -308,6 +363,16 @@ foreach ($query->result() as $row) {
                     </div>
                   </div>
                 </div>
+
+                <div class="form-group">
+             <label class="col-md-12 control-label">Names and ages of siblings</label>
+           <div class="col-md-12">
+            <?php foreach ($siblingsNameAge as $sibling) { ?>
+                <input type="text" class="form-control form-control-line" value="<?= $sibling ?>" name="txtSibling[]" />
+                  <?php } ?>
+            </div>
+               </div>
+
 
                 <div class="row">
                   <div class="col-md-6">
@@ -338,6 +403,13 @@ foreach ($query->result() as $row) {
                         </select>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <div class="form-group ">
+                  <label class="col-md-12 control-label">Name of Children and age, if married/ with family</label>
+                  <div class="col-md-12">
+                    <input type="text" class="form-control form-control-line" value="<?= $ChildrenNameAge ?>" name="txtChildrenNameAge" />
                   </div>
                 </div>
 
