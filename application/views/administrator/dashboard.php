@@ -57,6 +57,7 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
               <option value="course">Course</option>
               <option value="gender">Gender</option>
               <option value="studentYear">Student year</option>
+              <option value="year&sem">Year and Sem</option>
             </select>
           </div>
 
@@ -96,7 +97,26 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
               ?>
             </select>
           </div>
+
+          <div id="barDivYearSem" style="margin: .2rem; display:none">
+            <div class="row">
+              <div class="col-6">
+                <input type="text" class="form-control" placeholder="Input Year" id="inputYear">
+              </div>
+              <div class="col-6">
+                <select id="barYearSemFilter" class="form-select">
+                  <option value="" selected disabled>select sem</option>
+                  <option value="1st">1<sup>st</sup> Sem</option>
+                  <option value="2nd">2<sup>nd</sup> Sem</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div class="form-outline" style="margin: .2rem">
+            <button type="button" class="btn btn-primary btn-sm" id="btnYearSem" style="height: 35px; display: none" onclick="handleSubmitYearSem()">
+              Submit
+            </button>
             <button type="button" class="btn btn-secondary btn-sm" id="btnBarClear" style="height: 35px; display: none" onclick="handleBarClear()">
               Clear
             </button>

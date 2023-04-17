@@ -863,21 +863,36 @@
               $("#barDivCourse").show();
               $("#barDivGender").hide();
               $("#barDivStudentYear").hide();
+              $("#barDivYearSem").hide();
+              $("#btnYearSem").hide();
               break;
             case "gender":
               $("#barDivCourse").hide();
               $("#barDivGender").show();
               $("#barDivStudentYear").hide();
+              $("#barDivYearSem").hide();
+              $("#btnYearSem").hide();
               break;
             case "studentYear":
               $("#barDivCourse").hide();
               $("#barDivGender").hide();
               $("#barDivStudentYear").show();
+              $("#barDivYearSem").hide();
+              $("#btnYearSem").hide();
+              break;
+            case "year&sem":
+              $("#barDivCourse").hide();
+              $("#barDivGender").hide();
+              $("#barDivStudentYear").hide();
+              $("#barDivYearSem").show();
+              $("#btnYearSem").show();
               break;
             default:
               $("#barDivCourse").hide();
               $("#barDivGender").hide();
               $("#barDivStudentYear").hide();
+              $("#barDivYearSem").hide();
+              $("#btnYearSem").hide();
           }
           $("#btnBarClear").show();
         })
@@ -951,6 +966,44 @@
             })
         })
 
+        $("#btnYearSem").on("click", function(e) {
+          const value = $("#barYearSemFilter").val();
+          const year = $("#inputYear").val();
+
+          if (!year && !value) {
+            swal.mixin({
+              toast: true,
+              position: 'top',
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+            }).fire({
+              text: "Please input year and Select sem",
+              icon: 'error',
+            })
+          } else {
+            $.get(
+              `<?= site_url() . 'superadmin/get_bar_data?filterBy=yearSem&&filterByValue=' ?>${value}&&inputYear=${year}`,
+              (res, status) => {
+                barData = JSON.parse(res)
+                let filterBarData = months.map((d) => {
+                  if (barData.some((a) => a.SelectedDate === d)) {
+                    const selectedBarData = barData.filter((b) => b.SelectedDate === d)
+                    if (selectedBarData) {
+                      return Number(selectedBarData[0].CountPerMonth)
+                    }
+                    return 0
+                  }
+                  return 0
+                })
+                barChart.updateSeries([{
+                  name: 'Student Count',
+                  data: filterBarData
+                }])
+              })
+          }
+        })
+
         function handleBarClear() {
           $.get(
             `<?= site_url() . 'superadmin/get_bar_data/' ?>`,
@@ -975,10 +1028,14 @@
               $("#barCourseFilter").val("");
               $("#barGenderFilter").val("");
               $("#barStudentYearFilter").val("");
+              $("#inputYear").val("");
+              $("#barYearSemFilter").val("");
               $("#barDivCourse").hide();
               $("#barDivGender").hide();
               $("#barDivStudentYear").hide();
               $("#btnBarClear").hide()
+              $("#barDivYearSem").hide();
+              $("#btnYearSem").hide();
             })
         }
       }

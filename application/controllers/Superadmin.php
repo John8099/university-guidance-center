@@ -101,6 +101,34 @@ class Superadmin extends CI_Controller
                                         MONTHNAME(tbl_A.SelectedDate)
                                         ");
           break;
+        case "yearSem":
+          $year = $this->input->get("inputYear", TRUE);
+          $sem = $filterByValue;
+
+          $startDate = "";
+          $endDate = "";
+
+          if ($sem == "1st") {
+            $startDate = date("Y-m-d", strtotime("08-01-$year"));
+            $endDate = date("Y-m-t", strtotime("01-12-$year"));
+          } else {
+            $nextYear = intval($year) + 1;
+            $startDate = date("Y-m-d", strtotime("01-01-$nextYear"));
+            $endDate = date("Y-m-t", strtotime("01-03-$nextYear"));
+          }
+          $barChartQ = $this->db->query("SELECT 
+                                        MAX(MONTHNAME(tbl_A.SelectedDate)) AS SelectedDate,
+                                        COUNT(1) AS CountPerMonth 
+                                        FROM 
+                                        tblappointment tbl_A 
+                                        WHERE 
+                                        tbl_A.status='Completed' and 
+                                        tbl_A.CreatedOn
+                                        BETWEEN DATE('$startDate') and DATE('$endDate') 
+                                        GROUP BY 
+                                        MONTHNAME(tbl_A.SelectedDate)
+                                        ");
+          break;
         default:
           null;
       }
