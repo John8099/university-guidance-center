@@ -56,12 +56,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 <?php
 
 if ($this->session->flashdata('isPublish') == 'true') {
-  echo $this->routines->callSweetAlertYesNo("Data was successfully saved", "Do you want to publish this on email?", "info", "Quit", "Publish", site_url() . 'superadmin/question_publish');
+  echo $this->routines->callSweetAlertYesNo("The data has been saved successfully. Would you like to share it via email?", "info", "Quit", "Publish", site_url() . 'superadmin/question_publish');
 }
 if ($this->session->flashdata('isPublish') == 'false') {
-  echo $this->routines->callSweetAlert("Data was successfully saved");
+  echo $this->routines->callSweetAlert("The data has been saved successfully");
 }
 if ($this->session->flashdata('isUpdateStatus') == 'true') {
-  echo $this->routines->callSweetAlert("Wellness Check Status Updated");
+  echo $this->routines->callSweetAlert("Wellness Check Status has been updated");
 }
 ?>
