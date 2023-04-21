@@ -104,7 +104,7 @@ foreach ($result->result() as $row) {
                         <?php elseif ($row->Results == 'Positive') : ?>
                           <img src="<?= base_url() . 'media/emoj/' ?>Positive.png" alt="Positive" />
                           <p style="width: 500px; margin: auto;">
-                            We are happy to know that you are doing well! We hope that you will be able to continue and improve your wellbeing. You are always welcome to schedule an appointment with us, even right now if you wish.
+                          We are pleased to hear that you are doing well! Our hope is for you to maintain and enhance your well-being. You are invited to book an appointment with us at any time, including right now if you so desire
                           </p>
                         <?php else : ?>
                           <h4 style="text-transform: uppercase;">No Results</h4>
