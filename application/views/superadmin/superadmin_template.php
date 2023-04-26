@@ -1429,7 +1429,7 @@
 
       if (document.querySelector("#individualBarChart")) {
         $.get(
-          `<?= site_url() . 'superadmin/get_bar_data/' . $this->uri->segment(3) ?>`,
+          `<?= site_url() . 'superadmin/get_individual_bar_data/' . $this->uri->segment(3) ?>`,
           (res, status) => {
             individualBarChartData = JSON.parse(res)
             console.log(individualBarChartData)
@@ -1525,15 +1525,20 @@
 
       if (document.querySelector("#individualLineChart")) {
         $.get(
-          `<?= site_url() . 'superadmin/get_line_data/' . $this->uri->segment(3) ?>`,
+          `<?= site_url() . 'superadmin/get_individual_line_data/' . $this->uri->segment(3) ?>`,
           (res, status) => {
 
-            individualLineChartData = JSON.parse(res)
+            individualLineChartData = JSON.parse(res).sort((a, b) => a[1] - b[1])
             console.log(individualLineChartData)
 
             let posCountData = []
+            let posSScore = []
+
             let neutralCountData = []
+            let neutralSScore = []
+
             let negCountData = []
+            let negSScore = []
 
             individualLineChartData.forEach((d) => {
               switch (d.Results) {
@@ -1545,6 +1550,14 @@
                     }
                   }
                   posCountData[d.WeekNumber - 1]++
+
+                  if (posSScore.length === 0) {
+                    for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                      posSScore.push(0)
+                    }
+                  }
+                  posSScore[d.WeekNumber - 1] += Number(d.SScore)
+
                   break;
                 case "Neutral":
                   const neuData = individualLineChartData.filter((d) => d.Results === "Neutral")
@@ -1554,6 +1567,14 @@
                     }
                   }
                   neutralCountData[d.WeekNumber - 1]++
+
+                  if (neutralSScore.length === 0) {
+                    for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                      neutralSScore.push(0)
+                    }
+                  }
+                  neutralSScore[d.WeekNumber - 1] += Number(d.SScore)
+
                   break;
                 case "Negative":
                   const negData = individualLineChartData.filter((d) => d.Results === "Negative")
@@ -1563,6 +1584,13 @@
                     }
                   }
                   negCountData[d.WeekNumber - 1]++
+
+                  if (negSScore.length === 0) {
+                    for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                      negSScore.push(0)
+                    }
+                  }
+                  negSScore[d.WeekNumber - 1]++
 
                   break;
                 default:
@@ -1614,7 +1642,7 @@
               },
               tooltip: {
                 y: {
-                  formatter: (val) => val === undefined ? 0 : val
+                  formatter: (val) => val === undefined || val === 0 ? "none" : val.toFixed(2)
                 }
               },
               xaxis: {
@@ -1648,15 +1676,20 @@
         $("#lineMonthFilter").on("change", function(e) {
           const value = e.target.value
           $.get(
-            `<?= site_url() . 'superadmin/get_line_data/' . ($this->uri->segment(3)) . '?filterBy=month&&filterByValue=' ?>${value}`,
+            `<?= site_url() . 'superadmin/get_individual_line_data/' . ($this->uri->segment(3)) . '?filterBy=month&&filterByValue=' ?>${value}`,
             (res, status) => {
               const d = new Date();
-              lineData = JSON.parse(res)
+              lineData = JSON.parse(res).sort((a, b) => a[1] - b[1])
               console.log(lineData)
 
               let posCountData = []
+              let posSScore = []
+
               let neutralCountData = []
+              let neutralSScore = []
+
               let negCountData = []
+              let negSScore = []
 
               lineData.forEach((d) => {
                 switch (d.Results) {
@@ -1668,6 +1701,14 @@
                       }
                     }
                     posCountData[d.WeekNumber - 1]++
+
+                    if (posSScore.length === 0) {
+                      for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                        posSScore.push(0)
+                      }
+                    }
+                    posSScore[d.WeekNumber - 1] += Number(d.SScore)
+
                     break;
                   case "Neutral":
                     const neuData = lineData.filter((d) => d.Results === "Neutral")
@@ -1677,6 +1718,14 @@
                       }
                     }
                     neutralCountData[d.WeekNumber - 1]++
+
+                    if (neutralSScore.length === 0) {
+                      for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                        neutralSScore.push(0)
+                      }
+                    }
+                    neutralSScore[d.WeekNumber - 1] += Number(d.SScore)
+
                     break;
                   case "Negative":
                     const negData = lineData.filter((d) => d.Results === "Negative")
@@ -1686,6 +1735,13 @@
                       }
                     }
                     negCountData[d.WeekNumber - 1]++
+
+                    if (negSScore.length === 0) {
+                      for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                        negSScore.push(0)
+                      }
+                    }
+                    negSScore[d.WeekNumber - 1]++
 
                     break;
                   default:
@@ -1701,13 +1757,13 @@
 
               individualLineChart.updateSeries([{
                 name: 'Neutral',
-                data: neutralCountData
+                data: neutralSScore.map((d, i) => isNaN(d / neutralCountData[i]) ? 0 : d / neutralCountData[i].toFixed(2))
               }, {
                 name: 'Positive',
-                data: posCountData
+                data: posSScore.map((d, i) => isNaN(d / posCountData[i]) ? 0 : d / posCountData[i].toFixed(2))
               }, {
                 name: 'Negative',
-                data: negCountData
+                data: negSScore.map((d, i) => isNaN(d / negCountData[i]) ? 0 : d / negCountData[i].toFixed(2))
               }])
 
             })
