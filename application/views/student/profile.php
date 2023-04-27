@@ -125,8 +125,55 @@ foreach ($query->result() as $row) {
         <form method="post" action="<?= site_url() . 'student/profile_save/' . $UserID ?>" class="form-horizontal form-material mx-2">
           <?= $this->routines->InsertCSRF() ?>
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
+              <div class="row" style="display: flex; align-items: flex-end;">
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <div id="individualBarChart"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <div class="input-group">
+                        <div class="form-outline" style="margin: .2rem">
+                          <select id="lineFilterBy" class="form-select">
+                            <option value="" selected disabled>Filter by</option>
+                            <option value="month">Month</option>
+                          </select>
+                        </div>
 
+                        <div id="lineDivMonth" style="margin: .2rem; display:none">
+                          <select id="lineMonthFilter" class="form-select">
+                            <option value="" selected disabled>select month</option>
+                            <?php
+                            $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                            foreach ($months as $month) {
+                              $indexOfMonth = array_search($month, $months) + 1;
+                              echo "<option value='$indexOfMonth'>$month</option>";
+                            }
+                            ?>
+                          </select>
+                        </div>
+
+
+                        <div class="form-outline" style="margin: .2rem">
+                          <button type="button" class="btn btn-secondary btn-sm" id="btnLineClear" style="height: 35px; display: none" onclick="handleLineClear()">
+                            Clear
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div id="individualLineChart"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
               <div class="form-group required">
                 <label class="col-md-12 ">Email</label>
                 <div class="col-md-12">

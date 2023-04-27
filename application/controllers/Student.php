@@ -13,6 +13,96 @@ class Student extends CI_Controller
     $this->load->model('analyzer_model');
   }
 
+  public function get_individual_bar_data()
+  {
+    $barChartQ = null;
+
+    if ($this->uri->segment(3) != "") {
+      $userId = $this->uri->segment(3);
+      $barChartQ = $this->db->query("SELECT 
+                                    MAX(MONTHNAME(tbl_A.SelectedDate)) AS SelectedDate,
+                                    COUNT(1) AS CountPerMonth 
+                                    FROM 
+                                    tblappointment tbl_A 
+                                    LEFT JOIN 
+                                    tbluser u
+                                    ON
+                                    u.UserID = tbl_A.CreatedBy
+                                    WHERE 
+                                    tbl_A.status='Completed' and
+                                    u.UserID = '$userId'
+                                    GROUP BY 
+                                    MONTHNAME(tbl_A.SelectedDate)
+                                    ");
+    }
+
+    print_r(
+      json_encode(
+        $barChartQ ? $barChartQ->result() : []
+      )
+    );
+  }
+
+  public function get_individual_line_data()
+  {
+    $filterBy = $this->input->get("filterBy", TRUE);
+    $filterByValue = $this->input->get("filterByValue", TRUE);
+    $lineChartQ = null;
+
+    $first_day_this_month = date('Y-m-01');
+    $last_day_this_month  = date('Y-m-t');
+    $userId = $this->uri->segment(3);
+
+    if ($userId != "" && !$filterBy) {
+
+      $lineChartQ = $this->db->query("SELECT 
+                                      FLOOR((DayOfMonth(r.CreatedOn)-1)/7)+1 AS WeekNumber,
+                                      Results,
+                                      SScore
+                                      FROM 
+                                      tblresult r 
+                                      LEFT JOIN
+                                      tbluser u
+                                      ON
+                                      u.UserID = r.CreatedBy
+                                      WHERE 
+                                      u.UserID = '$userId' and
+                                      r.Results<>'' and
+                                      r.CreatedOn BETWEEN '$first_day_this_month' AND '$last_day_this_month'
+                                    ");
+    } else {
+      switch ($filterBy) {
+        case "month":
+          $first_day_this_month = date("Y-$filterByValue-01");
+          $last_day_this_month  = date("Y-$filterByValue-t");
+          $lineChartQ = $this->db->query("SELECT 
+                                          FLOOR((DayOfMonth(r.CreatedOn)-1)/7)+1 AS WeekNumber,
+                                          Results,
+                                          SScore
+                                          FROM 
+                                          tblresult r 
+                                          LEFT JOIN
+                                          tbluser u
+                                          ON
+                                          u.UserID = r.CreatedBy
+                                          WHERE 
+                                         " . ($userId != "" ? "u.UserID = '$userId' and" : "") . "
+                                          r.Results<>'' and
+                                          r.CreatedOn BETWEEN '$first_day_this_month' AND '$last_day_this_month'
+                                        ");
+          break;
+        default:
+          null;
+      }
+    }
+
+    print_r(
+      json_encode(
+        $lineChartQ ? $lineChartQ->result() : []
+      )
+    );
+  }
+
   public function student_register()
   {
     $data['heading'] = 'Student Register';

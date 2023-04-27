@@ -172,6 +172,29 @@
   <link href="<?= base_url() . 'media/' ?>dist/css/style.min.css" rel="stylesheet">
   <link href="<?= base_url() . 'media/' ?>global.css" rel="stylesheet">
   <script src="<?= base_url() . 'media/' ?>assets/libs/sweetalert/sweetalert.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>dist/js/app-style-switcher.js"></script>
+  <!--Wave Effects -->
+  <script src="<?= base_url() . 'media/' ?>dist/js/waves.js"></script>
+  <!--Menu sidebar -->
+  <script src="<?= base_url() . 'media/' ?>dist/js/sidebarmenu.js"></script>
+  <!--Custom JavaScript -->
+  <script src="<?= base_url() . 'media/' ?>dist/js/custom.js"></script>
+  <!--This page JavaScript -->
+  <!--chartis chart-->
+  <script src="<?= base_url() . 'media/' ?>assets/libs/chartist/dist/chartist.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>dist/js/pages/dashboards/dashboard1.js"></script>
+  <script src="<?= base_url() . 'media/' ?>dist/js/chart.js"></script>
+
+  <script src="<?= base_url() . 'media/' ?>datatables/jquery.dataTables.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables/dataTables.buttons.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables/buttons.print.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables/dataTables.bootstrap4.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables/dataTables.responsive.min.js"></script>
+  <script src="<?= base_url() . 'media/' ?>datatables/responsive.bootstrap4.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <style type="text/css">
     /*the container must be positioned relative:*/
     .custom-select {
@@ -464,27 +487,7 @@
   <!-- All Jquery -->
   <!-- ============================================================== -->
   <!-- Bootstrap tether Core JavaScript -->
-  <script src="<?= base_url() . 'media/' ?>assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>dist/js/app-style-switcher.js"></script>
-  <!--Wave Effects -->
-  <script src="<?= base_url() . 'media/' ?>dist/js/waves.js"></script>
-  <!--Menu sidebar -->
-  <script src="<?= base_url() . 'media/' ?>dist/js/sidebarmenu.js"></script>
-  <!--Custom JavaScript -->
-  <script src="<?= base_url() . 'media/' ?>dist/js/custom.js"></script>
-  <!--This page JavaScript -->
-  <!--chartis chart-->
-  <script src="<?= base_url() . 'media/' ?>assets/libs/chartist/dist/chartist.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>dist/js/pages/dashboards/dashboard1.js"></script>
-  <script src="<?= base_url() . 'media/' ?>dist/js/chart.js"></script>
 
-  <script src="<?= base_url() . 'media/' ?>datatables/jquery.dataTables.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables/dataTables.buttons.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables/buttons.print.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables/dataTables.bootstrap4.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables/dataTables.responsive.min.js"></script>
-  <script src="<?= base_url() . 'media/' ?>datatables/responsive.bootstrap4.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
       $('.fc-event-title').each(function(data) {
@@ -641,6 +644,438 @@
     /* If the user clicks anywhere outside the select box,
     then close all select boxes: */
     document.addEventListener("click", closeAllSelect);
+
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    function getNumberWithOrdinal(n) {
+      var s = ["th", "st", "nd", "rd"],
+        v = n % 100;
+      return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    }
+
+    let lineData, barData;
+    let barChart, lineChart;
+    const d = new Date();
+
+    if (document.querySelector("#individualBarChart")) {
+      $.get(
+        `<?= site_url() . 'student/get_individual_bar_data/' . $this->session->userdata("StudentUserID") ?>`,
+        (res, status) => {
+          individualBarChartData = JSON.parse(res)
+          console.log(individualBarChartData)
+          let filterBarData = months.map((d) => {
+            if (individualBarChartData.some((a) => a.SelectedDate === d)) {
+              const selectedBarData = individualBarChartData.filter((b) => b.SelectedDate === d)
+              if (selectedBarData) {
+                return Number(selectedBarData[0].CountPerMonth)
+              }
+              return 0
+            }
+            return 0
+          })
+
+          individualBarChartOptions = {
+            series: [{
+              name: 'Count',
+              data: filterBarData
+            }],
+            title: {
+              text: "Monthly Appointment"
+            },
+            chart: {
+              height: 350,
+              type: 'bar',
+            },
+            plotOptions: {
+              bar: {
+                borderRadius: 10,
+                dataLabels: {
+                  position: 'top', // top, center, bottom
+                },
+              }
+            },
+            dataLabels: {
+              enabled: true,
+              formatter: (val) => val,
+              offsetY: -20,
+              style: {
+                fontSize: '12px',
+                colors: ["#304758"]
+              }
+            },
+            tooltip: {
+              y: {
+                formatter: (val) => val
+              }
+            },
+
+            xaxis: {
+              categories: months,
+              position: 'bottom',
+              axisBorder: {
+                show: false
+              },
+              axisTicks: {
+                show: false
+              },
+              crosshairs: {
+                fill: {
+                  type: 'gradient',
+                  gradient: {
+                    colorFrom: '#D8E3F0',
+                    colorTo: '#BED1E6',
+                    stops: [0, 100],
+                    opacityFrom: 0.4,
+                    opacityTo: 0.5,
+                  }
+                }
+              },
+
+            },
+            yaxis: {
+              labels: {
+                formatter: (val) => val
+              },
+              axisBorder: {
+                show: false
+              },
+              axisTicks: {
+                show: false,
+              },
+            },
+
+          }
+
+          individualBarChart = new ApexCharts(document.querySelector("#individualBarChart"), individualBarChartOptions);
+          individualBarChart.render();
+
+        })
+
+    }
+
+    if (document.querySelector("#individualLineChart")) {
+      $.get(
+        `<?= site_url() . 'student/get_individual_line_data/' . $this->session->userdata("StudentUserID") ?>`,
+        (res, status) => {
+
+          individualLineChartData = JSON.parse(res).sort((a, b) => a[1] - b[1])
+          console.log(individualLineChartData)
+
+          let posCountData = []
+          let posSScore = []
+
+          let neutralCountData = []
+          let neutralSScore = []
+
+          let negCountData = []
+          let negSScore = []
+
+          individualLineChartData.forEach((d) => {
+            switch (d.Results) {
+              case "Positive":
+                const posData = individualLineChartData.filter((d) => d.Results === "Positive")
+                if (posCountData.length === 0) {
+                  for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                    posCountData.push(0)
+                  }
+                }
+                posCountData[d.WeekNumber - 1]++
+
+                if (posSScore.length === 0) {
+                  for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                    posSScore.push(0)
+                  }
+                }
+                posSScore[d.WeekNumber - 1] += Number(d.SScore)
+
+                break;
+              case "Neutral":
+                const neuData = individualLineChartData.filter((d) => d.Results === "Neutral")
+                if (neutralCountData.length === 0) {
+                  for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                    neutralCountData.push(0)
+                  }
+                }
+                neutralCountData[d.WeekNumber - 1]++
+
+                if (neutralSScore.length === 0) {
+                  for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                    neutralSScore.push(0)
+                  }
+                }
+                neutralSScore[d.WeekNumber - 1] += Number(d.SScore)
+
+                break;
+              case "Negative":
+                const negData = individualLineChartData.filter((d) => d.Results === "Negative")
+                if (negCountData.length === 0) {
+                  for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                    negCountData.push(0)
+                  }
+                }
+                negCountData[d.WeekNumber - 1]++
+
+                if (negSScore.length === 0) {
+                  for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                    negSScore.push(0)
+                  }
+                }
+                negSScore[d.WeekNumber - 1]++
+
+                break;
+              default:
+                null;
+            }
+          })
+
+          let individualLineCategory = []
+
+          for (let i = 1; i <= 52; i++) {
+            individualLineCategory.push(getNumberWithOrdinal(i))
+          }
+
+          individualLineChartOptions = {
+            series: [{
+              name: 'Neutral',
+              data: neutralCountData
+            }, {
+              name: 'Positive',
+              data: posCountData
+            }, {
+              name: 'Negative',
+              data: negCountData
+            }],
+            title: {
+              text: `${months[d.getMonth()]} Weekly Sentiment Report`
+            },
+            markers: {
+              size: 5,
+            },
+            chart: {
+              height: 350,
+              type: 'line',
+              zoom: {
+                enabled: false
+              }
+            },
+            dataLabels: {
+              enabled: false
+            },
+            stroke: {
+              curve: 'straight',
+            },
+            grid: {
+              row: {
+                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                opacity: 0.5
+              },
+            },
+            tooltip: {
+              y: {
+                formatter: (val) => val === undefined || val === 0 ? "none" : val.toFixed(2)
+              }
+            },
+            xaxis: {
+              categories: individualLineCategory,
+            },
+            yaxis: {
+              labels: {
+                formatter: (val) => val === undefined ? 0 : val
+              },
+              min: 0
+            },
+          }
+
+          individualLineChart = new ApexCharts(document.querySelector("#individualLineChart"), individualLineChartOptions);
+          individualLineChart.render();
+
+        })
+
+      $("#lineFilterBy").on("change", function(e) {
+        switch (e.target.value) {
+          case "month":
+            $("#lineDivMonth").show();
+            break;
+          default:
+            $("#lineDivMonth").hide();
+            break;
+        }
+        $("#btnLineClear").show();
+      })
+
+      $("#lineMonthFilter").on("change", function(e) {
+        const value = e.target.value
+        $.get(
+          `<?= site_url() . 'student/get_individual_line_data/' . ($this->session->userdata("StudentUserID")) . '?filterBy=month&&filterByValue=' ?>${value}`,
+          (res, status) => {
+            const d = new Date();
+            lineData = JSON.parse(res).sort((a, b) => a[1] - b[1])
+            console.log(lineData)
+
+            let posCountData = []
+            let posSScore = []
+
+            let neutralCountData = []
+            let neutralSScore = []
+
+            let negCountData = []
+            let negSScore = []
+
+            lineData.forEach((d) => {
+              switch (d.Results) {
+                case "Positive":
+                  const posData = lineData.filter((d) => d.Results === "Positive")
+                  if (posCountData.length === 0) {
+                    for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                      posCountData.push(0)
+                    }
+                  }
+                  posCountData[d.WeekNumber - 1]++
+
+                  if (posSScore.length === 0) {
+                    for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                      posSScore.push(0)
+                    }
+                  }
+                  posSScore[d.WeekNumber - 1] += Number(d.SScore)
+
+                  break;
+                case "Neutral":
+                  const neuData = lineData.filter((d) => d.Results === "Neutral")
+                  if (neutralCountData.length === 0) {
+                    for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                      neutralCountData.push(0)
+                    }
+                  }
+                  neutralCountData[d.WeekNumber - 1]++
+
+                  if (neutralSScore.length === 0) {
+                    for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                      neutralSScore.push(0)
+                    }
+                  }
+                  neutralSScore[d.WeekNumber - 1] += Number(d.SScore)
+
+                  break;
+                case "Negative":
+                  const negData = lineData.filter((d) => d.Results === "Negative")
+                  if (negCountData.length === 0) {
+                    for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                      negCountData.push(0)
+                    }
+                  }
+                  negCountData[d.WeekNumber - 1]++
+
+                  if (negSScore.length === 0) {
+                    for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                      negSScore.push(0)
+                    }
+                  }
+                  negSScore[d.WeekNumber - 1]++
+
+                  break;
+                default:
+                  null;
+              }
+            })
+
+            individualLineChart.updateOptions({
+              title: {
+                text: `${months[Number(e.target.value) - 1]} Weekly Sentiment Report`
+              }
+            })
+
+            individualLineChart.updateSeries([{
+              name: 'Neutral',
+              data: neutralSScore.map((d, i) => isNaN(d / neutralCountData[i]) ? 0 : d / neutralCountData[i].toFixed(2))
+            }, {
+              name: 'Positive',
+              data: posSScore.map((d, i) => isNaN(d / posCountData[i]) ? 0 : d / posCountData[i].toFixed(2))
+            }, {
+              name: 'Negative',
+              data: negSScore.map((d, i) => isNaN(d / negCountData[i]) ? 0 : d / negCountData[i].toFixed(2))
+            }])
+
+          })
+
+
+      })
+
+
+      function handleLineClear() {
+        $.get(
+          `<?= site_url() . 'student/get_individual_line_data/' . $this->session->userdata("StudentUserID") ?>`,
+          (res, status) => {
+            const d = new Date();
+            lineData = JSON.parse(res)
+            console.log(lineData)
+
+            let posCountData = []
+            let neutralCountData = []
+            let negCountData = []
+
+            lineData.forEach((d) => {
+              switch (d.Results) {
+                case "Positive":
+                  const posData = lineData.filter((d) => d.Results === "Positive")
+                  if (posCountData.length === 0) {
+                    for (let i = 0; i < Math.max(...posData.map(o => o.WeekNumber)); i++) {
+                      posCountData.push(0)
+                    }
+                  }
+                  posCountData[d.WeekNumber - 1]++
+                  break;
+                case "Neutral":
+                  const neuData = lineData.filter((d) => d.Results === "Neutral")
+                  if (neutralCountData.length === 0) {
+                    for (let i = 0; i < Math.max(...neuData.map(o => o.WeekNumber)); i++) {
+                      neutralCountData.push(0)
+                    }
+                  }
+                  neutralCountData[d.WeekNumber - 1]++
+                  break;
+                case "Negative":
+                  const negData = lineData.filter((d) => d.Results === "Negative")
+                  if (negCountData.length === 0) {
+                    for (let i = 0; i < Math.max(...negData.map(o => o.WeekNumber)); i++) {
+                      negCountData.push(0)
+                    }
+                  }
+                  negCountData[d.WeekNumber - 1]++
+
+                  break;
+                default:
+                  null;
+              }
+            })
+
+            individualLineChart.updateSeries([{
+              name: 'Neutral',
+              data: neutralCountData
+            }, {
+              name: 'Positive',
+              data: posCountData
+            }, {
+              name: 'Negative',
+              data: negCountData
+            }])
+
+            individualLineChart.updateOptions({
+              title: {
+                text: `${months[d.getMonth()]} Weekly Sentiment Report`
+              }
+            })
+
+            $("#lineMonthFilter").val("");
+            $("#lineFilterBy").val("");
+
+            $("#lineDivMonth").hide();
+            $("#btnLineClear").hide()
+
+          })
+      }
+
+    }
   </script>
 </body>
 
