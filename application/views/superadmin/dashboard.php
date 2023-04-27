@@ -380,11 +380,11 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
                 <td>
                   <?php if (!$row->remarks) : ?>
                     <button class='btn btn-outline-info btn-sm' type='button' onclick='handleSaveRemarks("<?= $row->resultId ?>", "<?= $row->remarks ?>")'>
-                      Add Remark
+                      Add Remarks
                     </button>
                   <?php else : ?>
                     <button class='btn btn-outline-warning btn-sm' type='button' onclick='handleSaveRemarks("<?= $row->resultId ?>", "<?= $row->remarks ?>")'>
-                      Edit Remark
+                      Edit Remarks
                     </button>
                   <?php endif; ?>
                 </td>
