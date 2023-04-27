@@ -9,21 +9,30 @@ $middle_name = "";
 $SchoolID = "";
 $Course = "";
 $YearSec = "";
+$Age = "";
 $CollegeID = "";
 $CivilStatus = "";
+$ifMarried = "";
+$SpouseName = "";
+$SpouseContact = "";
 $PlaceBirth = "";
 $DateBirth = "";
 $Gender = "";
 $Address = "";
+$HomeAddress = "";
 $MobileNo = "";
 $Religion = "";
 $LivingArrangement = "";
 $MinorityGroup = "";
 $GuardianName = "";
+$GuardianAge = "";
 $GuardianContactNumber = "";
 $GuardianOccupation = "";
 $GuardianOfficeAddress = "";
+$SiblingsNameAge = "";
+$sibling = "";
 $EstAnnualIncome = "";
+$ChildrenNameAge = ""; 
 $SourceOfIncome = "";
 $Disability = "";
 $GeneralCondition = "";
@@ -41,21 +50,30 @@ foreach ($query->result() as $row) {
   $SchoolID = $row->SchoolID;
   $Course = $row->Course;
   $YearSec = $row->YearSec;
+  $Age = $row->Age;
   $CollegeID = $row->CollegeID;
   $CivilStatus = $row->CivilStatus;
+  $ifMarried = $row->ifMarried; 
+  $SpouseName = $row->SpouseName;
+  $SpouseContact = $row->SpouseContact;
   $PlaceBirth = $row->PlaceBirth;
   $DateBirth = $row->DateBirth;
   $Gender = $row->Gender;
   $Address = $row->Address;
+  $HomeAddress = $row->HomeAddress;
   $MobileNo = $row->MobileNo;
   $Religion = $row->Religion;
   $LivingArrangement = $row->LivingArrangement;
   $MinorityGroup = $row->MinorityGroup;
   $GuardianName = $row->GuardianName;
+  $GuardianAge = $row->GuardianAge;
   $GuardianContactNumber = $row->GuardianContactNumber;
   $GuardianOccupation = $row->GuardianOccupation;
   $GuardianOfficeAddress = $row->GuardianOfficeAddress;
+  $SiblingsNameAge = $row->SiblingsNameAge;
+  $sibling = $row->sibling;
   $EstAnnualIncome = $row->EstAnnualIncome;
+  $ChildrenNameAge = $row->ChildrenNameAge;
   $SourceOfIncome = $row->SourceOfIncome;
   $Disability = $row->Disability;
   $GeneralCondition = $row->GeneralCondition;
@@ -63,6 +81,7 @@ foreach ($query->result() as $row) {
   $FBLink = $row->FBLink;
 }
 ?>
+
 
 <div class="row">
   <!-- Column -->

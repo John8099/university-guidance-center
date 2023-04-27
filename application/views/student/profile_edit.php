@@ -204,7 +204,7 @@ foreach ($query->result() as $row) {
               </div>
 
               <div class="form-group required">
-              <?php if ($isMarried) { ?>
+              <?php if ($ifMarried) { ?>
            <div class="form-group">
          <label class="col-md-12 control-label">Spouse's name</label>
         <div class="col-md-12">
@@ -369,11 +369,10 @@ foreach ($query->result() as $row) {
                 </div>
 
                 <div class="form-group">
-             <label class="col-md-12 control-label">Names and ages of siblings</label>
-           <div class="col-md-12">
-            <?php foreach ($siblingsNameAge as $sibling) { ?>
-                <input type="text" class="form-control form-control-line" value="<?= $sibling ?>" name="txtSibling[]" />
-                  <?php } ?>
+                <div class="form-group required">
+           <label class="col-md-12 control-label">Names and ages of siblings</label>
+                      <div class="col-md-12">
+                        <input type="text" class="form-control form-control-line" required value="<?= $SiblingsNameAge ?>" name="txtsibling" />
             </div>
                </div>
 
