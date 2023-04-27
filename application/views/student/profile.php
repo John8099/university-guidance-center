@@ -83,26 +83,7 @@ foreach ($query->result() as $row) {
 ?>
 
 
-<div class="row">
-  <!-- Column -->
-  <div class="col-lg-12 col-xlg-12 col-md-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="container">
-          <h6>
-            <strong>Note:</strong>
-          </h6>
-          <p>
-            This e- document is confidential. All gathered information about students using this form will be solely utilized by the university guidance center and college guidance offices for guidance and counseling purposes only. Please prepare 2x2 photo and e-signature to be uploaded in this form.
-          </p>
-          <p>
-            The name and photo associated with your wvsu account will be recorded when you upload files and submit this form.
-          </p>
-          <p>
-            Any files that are uploaded will be shared with the organization they belong to.
-          </p>
-        </div>
-      </div>
+
       <div class="card-body">
 
         <div class="alert alert-success d-flex align-items-center d-none" role="alert" id="alertsuccess">
@@ -173,6 +154,25 @@ foreach ($query->result() as $row) {
                 </div>
               </div>
             </div>
+            <!-- Column -->
+  <div class="col-lg-12 col-xlg-12 col-md-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="container">
+          <h6>
+            <strong>Note:</strong>
+          </h6>
+          <p>
+            This e- document is confidential. All gathered information about students using this form will be solely utilized by the university guidance center and college guidance offices for guidance and counseling purposes only. Please prepare 2x2 photo and e-signature to be uploaded in this form.
+          </p>
+          <p>
+            The name and photo associated with your wvsu account will be recorded when you upload files and submit this form.
+          </p>
+          <p>
+            Any files that are uploaded will be shared with the organization they belong to.
+          </p>
+        </div>
+      </div>
             <div class="col-md-12">
               <div class="form-group required">
                 <label class="col-md-12 ">Email</label>
@@ -181,11 +181,12 @@ foreach ($query->result() as $row) {
                 </div>
               </div>
                             
-
+              <div class="row">
+  
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group required">
-                    <label class="col-md-12 control-label">Last Name</label>
+                    <label class="col-md-12">Last Name</label>
                     <div class="col-md-12">
                       <input type="text"   value="<?= $last_name ?>"class="form-control form-control-line" required name="txtLname" readonly />
                     </div>
