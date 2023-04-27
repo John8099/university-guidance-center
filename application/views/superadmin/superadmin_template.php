@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Virtual-and-Remote-Guidance-Counselling-System | <?= $heading; ?></title>
+  <title>WVSU Guidance Appointment and Monitoring System | <?= $heading; ?></title>
   <!-- Calendar CSS -->
   <link href="<?= base_url() . 'media/' ?>fullcalendar/lib/main.css" rel="stylesheet">
   <script src='https://github.com/mozilla-comm/ical.js/releases/download/v1.4.0/ical.js'></script>
