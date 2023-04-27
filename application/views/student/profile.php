@@ -173,92 +173,122 @@ foreach ($query->result() as $row) {
                 </div>
               </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-12">
               <div class="form-group required">
                 <label class="col-md-12 ">Email</label>
                 <div class="col-md-12">
                   <input type="email" class="form-control form-control-line" required value="<?= $Email ?>" name="txtEmail" readonly />
                 </div>
               </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 ">Last name</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" required value="<?= $last_name ?>" name="txtLname" readonly />
-                </div>
-              </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 ">First name</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" required value="<?= $first_name ?>" name="txtFname" readonly />
-                </div>
-              </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 ">Middle Name</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" required value="<?= $middle_name ?>" name="txtMname" readonly />
-                </div>
-              </div>
-
-              <div class="form-group required">
-                <label class="col-md-12 ">Student ID #</label>
-                <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" required value="<?= $SchoolID ?>" name="txtStudentId" readonly />
-                </div>
-              </div>
+                            
 
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <div class="form-group required">
-                    <label class="col-md-12 ">Course</label>
+                    <label class="col-md-12 control-label">Last Name</label>
                     <div class="col-md-12">
-                      <input type="text" placeholder="Course" class="form-control form-control-line" value="<?= $Course ?>" required name="txtCourse" readonly />
+                      <input type="text"   value="<?= $last_name ?>"class="form-control form-control-line" required name="txtLname" readonly />
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 ">Year & Section</label>
-                    <div class="col-md-12">
-                      <input type="text" value="<?= $YearSec ?>" class="form-control form-control-line" required name="txtYearSec" readonly />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                  <div class="form-group required">
-                    <label class="col-md-12 ">Age</label>
-                    <div class="col-md-12">
-                      <input type="text" value="<?= $Age ?>" class="form-control form-control-line" required name="txtAge" readonly />
-                    </div>
-                  </div>
-              <div class="form-group required">
-                <label class="col-md-12 ">College</label>
-                <div class="col-md-12">
-                  <input type="text" value="<?= $this->routines->getCollege($CollegeID) ?>" readonly class="form-control form-control-line">
-                </div>
-              </div>
-            </div>
 
-            <div class="col-md-6">
-              <div class="form-group required">
-                <label class="col-md-12 ">Civil Status</label>
-                <div class="col-md-12">
-                  <input type="text" value="<?= $CivilStatus ?>" readonly class="form-control form-control-line">
-
+                <div class="col-md-4">
+                  <div class="form-group required">
+                    <label class="col-md-12 control-label">First Name</label>
+                    <div class="col-md-12">
+                      <input type="text" value="<?= $first_name ?>" class="form-control form-control-line" required name="txtFname" readonly/>
+                    </div>
+                  </div>
                 </div>
+                <div class="col-md-4">
+                  <div class="form-group required">
+                    <label class="col-md-12 control-label">Middle Name</label>
+                    <div class="col-md-12">
+                      <input type="text" value="<?= $middle_name ?>" class="form-control form-control-line" required name="txtMname" readonly/>
               </div>
+              </div>
+                </div>
+                          
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                   <div class="form-group required">
-                    <label class="col-md-12 ">Spouse's Name</label>
+                    <label class="col-md-12 control-label">Student ID #</label>
                     <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" value="<?= $SpouseName ?>" required name="txtSpouseName" readonly />
+                      <input type="text" placeholder="Student ID" class="form-control form-control-line" value="<?= $SchoolID ?>" required name="txtStudentId" readonly />
                     </div>
                   </div>
                 </div>
+
+                <div class="col-md-4">
+                  <div class="form-group required">
+                    <label class="col-md-12 control-label">Course</label>
+                    <div class="col-md-12">
+                      <input type="text" value="<?= $Course ?>" class="form-control form-control-line" required name="txtCourse" readonly/>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group required">
+                    <label class="col-md-12 control-label">Year & Section</label>
+                    <div class="col-md-12">
+                      <input type="text" value="<?= $YearSec ?>" class="form-control form-control-line" required name="txtYearSec" readonly/>
+              </div>
+              </div>
+                </div>
+
+                <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group required">
+                    <label class="col-md-12 control-label">Age</label>
+                    <div class="col-md-12">
+                    <input type="text" value="<?= $Age ?>" class="form-control form-control-line" required name="txtAge" readonly />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="form-group required">
+                    <label class="col-md-12 control-label">College</label>
+                    <div class="col-md-12">
+                    <input type="text" value="<?= $this->routines->getCollege($CollegeID) ?>" readonly class="form-control form-control-line">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group required">
+                    <label class="col-md-12 control-label">Civil Status</label>
+                    <div class="col-md-12">
+                    <input type="text" value="<?= $CivilStatus ?>" readonly class="form-control form-control-line">
+              </div>
+              </div>
+                </div>
+
+                <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 control-label">Spouse's Name</label>
+                    <div class="col-md-12">
+                    <input type="text" class="form-control form-control-line" value="<?= $SpouseName ?>" required name="txtSpouseName" readonly />
+            
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 control-label">Spouse's Contact</label>
+                    <div class="col-md-12">
+                    <input type="text" class="form-control form-control-line" value="<?= $SpouseContact ?>" required name="txtSpouseContact" readonly />
+                  </div>
+                </div>
+
+              </div>
+              </div>
+                </div>
+
+              
+              
+             
 
               <div class="row">
                 <div class="col-md-6">
@@ -293,6 +323,13 @@ foreach ($query->result() as $row) {
                 </div>
               </div>
 
+              <div class="form-group required">
+                <label class="col-md-12 ">Home/Provincial Address</label>
+                <div class="col-md-12">
+                  <input type="text" class="form-control form-control-line" required value="<?= $HomeAddress ?>" name="txtHomeAddress" readonly readonly />
+                </div>
+              </div>
+
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group required">
@@ -322,7 +359,7 @@ foreach ($query->result() as $row) {
               <div class="form-group">
                 <label class="col-md-12 ">If member of a minority group/indigenous people</label>
                 <div class="col-md-12">
-                  <input type="text" class="form-control form-control-line" value="<?= $MinorityGroup ?>" placeholder="Please specify here" required name="txtMinorityGroup" readonly />
+                  <input type="text" class="form-control form-control-line" value="<?= $MinorityGroup ?>"  required name="txtMinorityGroup" readonly />
                 </div>
               </div>
             </div>
