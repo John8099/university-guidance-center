@@ -196,7 +196,7 @@ foreach ($query->result() as $row) {
               </div>
 
               <div class="form-group required">
-                <label class="col-md-12 ">Middle name</label>
+                <label class="col-md-12 ">Middle Name</label>
                 <div class="col-md-12">
                   <input type="text" class="form-control form-control-line" required value="<?= $middle_name ?>" name="txtMname" readonly />
                 </div>
@@ -227,7 +227,13 @@ foreach ($query->result() as $row) {
                   </div>
                 </div>
               </div>
-
+              <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 ">Age</label>
+                    <div class="col-md-12">
+                      <input type="text" value="<?= $Age ?>" class="form-control form-control-line" required name="txtAge" readonly />
+                    </div>
+                  </div>
               <div class="form-group required">
                 <label class="col-md-12 ">College</label>
                 <div class="col-md-12">
@@ -244,6 +250,15 @@ foreach ($query->result() as $row) {
 
                 </div>
               </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group required">
+                    <label class="col-md-12 ">Spouse's Name</label>
+                    <div class="col-md-12">
+                      <input type="text" class="form-control form-control-line" value="<?= $SpouseName ?>" required name="txtSpouseName" readonly />
+                    </div>
+                  </div>
+                </div>
 
               <div class="row">
                 <div class="col-md-6">

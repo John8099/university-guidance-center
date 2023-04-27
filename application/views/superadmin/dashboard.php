@@ -327,7 +327,7 @@ $TotalStudents = $this->db->query("SELECT COUNT(UserID) AS Total FROM tbluser WH
         <table id="assessmentTable" class="table table-hover">
           <thead>
             <tr>
-              <th scope="col">Student name</th>
+              <th scope="col">Student Name</th>
               <th scope="col">Title</th>
               <th scope="col">Type</th>
               <th scope="col">Date taken</th>
