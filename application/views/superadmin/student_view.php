@@ -41,21 +41,30 @@ foreach ($query->result() as $row) {
   $SchoolID = $row->SchoolID;
   $Course = $row->Course;
   $YearSec = $row->YearSec;
+  $Age = $row->Age;
   $CollegeID = $row->CollegeID;
   $CivilStatus = $row->CivilStatus;
+  $ifMarried = $row->ifMarried; 
+  $SpouseName = $row->SpouseName;
+  $SpouseContact = $row->SpouseContact;
   $PlaceBirth = $row->PlaceBirth;
   $DateBirth = $row->DateBirth;
   $Gender = $row->Gender;
   $Address = $row->Address;
+  $HomeAddress = $row->HomeAddress;
   $MobileNo = $row->MobileNo;
   $Religion = $row->Religion;
   $LivingArrangement = $row->LivingArrangement;
   $MinorityGroup = $row->MinorityGroup;
   $GuardianName = $row->GuardianName;
+  $GuardianAge = $row->GuardianAge;
   $GuardianContactNumber = $row->GuardianContactNumber;
   $GuardianOccupation = $row->GuardianOccupation;
   $GuardianOfficeAddress = $row->GuardianOfficeAddress;
+  $SiblingsNameAge = $row->SiblingsNameAge;
+  $sibling = $row->sibling;
   $EstAnnualIncome = $row->EstAnnualIncome;
+  $ChildrenNameAge = $row->ChildrenNameAge;
   $SourceOfIncome = $row->SourceOfIncome;
   $Disability = $row->Disability;
   $GeneralCondition = $row->GeneralCondition;
@@ -129,6 +138,7 @@ foreach ($query->result() as $row) {
             <p><strong>School ID:</strong> <?= $SchoolID ?></p>
             <p><strong>Course:</strong> <?= $Course ?></p>
             <p><strong>Year and Section:</strong> <?= $YearSec ?></p>
+            <p><strong>Age:</strong> <?= $Age ?></p>
           </div>
           <div class="col-6">
             <p><strong>College:</strong> <?= $this->routines->getCollege($CollegeID) ?></p>
@@ -137,6 +147,7 @@ foreach ($query->result() as $row) {
             <p><strong>Birth Day:</strong> <?= $DateBirth ?></p>
             <p><strong>Gender:</strong> <?= $Gender ?></p>
             <p><strong>Address:</strong> <?= $Address ?></p>
+            <p><strong>Home Address:</strong> <?= $HomeAddress ?></p>
             <p><strong>Mobile no.:</strong> <?= $MobileNo ?></p>
 
           </div>
@@ -152,9 +163,12 @@ foreach ($query->result() as $row) {
             <?php endif; ?>
 
             <p><strong>Guardian's name/ Spouse:</strong> <?= $GuardianName ?></p>
+            <p><strong>Guardian's Age:</strong> <?= $GuardianAge ?></p>
             <p><strong>Contact Number of Guardian/ Spouse:</strong> <?= $GuardianContactNumber ?></p>
             <p><strong>Occupation of Guardian/ Spouse:</strong> <?= $GuardianOccupation ?></p>
             <p><strong>Office or Address of Guardian/ Spouse:</strong> <?= $GuardianOfficeAddress ?></p>
+            <p><strong>Siblings Name and Age:</strong> <?= $SiblingsNameAge ?></p>
+            <p><strong>Children Name and Age</strong> <?= $ChildrenNameAge ?></p>
           </div>
 
           <div class="col-6">
