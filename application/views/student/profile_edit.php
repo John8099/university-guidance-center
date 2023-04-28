@@ -12,7 +12,6 @@ $YearSec = "";
 $Age = "";
 $CollegeID = "";
 $CivilStatus = "";
-$ifMarried = "";
 $SpouseName = "";
 $SpouseContact = "";
 $PlaceBirth = "";
@@ -53,7 +52,6 @@ foreach ($query->result() as $row) {
   $Age = $row->Age;
   $CollegeID = $row->CollegeID;
   $CivilStatus = $row->CivilStatus;
-  $ifMarried = $row->ifMarried; 
   $SpouseName = $row->SpouseName;
   $SpouseContact = $row->SpouseContact;
   $PlaceBirth = $row->PlaceBirth;
@@ -376,43 +374,6 @@ foreach ($query->result() as $row) {
                     </div>
                   </div>
                 </div>
-
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group required">
-                      <label class="col-md-12 ">Estimated Family Annual Income</label>
-                      <div class="col-md-12">
-                      <input type="text" class="form-control form-control-line" required value="<?= $EstAnnualIncome ?>" name="txtEstAnnualIncome" />
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group required">
-                      <label class="col-md-12 ">Source of income</label>
-                      <div class="col-md-12">
-                      <select name="txtSourceOfIncome" class="form-select" required>
-                          <option value="" selected disabled>Select source of income</option>
-                          <?php
-                          $sourceOfIncomes = array(
-                            "Salaries/ Wages",
-                            "Business",
-                            "Allowance",
-                            "Others"
-                          );
-                          foreach ($sourceOfIncomes as $source) :
-                          ?>
-                            <option value="<?= $source ?>" <?= $SourceOfIncome == $source ? "selected" : "" ?>><?= $source ?></option>
-                          <?php endforeach; ?>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-
-
-
                 <div class="form-group">
                 <div class="form-group required">
            <label class="col-md-12 control-label">Names and ages of siblings</label>
