@@ -168,7 +168,7 @@ foreach ($query->result() as $row) {
             <p><strong>Occupation of Guardian/ Spouse:</strong> <?= $GuardianOccupation ?></p>
             <p><strong>Office or Address of Guardian/ Spouse:</strong> <?= $GuardianOfficeAddress ?></p>
             <p><strong>Siblings Name and Age:</strong> <?= $SiblingsNameAge ?></p>
-            <p><strong>Children Name and Age</strong> <?= $Children ?></p>
+            <p><strong>Children Name and Age</strong> <?= $ChildrenNameAge ?></p>
           </div>
 
           <div class="col-6">
