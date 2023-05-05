@@ -406,6 +406,14 @@ foreach ($query->result() as $row) {
                   </div>
                 </div>
 
+                <div class="form-group">
+                <div class="form-group required">
+           <label class="col-md-12 control-label">Names and ages of siblings</label>
+                      <div class="col-md-12">
+                        <input type="text" class="form-control form-control-line" required value="<?= $SiblingsNameAge ?>" name="txtsibling" readonly/>
+            </div>
+               </div>
+
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group required">
@@ -422,6 +430,13 @@ foreach ($query->result() as $row) {
                         <input type="text" value="<?= $SourceOfIncome ?>" readonly class="form-control form-control-line">
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <div class="form-group ">
+                  <label class="col-md-12 control-label">Name of Children and age, if married/ with family</label>
+                  <div class="col-md-12">
+                    <input type="text" class="form-control form-control-line" value="<?= $ChildrenNameAge ?>" name="txtChildrenNameAge" readonly />
                   </div>
                 </div>
 
