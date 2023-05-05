@@ -410,7 +410,7 @@ foreach ($query->result() as $row) {
                 <div class="form-group required">
            <label class="col-md-12 control-label">Names and ages of siblings</label>
                       <div class="col-md-12">
-                        <input type="text" class="form-control form-control-line" required value="<?= $SiblingsNameAge ?>" name="txtsibling" readonly/>
+                        <input type="text" class="form-control form-control-line" required value="<?= $SiblingsNameAge ?>" name="txtSiblingsNameAge" readonly/>
             </div>
                </div>
 
